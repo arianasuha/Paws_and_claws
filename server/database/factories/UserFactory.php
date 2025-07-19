@@ -24,21 +24,29 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'username' => $this->faker->unique()->userName(),
             'password' => static::$password ??= Hash::make('password'),
+            'is_active' => true,
+            'is_admin' => false,
+            'is_vet' => false,
             'remember_token' => Str::random(10),
+            // Slug will be generated automatically by the model's HasSlug trait
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate a specific password for the user.
+     *
+     * @param string $password
+     * @return $this
      */
-    public function unverified(): static
+    public function withPassword(string $password): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'password' => $password,
         ]);
     }
 }
