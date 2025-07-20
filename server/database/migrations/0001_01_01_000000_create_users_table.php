@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('password');
             $table->string('slug')->unique();
-            $table->boolean('is_active');
-            $table->boolean('is_admin');
-            $table->boolean('is_vet');
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_vet')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
