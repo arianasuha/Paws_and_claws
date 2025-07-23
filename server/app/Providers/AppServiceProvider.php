@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Vet;
+use App\Policies\VetPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,4 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+    // app/Providers/AuthServiceProvider.php
+
+    protected $policies = [
+        Vet::class => VetPolicy::class,
+    ];
 }

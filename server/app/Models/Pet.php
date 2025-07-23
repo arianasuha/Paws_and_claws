@@ -18,7 +18,7 @@ class Pet extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'owner_id',
+        'user_id',
         'name',
         'species',
         'breed',
@@ -41,5 +41,10 @@ class Pet extends Model
             'weight' => 'integer',
             'height' => 'integer',
         ];
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

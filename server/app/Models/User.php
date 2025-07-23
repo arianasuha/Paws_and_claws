@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,6 +10,8 @@ use \Illuminate\Support\Facades\Hash;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Vet;
 
 class User extends Authenticatable
 {
@@ -108,6 +109,11 @@ class User extends Authenticatable
         return SlugOptions::create()
             ->generateSlugsFrom('email')
             ->saveSlugsTo('slug');
+    }
+
+    public function vet(): HasOne
+    {
+        return $this->hasOne(Vet::class);
     }
 }
 

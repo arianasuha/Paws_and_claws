@@ -21,7 +21,7 @@ class PetFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(), // Creates or references an existing user
+            'user_id' => User::factory(),
             'name' => $this->faker->firstName(),
             'species' => $this->faker->randomElement(['Dog', 'Cat', 'Bird', 'Fish', 'Rabbit']),
             'breed' => $this->faker->word(),

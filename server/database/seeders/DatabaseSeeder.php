@@ -4,9 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Pet;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Vet;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +17,7 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         Pet::factory()->count(10)->create();
+
+        Vet::factory()->count(10)->create();
     }
 }
