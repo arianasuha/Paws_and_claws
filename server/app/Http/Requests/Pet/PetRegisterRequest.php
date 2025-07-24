@@ -3,7 +3,8 @@
 namespace App\Http\Requests\Pet;
 
 use App\Http\Requests\BaseRequest;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class PetRegisterRequest extends BaseRequest
 {
@@ -17,43 +18,39 @@ class PetRegisterRequest extends BaseRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'owner_id' => [
-                'required',
-                'integer',
-                'exists:users,id', // Ensure owner_id exists in the users table
-                function ($attribute, $value, $fail) {
-                    if (Auth::id() !== (int) $value) {
-                        $fail('You can only register pets for yourself.');
-                    }
-                },
-            ],
             'name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female',
             'species' => 'required|string|max:255',
             'breed' => 'nullable|string|max:255',
-            'dob' => 'nullable|date',
-            'gender' => 'nullable|string|in:male,female,unknown',
-            'weight' => 'nullable|numeric|min:0',
+            'dob' => 'required|date',
+            'image_url' => 'nullable|image|max:2048',
+            'user_id' => 'prohibited', // Prevent user_id from being sent
             'height' => 'nullable|numeric|min:0',
-            'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'weight' => 'nullable|numeric|min:0',
         ];
     }
 
     /**
-     * Prepare the data for validation.
-     * This method automatically sets the owner_id to the authenticated user's ID.
+     * Get custom messages for validation errors.
      */
-    protected function prepareForValidation(): void
+    public function messages(): array
     {
-        if (Auth::check()) {
-            $this->merge([
-                'owner_id' => Auth::id(),
-            ]);
-        }
+        return [
+            'user_id.prohibited' => 'You can only register pets for yourself.',
+        ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

@@ -14,52 +14,52 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('api.logout');
 
-    Route::get('/user', [UserController::class, 'index'])
+    Route::get('/users', [UserController::class, 'index'])
         ->name('api.getUser');
 
-    Route::get('/user/{user}', [UserController::class, 'show'])
+    Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('api.getUserByIdentifier');
 
-    Route::patch('/user/{user}', [UserController::class, 'update'])
+    Route::put('/users/{user}', [UserController::class, 'update'])
         ->name('api.updateUser');
 
-    Route::delete('/user/{user}', [UserController::class, 'destroy'])
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('api.deleteUser');
 
-    Route::get('/pet', [PetController::class, 'index'])
+    Route::get('/pets', [PetController::class, 'index'])
         ->name('api.getPet');
 
-    Route::get('/pet/{pet}', [PetController::class, 'show'])
+    Route::get('/pets/{pet}', [PetController::class, 'show'])
     ->name('api.getPetByIdentifier');
 
-    Route::patch('/pet/{pet}', [PetController::class, 'update'])
+    Route::post('/pets', [PetController::class, 'createPet'])
+            ->name('api.createPet');
+
+    Route::put('/pets/{pet}', [PetController::class, 'update'])
     ->name('api.updatePet');
 
-    Route::delete('/pet/{pet}', [PetController::class, 'destroy'])
+    Route::delete('/pets/{pet}', [PetController::class, 'destroy'])
     ->name('api.deletePet');
 
-    Route::get('/vet', [PetController::class, 'index'])
+    Route::get('/vets', [VetController::class, 'index'])
         ->name('api.getPet');
 
-    Route::get('/vet/{vet}', [PetController::class, 'show'])
+    Route::get('/vets/{vet}', [VetController::class, 'show'])
     ->name('api.getVetByIdentifier');
 
-    Route::patch('/vet/{vet}', [PetController::class, 'update'])
+    Route::put('/vets/{vet}', [VetController::class, 'update'])
     ->name('api.updateVet');
 
-    Route::delete('/vet/{vet}', [PetController::class, 'destroy'])
+    Route::delete('/vets/{vet}', [VetController::class, 'destroy'])
     ->name('api.deleteVet');
         });
 
 
-Route::post('/user', [UserController::class, 'createUser'])
+Route::post('/users', [UserController::class, 'createUser'])
     ->name('api.createUser');
 
-Route::post('/user/admin', [UserController::class, 'createAdminUser'])
+Route::post('/admin/users', [UserController::class, 'createAdminUser'])
     ->name('api.createAdminUser');
 
-Route::post('/createPet', [PetController::class, 'createPet'])
-            ->name('api.createPet');
-
-Route::post('/createVet', [VetController::class, 'createVet'])
+Route::post('/vets', [VetController::class, 'createVet'])
             ->name('api.createVet');

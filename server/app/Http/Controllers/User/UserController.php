@@ -49,15 +49,15 @@ class UserController extends Controller
 
         try {
             $foundUser = User::where('id', $user)
-            ->orWhere('slug', $user)
-            ->first();
+                ->orWhere('slug', $user)
+                ->first();
 
             if (!$foundUser) {
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::user() !== $foundUser && !Auth::user()->is_admin) {
-                return response()->json( [
+            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
+                return response()->json([
                     "errors" => "You are not authorized to view this user."
                 ], 403);
             }
@@ -70,7 +70,6 @@ class UserController extends Controller
         }
     }
 
-
     public function createUser(RegisterUserRequest $request): JsonResponse
     {
         if ($request->has('is_admin')) {
@@ -81,13 +80,12 @@ class UserController extends Controller
         $validated = $request->validated();
 
         try {
-            // Note: Your User model's setPasswordAttribute should handle hashing
             $user = User::create([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'username' => $validated['username'],
-                'password' => $validated['password'], // The setter will hash this
+                'password' => $validated['password'],
                 'address' => $validated['address']
             ]);
 
@@ -106,13 +104,12 @@ class UserController extends Controller
         $validated = $request->validated();
 
         try {
-            // Note: Your User model's setPasswordAttribute should handle hashing
             $user = User::create([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'username' => $validated['username'],
-                'password' => $validated['password'], // The setter will hash this
+                'password' => $validated['password'],
                 'address' => $validated['address'],
                 'is_admin' => true,
             ]);
@@ -138,27 +135,26 @@ class UserController extends Controller
         if ($request->has('is_admin') || $request->has('is_active') || $request->has('is_vet')) {
             return response()->json([
                 "errors" => "You are not authorized to change account status."
-            ]);
+            ], 403);
         }
 
         try {
             $foundUser = User::where('id', $user)
-            ->orWhere('slug', $user)
-            ->first();
+                ->orWhere('slug', $user)
+                ->first();
 
             if (!$foundUser) {
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::user() !== $foundUser && !Auth::user()->is_admin) {
-                return response()->json( [
+            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
+                return response()->json([
                     "errors" => "You are not authorized to update this user."
                 ], 403);
             }
 
             $validated = $request->validated();
 
-            // Handle password separately if it's being updated
             if (isset($validated['password'])) {
                 $foundUser->password = $validated['password'];
                 unset($validated['password']);
@@ -168,7 +164,7 @@ class UserController extends Controller
 
             return response()->json([
                 "success" => "User updated successfully.",
-                $foundUser->fresh(),
+                'user' => $foundUser->fresh(),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -187,14 +183,14 @@ class UserController extends Controller
 
         try {
             $foundUser = User::where('id', $user)
-            ->orWhere('slug', $user)
-            ->first();
+                ->orWhere('slug', $user)
+                ->first();
 
             if (!$foundUser) {
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::user() !== $foundUser) {
+            if (Auth::id() !== $foundUser->id) {
                 return response()->json([
                     'errors' => 'You are not authorized to delete this user.'
                 ], 403);

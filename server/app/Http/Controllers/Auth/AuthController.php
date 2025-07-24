@@ -47,10 +47,10 @@ class AuthController extends Controller
     public function login(AuthRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $user = User::where('email', $validated->email)->first();
+        $user = User::where('email', $validated['email'])->first();
 
         // Check password
-        if (!$user || !Hash::check($validated->password, $user->password) || !$user->is_active) {
+        if (!$user || !Hash::check($validated['password'], $user->password) || !$user->is_active) {
             return response()->json([
                 'errors' => 'Credentials are incorrect.'
             ], 422);
