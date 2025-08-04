@@ -31,6 +31,7 @@ class UpdateUserRequest extends BaseRequest
             'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
             'username' => ['nullable', 'string', 'max:255', Rule::unique('users', 'username')->ignore($userId)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed', new StrongPassword()],
+            'address' => ['nullable', 'string', 'max:255'],
         ];
     }
 
