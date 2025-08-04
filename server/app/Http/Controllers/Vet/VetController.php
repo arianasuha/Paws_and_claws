@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vet;
 
 use App\Models\Vet;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -15,12 +16,7 @@ class VetController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
-
-        $this->middleware('can:view,vet')->only('show');
-        $this->middleware('can:update,vet')->only('update');
-        $this->middleware('can:delete,vet')->only('destroy');
-
+        $this->middleware('auth:sanctum')->except('createVet');
     }
 
     /**
@@ -32,7 +28,7 @@ class VetController extends Controller
         try {
             $this->authorize('viewAny', Vet::class);
 
-            $vets = Vet::with('user')->get();
+            $vets = Vet::with('user')->paginate(10);
             return response()->json($vets, 200);
         } catch (AuthorizationException $e) {
             return response()->json(["errors" => "You are not authorized to view vet listings."], 403);
@@ -44,21 +40,35 @@ class VetController extends Controller
 
     /**
      * Store a newly created vet profile in storage.
-     * Authorized by VetPolicy's create method via $this->authorize().
      */
     public function createVet(VetRegisterRequest $request): JsonResponse
     {
         try {
-            $this->authorize('create', Vet::class);
-
             $validated = $request->validated();
-            $vet = Vet::create($validated);
+
+            $userData = [
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'username' => $validated['username'],
+                'password' => $validated['password'],
+                'is_vet' => true,
+            ];
+            
+            if (isset($validated['address'])) {
+                $userData['address'] = $validated['address'];
+            }
+
+            $user = User::create($userData);
+
+            $vetData = array_diff_key($validated, $userData);
+
+            $vetData['user_id'] = $user->id;
+            $vet = Vet::create($vetData);
 
             return response()->json([
                 "success" => "Vet profile created successfully.",
-                "vet" => $vet->load('user'),
             ], 201);
-
         } catch (AuthorizationException $e) {
             return response()->json(["errors" => $e->getMessage()], 403);
         } catch (\Exception $e) {
@@ -72,9 +82,11 @@ class VetController extends Controller
      * Authorized by 'can:view,vet' middleware.
      * Laravel's route model binding will inject the Vet model.
      */
-    public function show(Vet $vet): JsonResponse
+    public function show($userId): JsonResponse
     {
         try {
+            $vet = Vet::where('user_id', $userId)->firstOrFail();
+        
             return response()->json($vet->load('user'), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(["errors" => "Vet profile not found."], 404);
@@ -90,18 +102,33 @@ class VetController extends Controller
      * Update the specified vet profile in storage.
      * Authorized by 'can:update,vet' middleware.
      */
-    public function update(VetUpdateRequest $request, Vet $vet): JsonResponse
+    public function update(VetUpdateRequest $request, string $userId): JsonResponse
     {
         try {
+            $user = User::where('id', $userId)->firstOrFail();
+            $vet = Vet::where('user_id', $userId)->firstOrFail();
 
             $validated = $request->validated();
-            unset($validated['user_id']);
 
-            $vet->update($validated);
+            $userFields = ['first_name', 'last_name', 'email', 'username', 'password', 'address'];
+            $userData = array_intersect_key($validated, array_flip($userFields));
+            $vetData = array_diff_key($validated, array_flip($userFields));
+
+            if (isset($userData['password'])) {
+                $user->password = $userData['password'];
+                unset($userData['password']);
+            }
+            
+            if (!empty($userData)) {
+                $user->update($userData);
+            }
+
+            if (!empty($vetData)) {
+                $vet->update($vetData);
+            }
 
             return response()->json([
                 "success" => "Vet profile updated successfully.",
-                "vet" => $vet->fresh()->load('user'),
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(["errors" => "Vet profile not found."], 404);
@@ -117,12 +144,13 @@ class VetController extends Controller
      * Remove the specified vet profile from storage.
      * Authorized by 'can:delete,vet' middleware.
      */
-    public function destroy(Vet $vet): JsonResponse
+    public function destroy($userId): JsonResponse
     {
         try {
-            $vet->delete();
+            $vet = Vet::where('user_id', $userId)->firstOrFail();
+            $vet->user->delete();
 
-            return response()->json(["success" => "Vet profile deleted successfully."], 200);
+            return response()->json(["success" => "Vet profile deleted successfully."], 204);
         } catch (ModelNotFoundException $e) {
             return response()->json(["errors" => "Vet profile not found."], 404);
         } catch (AuthorizationException $e) {

@@ -9,6 +9,15 @@ use App\Http\Controllers\Vet\VetController;
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('api.login');
+    
+Route::post('/users', [UserController::class, 'createUser'])
+    ->name('api.createUser');
+
+Route::post('/admin/users', [UserController::class, 'createAdminUser'])
+    ->name('api.createAdminUser');
+
+Route::post('/vets', [VetController::class, 'createVet'])
+            ->name('api.createVet');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
@@ -42,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     ->name('api.deletePet');
 
     Route::get('/vets', [VetController::class, 'index'])
-        ->name('api.getPet');
+        ->name('api.getVet');
 
     Route::get('/vets/{vet}', [VetController::class, 'show'])
     ->name('api.getVetByIdentifier');
@@ -52,14 +61,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/vets/{vet}', [VetController::class, 'destroy'])
     ->name('api.deleteVet');
-        });
-
-
-Route::post('/users', [UserController::class, 'createUser'])
-    ->name('api.createUser');
-
-Route::post('/admin/users', [UserController::class, 'createAdminUser'])
-    ->name('api.createAdminUser');
-
-Route::post('/vets', [VetController::class, 'createVet'])
-            ->name('api.createVet');
+});

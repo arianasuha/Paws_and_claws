@@ -80,19 +80,13 @@ class UserController extends Controller
         $validated = $request->validated();
 
         try {
-            $user = User::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'username' => $validated['username'],
-                'password' => $validated['password'],
-                'address' => $validated['address']
-            ]);
+            User::create($validated);
 
             return response()->json([
                 "success" => "User created successfully. Please verify your email to activate your account.",
             ], 201);
         } catch (\Exception $e) {
+            \Log::error($e->getMessage());
             return response()->json([
                 "errors" => $e->getMessage()
             ], 500);
@@ -102,17 +96,10 @@ class UserController extends Controller
     public function createAdminUser(RegisterUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $validated['is_admin'] = true;
 
         try {
-            $user = User::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'username' => $validated['username'],
-                'password' => $validated['password'],
-                'address' => $validated['address'],
-                'is_admin' => true,
-            ]);
+            User::create($validated);
 
             return response()->json([
                 "success" => "User created successfully. Please verify your email to activate your account.",
@@ -154,7 +141,7 @@ class UserController extends Controller
             }
 
             $validated = $request->validated();
-
+            \Log::info($validated);
             if (isset($validated['password'])) {
                 $foundUser->password = $validated['password'];
                 unset($validated['password']);
