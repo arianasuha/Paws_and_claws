@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ReportLostPet extends Model
+class OrderItem extends Model
 {
     use HasFactory;
     public const UPDATED_AT = null;
@@ -18,26 +18,24 @@ class ReportLostPet extends Model
      * @var array
      */
     protected $fillable = [
-        'location',
-        'date_lost',
-        'user_id',
-        'pet_id',
-        'status',
+        'order_id',
+        'product_id',
+        'quantity',
     ];
 
     /**
-     * Get the user who submitted the report.
+     * Get the order that the item belongs to.
      */
-    public function user(): BelongsTo
+    public function checkout(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Checkout::class, 'order_id', 'order_id');
     }
 
     /**
-     * Get the pet that the report is about.
+     * Get the product that the order item is for.
      */
-    public function pet(): BelongsTo
+    public function petProduct(): BelongsTo
     {
-        return $this->belongsTo(Pet::class);
+        return $this->belongsTo(PetProduct::class, 'product_id', 'product_id');
     }
 }

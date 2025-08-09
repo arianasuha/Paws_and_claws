@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ReportLostPet extends Model
+class Reminder extends Model
 {
     use HasFactory;
     public const UPDATED_AT = null;
@@ -18,23 +18,16 @@ class ReportLostPet extends Model
      * @var array
      */
     protected $fillable = [
-        'location',
-        'date_lost',
-        'user_id',
         'pet_id',
-        'status',
+        'med_name',
+        'dosage',
+        'start_date',
+        'end_date',
+        'reminder_time',
     ];
 
     /**
-     * Get the user who submitted the report.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the pet that the report is about.
+     * Get the pet that the reminder is for.
      */
     public function pet(): BelongsTo
     {

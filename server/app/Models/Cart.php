@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ReportLostPet extends Model
+class Cart extends Model
 {
     use HasFactory;
     public const UPDATED_AT = null;
     public const CREATED_AT = null;
+
 
     /**
      * The attributes that are mass assignable.
@@ -18,15 +19,13 @@ class ReportLostPet extends Model
      * @var array
      */
     protected $fillable = [
-        'location',
-        'date_lost',
         'user_id',
-        'pet_id',
-        'status',
+        'product_id',
+        'quantity',
     ];
 
     /**
-     * Get the user who submitted the report.
+     * Get the user that owns the cart.
      */
     public function user(): BelongsTo
     {
@@ -34,10 +33,10 @@ class ReportLostPet extends Model
     }
 
     /**
-     * Get the pet that the report is about.
+     * Get the product that is in the cart.
      */
-    public function pet(): BelongsTo
+    public function petProduct(): BelongsTo
     {
-        return $this->belongsTo(Pet::class);
+        return $this->belongsTo(PetProduct::class, 'product_id', 'product_id');
     }
 }

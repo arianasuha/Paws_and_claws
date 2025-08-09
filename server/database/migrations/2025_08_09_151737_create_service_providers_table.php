@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('report_lost_pets', function (Blueprint $table) {
-            $table->id('report_id');
-            $table->string('location');
-            $table->date('date_lost');
+        Schema::create('service_providers', function (Blueprint $table) {
+            $table->id('service_provider_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->string('status');
+            $table->string('service_type');
+            $table->text('service_desc')->nullable();
+            $table->decimal('rate_per_hour', 8, 2);
+            $table->decimal('rating', 2, 1)->nullable();
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('report_lost_pets');
+        Schema::dropIfExists('service_providers');
     }
 };
