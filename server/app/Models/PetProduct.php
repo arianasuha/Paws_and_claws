@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class PetProduct extends Model
+{
+    use HasFactory;
+    public const UPDATED_AT = null;
+    public const CREATED_AT = null;
+
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        'stock',
+        'image_url',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'price' => 'decimal:8,2',
+        'stock' => 'integer',
+    ];
+}

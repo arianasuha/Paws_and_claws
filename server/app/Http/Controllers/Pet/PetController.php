@@ -16,6 +16,37 @@ class PetController extends Controller
     /**
      * Create a new controller instance.
      */
+
+    private function imageHandler(Request $request, array &$validated, ?Pet $pet = null): void
+    {
+        if ($request->hasFile('image_url')) {
+            if ($pet && $pet->image_url) {
+                $this->deleteOldImage($pet->image_url);
+            }
+            $path = $request->file('image_url')->store('profile_images', 'public');
+            $validated['image_url'] = Storage::url($path);
+        } else if (array_key_exists('image_url', $validated) && is_null($validated['image_url'])) {
+            // If remove Image button is pressed we will send image_url null
+            // otherwise the key won't be sent
+            if ($pet && $pet->image_url) {
+                $this->deleteOldImage($pet->image_url);
+            }
+            $validated['image_url'] = null;
+        } else {
+            unset($validated['image_url']);
+        }
+    }
+
+    private function deleteOldImage(?string $imageUrl): void
+    {
+        if ($imageUrl) {
+            $path = str_replace(Storage::url(''), '', $imageUrl);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+    }
+
     public function __construct()
     {
         $this->middleware('auth:sanctum');
@@ -45,7 +76,7 @@ class PetController extends Controller
         $validatedData['user_id'] = Auth::id(); // Ensure user_id is set to authenticated user
 
         if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('public/pet_images');
+            $imagePath = $request->file('image_url')->store('pet_images', 'public');
             $validatedData['image_url'] = Storage::url($imagePath);
         } else {
             $validatedData['image_url'] = null;
@@ -93,6 +124,8 @@ class PetController extends Controller
             }
 
             $validated = $request->validated();
+
+            $this->imageHandler($request, $validated, $foundPet);
             $foundPet->update($validated);
 
             return response()->json([
@@ -122,6 +155,9 @@ class PetController extends Controller
                 return response()->json(['error' => 'Unauthorized. You can only update your own pets.'], 403);
             }
 
+            if ($foundPet->image_url) {
+                $this->deleteOldImage($foundPet->image_url);
+            }
             $foundPet->delete();
 
             return response()->json(null, 204);
