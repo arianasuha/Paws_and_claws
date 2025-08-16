@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\AuthRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Http\OpenApi\Annotations as OA;
 
 class AuthController extends Controller
 {
@@ -22,8 +23,8 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="Password123!"),
+     *             @OA\Property(property="email", type="string", format="email", example="suha@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="Laravel@123"),
      *         ),
      *     ),
      *     @OA\Response(

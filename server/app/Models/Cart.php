@@ -37,6 +37,6 @@ class Cart extends Model
      */
     public function petProduct(): BelongsTo
     {
-        return $this->belongsTo(PetProduct::class, 'product_id', 'product_id');
+        return $this->belongsTo(PetProduct::class, 'product_id');
     }
 }

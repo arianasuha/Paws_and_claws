@@ -1,15 +1,14 @@
 <?php
 
 namespace Database\Factories;
-
+use App\Models\MedicalLog;
 use App\Models\Pet;
-use App\Models\DiseaseLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PetDisease>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PetMedical>
  */
-class PetDiseaseFactory extends Factory
+class PetMedicalFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,7 +19,7 @@ class PetDiseaseFactory extends Factory
     {
         return [
             'pet_id' => Pet::factory(),
-            'disease_id' => DiseaseLog::factory(),
+            'medical_id' => MedicalLog::factory(),
         ];
     }
 }

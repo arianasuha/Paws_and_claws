@@ -3,16 +3,17 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\DiseaseLog;
+use App\Models\Order;
+use App\Models\User;
 
-class DiseaseLogFactory extends Factory
+class OrderFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = DiseaseLog::class;
+    protected $model = Order::class;
 
     /**
      * Define the model's default state.
@@ -22,10 +23,8 @@ class DiseaseLogFactory extends Factory
     public function definition(): array
     {
         return [
-            'symptoms' => $this->faker->text(200),
-            'causes' => $this->faker->text(200),
-            'treat_options' => $this->faker->text(200),
-            'severity' => $this->faker->randomElement(['low', 'medium', 'high']),
+            'user_id' => User::factory(),
+            'order_date' => $this->faker->date(),
         ];
     }
 }

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_reminder', function (Blueprint $table) {
-            $table->id('user_reminder_id');
+        Schema::create('user_reminders', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('reminder_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_reminder');
+        Schema::dropIfExists('user_reminders');
     }
 };

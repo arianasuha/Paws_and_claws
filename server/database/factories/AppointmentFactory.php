@@ -2,15 +2,20 @@
 
 namespace Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Appointment;
 use App\Models\Pet;
 use App\Models\Vet;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Appointment>
- */
 class AppointmentFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Appointment::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,15 +23,13 @@ class AppointmentFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['scheduled', 'completed', 'canceled'];
-
         return [
-            'pet_id' => Pet::inRandomOrder()->first()->id,
-            'vet_id' => Vet::inRandomOrder()->first()->id,
-            'app_date' => fake()->dateTimeBetween('-1 month', '+1 month')->format('Y-m-d'),
-            'app_time' => fake()->time('H:i'),
-            'visit_reason' => fake()->sentence(),
-            'status' => fake()->randomElement($statuses),
+            'pet_id' => Pet::factory(),
+            'vet_id' => Vet::factory(),
+            'app_date' => $this->faker->date(),
+            'app_time' => $this->faker->time(),
+            'visit_reason' => $this->faker->sentence(),
+            'status' => $this->faker->randomElement(['pending', 'confirmed', 'completed', 'canceled']),
         ];
     }
 }

@@ -65,7 +65,7 @@ class User extends Authenticatable
      */
     public function setPasswordAttribute($value)
     {
-        if (! Hash::isHashed($value)) {
+        if (!Hash::isHashed($value)) {
             $this->validatePasswordStrength($value);
             $this->attributes['password'] = Hash::make($value);
         } else {
@@ -105,7 +105,8 @@ class User extends Authenticatable
         }
     }
 
-    public function getSlugOptions(): SlugOptions {
+    public function getSlugOptions(): SlugOptions
+    {
         return SlugOptions::create()
             ->generateSlugsFrom('email')
             ->saveSlugsTo('slug');
@@ -115,6 +116,37 @@ class User extends Authenticatable
     {
         return $this->hasOne(Vet::class);
     }
+
+    public function pets()
+    {
+        return $this->hasMany(Pet::class);
+    }
+
+    public function petMarkets()
+    {
+        return $this->hasMany(PetMarket::class);
+    }
+
+    public function reportedLostPets()
+    {
+        return $this->hasMany(ReportLostPet::class);
+    }
+
+    public function serviceProvider()
+    {
+        return $this->hasMany(ServiceProvider::class);
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }
 
 

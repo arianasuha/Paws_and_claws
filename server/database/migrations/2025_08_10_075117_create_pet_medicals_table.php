@@ -6,15 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+   public function up(): void
     {
-        Schema::create('pet_diseases', function (Blueprint $table) {
+        Schema::create('pet_medicals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('disease_id')->constrained('disease_logs')->onDelete('cascade');
             $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
+            $table->foreignId('medical_id')->constrained('medical_logs')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pet_diseases');
+        Schema::dropIfExists('pet_medicals');
     }
 };

@@ -33,4 +33,9 @@ class Reminder extends Model
     {
         return $this->belongsTo(Pet::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_reminders');
+    }
 }

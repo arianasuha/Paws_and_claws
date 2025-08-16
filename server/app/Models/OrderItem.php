@@ -26,9 +26,9 @@ class OrderItem extends Model
     /**
      * Get the order that the item belongs to.
      */
-    public function checkout(): BelongsTo
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(Checkout::class, 'order_id', 'order_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     /**
@@ -36,6 +36,6 @@ class OrderItem extends Model
      */
     public function petProduct(): BelongsTo
     {
-        return $this->belongsTo(PetProduct::class, 'product_id', 'product_id');
+        return $this->belongsTo(PetProduct::class, 'product_id');
     }
 }

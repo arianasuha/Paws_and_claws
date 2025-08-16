@@ -41,4 +41,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Vet::class);
     }
+
+    public function medicalLog()
+    {
+        return $this->hasOne(MedicalLog::class, 'app_id');
+    }
 }

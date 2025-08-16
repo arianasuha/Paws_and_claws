@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class UserReminder extends Model
 {
     use HasFactory;
+    public const UPDATED_AT = null;
+    public const CREATED_AT = null;
 
     /**
      * The attributes that are mass assignable.

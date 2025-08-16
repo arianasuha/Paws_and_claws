@@ -33,4 +33,14 @@ class PetProduct extends Model
         'price' => 'decimal:8,2',
         'stock' => 'integer',
     ];
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'product_id');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'product_id');
+    }
 }

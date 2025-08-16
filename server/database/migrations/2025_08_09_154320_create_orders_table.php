@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reminders', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->string('med_name');
-            $table->string('dosage');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->time('reminder_time');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->date('order_date');
         });
     }
 
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reminders');
+        Schema::dropIfExists('orders');
     }
 };

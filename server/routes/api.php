@@ -9,7 +9,7 @@ use App\Http\Controllers\Vet\VetController;
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('api.login');
-    
+
 Route::post('/users', [UserController::class, 'createUser'])
     ->name('api.createUser');
 
@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('api.getUserByIdentifier');
 
-    Route::put('/users/{user}', [UserController::class, 'update'])
+    Route::patch('/users/{user}', [UserController::class, 'update'])
         ->name('api.updateUser');
 
     Route::delete('/users/{user}', [UserController::class, 'destroy'])

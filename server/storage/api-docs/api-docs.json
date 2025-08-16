@@ -1,14 +1,18 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Product Catalog API",
-        "description": "API documentation for the Product Catalog project",
+        "title": "Paws and Claws API",
+        "description": "API documentation for the Paws and Claws project",
         "contact": {
             "email": "support@example.com"
         },
         "version": "1.0.0"
     },
     "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local API Server"
+        },
         {
             "url": "http://localhost:8000"
         }
@@ -35,12 +39,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "user@example.com"
+                                        "example": "suha@example.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "Password123!"
+                                        "example": "Laravel@123"
                                     }
                                 },
                                 "type": "object"
@@ -140,9 +144,485 @@
                     }
                 ]
             }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all users (Admin only)",
+                "description": "Returns a paginated list of all users. Requires admin privileges.",
+                "operationId": "indexUsers",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new user",
+                "description": "Creates a new user account.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "User registration payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/users/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a single user by ID or slug",
+                "description": "Returns a single user by their ID or slug. Requires authentication. A user can view their own profile, but only an admin can view others.",
+                "operationId": "showUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete a user",
+                "description": "Deletes an authenticated user's account. Requires user to be authenticated and deleting their own account.",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update a user by ID or slug",
+                "description": "Updates an existing user. Requires authentication. A user can update their own profile, but only an admin can update others. Restricted fields like `is_admin` cannot be updated.",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "User update payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new admin user",
+                "description": "Creates a new admin user account. Requires a specific auth mechanism not detailed here.",
+                "operationId": "createAdminUser",
+                "requestBody": {
+                    "description": "Admin user registration payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Admin user created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
         }
     },
     "components": {
+        "schemas": {
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "description": "User ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "description": "Is the user an admin?",
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "description": "Is the user active?",
+                        "type": "boolean"
+                    },
+                    "is_vet": {
+                        "description": "Is the user a veterinarian?",
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserPaginatedResponse": {
+                "title": "UserPaginatedResponse",
+                "description": "Paginated list of users",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "title": "RegisterUserRequest",
+                "description": "User registration request payload",
+                "required": [
+                    "email",
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "title": "UpdateUserRequest",
+                "description": "User update request payload",
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
@@ -151,6 +631,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Users",
+            "description": "API Endpoints of Users"
+        },
         {
             "name": "Authentication",
             "description": "Authentication"

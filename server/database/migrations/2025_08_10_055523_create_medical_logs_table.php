@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reminders', function (Blueprint $table) {
+        Schema::create('medical_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->string('med_name');
-            $table->string('dosage');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->time('reminder_time');
+            $table->foreignId('app_id')->constrained('appointments')->onDelete('cascade'); // Foreign key to 'apps' table
+            $table->string('treat_pres');
+            $table->string('diagnosis');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reminders');
+        Schema::dropIfExists('medical_logs');
     }
 };
+

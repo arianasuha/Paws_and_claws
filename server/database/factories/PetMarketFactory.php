@@ -2,16 +2,20 @@
 
 namespace Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\PetMarket;
 use App\Models\User;
 use App\Models\Pet;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PetMarket>
- */
 class PetMarketFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = PetMarket::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,17 +23,14 @@ class PetMarketFactory extends Factory
      */
     public function definition(): array
     {
-        $types = ['adoption', 'sale', 'breeding'];
-        $statuses = ['available', 'pending', 'sold'];
-
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
-            'pet_id' => Pet::inRandomOrder()->first()->id,
-            'date' => Carbon::now()->subDays(rand(1, 30)),
-            'type' => fake()->randomElement($types),
-            'status' => fake()->randomElement($statuses),
-            'description' => fake()->paragraph(),
-            'fee' => fake()->randomFloat(2, 10, 1000),
+            'user_id' => User::factory(),
+            'pet_id' => Pet::factory(),
+            'date' => $this->faker->date(),
+            'type' => $this->faker->randomElement(['sale', 'adoption']),
+            'status' => $this->faker->randomElement(['available', 'sold', 'adopted', 'pending']),
+            'description' => $this->faker->text(200),
+            'fee' => $this->faker->randomFloat(2, 50, 500),
         ];
     }
 }

@@ -3,13 +3,18 @@
 namespace Database\Factories;
 
 use App\Models\Pet;
+use App\Models\Reminder; // Add the Reminder model to the imports
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reminder>
- */
 class ReminderFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Reminder::class;
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +26,8 @@ class ReminderFactory extends Factory
         $endDate = fake()->dateTimeBetween($startDate, '+1 month');
 
         return [
-            'pet_id' => Pet::inRandomOrder()->first()->id,
+            // Use Pet::factory() to create a pet automatically
+            'pet_id' => Pet::factory(),
             'med_name' => fake()->word(),
             'dosage' => fake()->randomElement(['1 tablet', '100mg', '2ml']),
             'start_date' => $startDate,

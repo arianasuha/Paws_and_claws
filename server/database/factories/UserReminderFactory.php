@@ -20,7 +20,7 @@ class UserReminderFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'reminder_id' => Reminder::inRandomOrder()->first()->reminder_id,
+            'reminder_id' => Reminder::inRandomOrder()->first()->id,
         ];
     }
 }

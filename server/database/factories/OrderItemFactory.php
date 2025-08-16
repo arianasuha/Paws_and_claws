@@ -2,15 +2,20 @@
 
 namespace Database\Factories;
 
-use App\Models\Checkout;
-use App\Models\PetProduct;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\OrderItem;
+use App\Models\Order;
+use App\Models\PetProduct;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OrderItem>
- */
 class OrderItemFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = OrderItem::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,9 +24,9 @@ class OrderItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'order_id' => Checkout::inRandomOrder()->first()->order_id,
-            'product_id' => PetProduct::inRandomOrder()->first()->product_id,
-            'quantity' => fake()->numberBetween(1, 5),
+            'order_id' => Order::factory(),
+            'product_id' => PetProduct::factory(),
+            'quantity' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

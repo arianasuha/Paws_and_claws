@@ -3,13 +3,18 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\Pet; // Add the Pet model to the imports
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pet>
- */
 class PetFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Pet::class;
+
     /**
      * Define the model's default state.
      *
@@ -20,13 +25,13 @@ class PetFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => $this->faker->firstName(),
-            'gender' => $this->faker->randomElement(['male', 'female']),
-            'species' => $this->faker->randomElement(['Dog', 'Cat', 'Bird']),
+            'species' => $this->faker->randomElement(['Dog', 'Cat', 'Bird', 'Rabbit']),
             'breed' => $this->faker->word(),
-            'dob' => $this->faker->date('Y-m-d', 'now - 1 year'),
-            'image_url' => null, // Set to null to match controller logic
-            'height' => null, // Nullable, not set by default
-            'weight' => null, // Nullable, not set by default
+            'dob' => $this->faker->date(),
+            'gender' => $this->faker->randomElement(['male', 'female']),
+            'weight' => $this->faker->numberBetween(1, 50),
+            'height' => $this->faker->numberBetween(10, 100),
+            'image_url' => $this->faker->imageUrl(),
         ];
     }
 }

@@ -2,15 +2,20 @@
 
 namespace Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Cart;
 use App\Models\User;
 use App\Models\PetProduct;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cart>
- */
 class CartFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Cart::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,9 +24,9 @@ class CartFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
-            'product_id' => PetProduct::inRandomOrder()->first()->product_id,
-            'quantity' => fake()->numberBetween(1, 10),
+            'user_id' => User::factory(),
+            'product_id' => PetProduct::factory(),
+            'quantity' => $this->faker->numberBetween(1, 10),
         ];
     }
 }
