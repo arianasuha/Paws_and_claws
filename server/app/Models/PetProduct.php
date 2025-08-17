@@ -30,7 +30,7 @@ class PetProduct extends Model
      * @var array
      */
     protected $casts = [
-        'price' => 'decimal:8,2',
+        'price' => 'decimal:2',
         'stock' => 'integer',
     ];
 
