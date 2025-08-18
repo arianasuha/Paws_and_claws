@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreAppointmentRequest;
+use App\Http\Requests\Vet\AppointmentRegisterRequest;
+use App\Http\Requests\Vet\AppointmentUpdateRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
 
@@ -77,7 +78,7 @@ class AppointmentController extends Controller
      * @OA\Response(response=500, description="Internal Server Error")
      * )
      */
-    public function store(StoreAppointmentRequest $request): JsonResponse
+    public function store(AppointmentRegisterRequest $request): JsonResponse
     {
         try {
             $appointment = Appointment::create($request->validated());
@@ -162,7 +163,7 @@ class AppointmentController extends Controller
      * @OA\Response(response=500, description="Internal Server Error")
      * )
      */
-    public function update(StoreAppointmentRequest $request, Appointment $appointment): JsonResponse
+    public function update(AppointmentUpdateRequest $request, Appointment $appointment): JsonResponse
     {
         try {
             // Check if the authenticated user is the pet's owner before updating

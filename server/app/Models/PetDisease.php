@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PetDisease extends Model
 {
@@ -20,4 +21,22 @@ class PetDisease extends Model
         'disease_id',
         'pet_id',
     ];
+
+    /**
+     * Get the disease log associated with the pet disease record.
+     * * @return BelongsTo
+     */
+    public function disease(): BelongsTo
+    {
+        return $this->belongsTo(DiseaseLog::class, 'disease_id');
+    }
+
+    /**
+     * Get the pet that has the disease record.
+     * * @return BelongsTo
+     */
+    public function pet(): BelongsTo
+    {
+        return $this->belongsTo(Pet::class, 'pet_id');
+    }
 }

@@ -60,6 +60,16 @@ use OpenApi\Annotations as OA;
  * description="API Endpoints for Carts"
  * )
  *
+ * @OA\Tag(
+ * name="Appointments",
+ * description="API Endpoints for Appointments"
+ * )
+ *
+ * @OA\Tag(
+ * name="LostPets",
+ * description="API Endpoints for reporting lost pets"
+ * )
+ *
  * @OA\Schema(
  * schema="User",
  * title="User",
@@ -849,6 +859,190 @@ use OpenApi\Annotations as OA;
  * description="New quantity for the cart item"
  * )
  * )
+ *
+ * @OA\Schema(
+ * schema="Appointment",
+ * title="Appointment",
+ * description="Appointment model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Appointment ID"),
+ * @OA\Property(property="pet_id", type="integer", format="int64", description="ID of the pet"),
+ * @OA\Property(property="vet_id", type="integer", format="int64", description="ID of the veterinarian"),
+ * @OA\Property(property="app_date", type="string", format="date", description="Date of the appointment"),
+ * @OA\Property(property="app_time", type="string", format="time", description="Time of the appointment"),
+ * @OA\Property(property="visit_reason", type="string", description="Reason for the visit"),
+ * @OA\Property(property="status", type="string", enum={"Scheduled", "Completed", "Canceled"}, description="Status of the appointment"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="AppointmentPaginatedResponse",
+ * title="AppointmentPaginatedResponse",
+ * description="Paginated list of appointments",
+ * @OA\Property(property="current_page", type="integer"),
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Appointment")),
+ * @OA\Property(property="first_page_url", type="string"),
+ * @OA\Property(property="from", type="integer"),
+ * @OA\Property(property="last_page", type="integer"),
+ * @OA\Property(property="last_page_url", type="string"),
+ * @OA\Property(
+ * property="links",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="url", type="string", nullable=true),
+ * @OA\Property(property="label", type="string"),
+ * @OA\Property(property="active", type="boolean")
+ * )
+ * ),
+ * @OA\Property(property="next_page_url", type="string", nullable=true),
+ * @OA\Property(property="path", type="string"),
+ * @OA\Property(property="per_page", type="integer"),
+ * @OA\Property(property="prev_page_url", type="string", nullable=true),
+ * @OA\Property(property="to", type="integer"),
+ * @OA\Property(property="total", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ * schema="AppointmentRegisterRequest",
+ * title="AppointmentRegisterRequest",
+ * description="Payload for creating a new appointment",
+ * required={"pet_id", "vet_id", "app_date", "app_time", "visit_reason", "status"},
+ * @OA\Property(property="pet_id", type="integer", format="int64", description="ID of the pet for the appointment"),
+ * @OA\Property(property="vet_id", type="integer", format="int64", description="ID of the veterinarian for the appointment"),
+ * @OA\Property(property="app_date", type="string", format="date", description="Date of the appointment (YYYY-MM-DD)"),
+ * @OA\Property(property="app_time", type="string", format="time", description="Time of the appointment (HH:MM)"),
+ * @OA\Property(property="visit_reason", type="string", description="Reason for the visit"),
+ * @OA\Property(property="status", type="string", enum={"Scheduled", "Completed", "Canceled"}, description="Status of the appointment"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="AppointmentUpdateRequest",
+ * title="AppointmentUpdateRequest",
+ * description="Payload for updating an existing appointment",
+ * @OA\Property(property="pet_id", type="integer", format="int64", nullable=true, description="ID of the pet for the appointment"),
+ * @OA\Property(property="vet_id", type="integer", format="int64", nullable=true, description="ID of the veterinarian for the appointment"),
+ * @OA\Property(property="app_date", type="string", format="date", nullable=true, description="Date of the appointment (YYYY-MM-DD)"),
+ * @OA\Property(property="app_time", type="string", format="time", nullable=true, description="Time of the appointment (HH:MM)"),
+ * @OA\Property(property="visit_reason", type="string", nullable=true, description="Reason for the visit"),
+ * @OA\Property(property="status", type="string", nullable=true, enum={"Scheduled", "Completed", "Canceled"}, description="Status of the appointment"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="ReportLostPetRequest",
+ * title="ReportLostPetRequest",
+ * description="Payload for reporting a lost pet",
+ * required={"pet_id", "last_seen_location", "description"},
+ * @OA\Property(
+ * property="pet_id",
+ * type="integer",
+ * format="int64",
+ * description="ID of the pet that is lost"
+ * ),
+ * @OA\Property(
+ * property="last_seen_location",
+ * type="string",
+ * description="The last known location of the pet (e.g., street address or landmark)"
+ * ),
+ * @OA\Property(
+ * property="last_seen_date",
+ * type="string",
+ * format="date",
+ * description="Date the pet was last seen",
+ * nullable=true
+ * ),
+ * @OA\Property(
+ * property="last_seen_time",
+ * type="string",
+ * format="time",
+ * description="Time the pet was last seen",
+ * nullable=true
+ * ),
+ * @OA\Property(
+ * property="description",
+ * type="string",
+ * description="Detailed description of the lost pet and circumstances"
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="LostPetReport",
+ * title="LostPetReport",
+ * description="Lost pet report model",
+ * @OA\Property(
+ * property="id",
+ * type="integer",
+ * format="int64",
+ * description="Lost pet report ID"
+ * ),
+ * @OA\Property(
+ * property="pet_id",
+ * type="integer",
+ * format="int64",
+ * description="ID of the lost pet"
+ * ),
+ * @OA\Property(
+ * property="last_seen_location",
+ * type="string",
+ * description="The last known location of the pet"
+ * ),
+ * @OA\Property(
+ * property="last_seen_date",
+ * type="string",
+ * format="date",
+ * description="Date the pet was last seen",
+ * nullable=true
+ * ),
+ * @OA\Property(
+ * property="last_seen_time",
+ * type="string",
+ * format="time",
+ * description="Time the pet was last seen",
+ * nullable=true
+ * ),
+ * @OA\Property(
+ * property="description",
+ * type="string",
+ * description="Detailed description of the lost pet and circumstances"
+ * ),
+ * @OA\Property(
+ * property="created_at",
+ * type="string",
+ * format="date-time",
+ * description="Creation timestamp"
+ * ),
+ * @OA\Property(
+ * property="updated_at",
+ * type="string",
+ * format="date-time",
+ * description="Last update timestamp"
+ * )
+ * )
+ *
+ * @OA\Post(
+ * path="/api/lost-pets",
+ * tags={"LostPets"},
+ * summary="Report a lost pet",
+ * description="Allows a user to submit a report for a lost pet.",
+ * security={{"sanctum": {}}},
+ * @OA\RequestBody(
+ * required=true,
+ * @OA\JsonContent(ref="#/components/schemas/ReportLostPetRequest")
+ * ),
+ * @OA\Response(
+ * response=201,
+ * description="Lost pet report created successfully",
+ * @OA\JsonContent(ref="#/components/schemas/LostPetReport")
+ * ),
+ * @OA\Response(
+ * response=401,
+ * description="Unauthenticated"
+ * ),
+ * @OA\Response(
+ * response=422,
+ * description="Validation error"
+ * )
+ * )
+ *
  */
 class Annotations
 {
