@@ -22,7 +22,7 @@ class ServiceProviderFactory extends Factory
      */
     public function definition(): array
     {
-        $serviceTypes = ['Grooming', 'Training', 'Boarding', 'Walking'];
+        $serviceTypes = ['groomer', 'trainer', 'walker'];
 
         return [
             // This is the key change: Laravel will create a new User and get its ID.

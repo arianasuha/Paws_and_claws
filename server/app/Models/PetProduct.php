@@ -43,4 +43,9 @@ class PetProduct extends Model
     {
         return $this->hasMany(OrderItem::class, 'product_id');
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
 }

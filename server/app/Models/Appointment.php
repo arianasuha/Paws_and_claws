@@ -19,7 +19,7 @@ class Appointment extends Model
      */
     protected $fillable = [
         'pet_id',
-        'vet_id',
+        'user_id',
         'app_date',
         'app_time',
         'visit_reason',
@@ -37,9 +37,9 @@ class Appointment extends Model
     /**
      * Get the veterinarian that the appointment belongs to.
      */
-    public function vet(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Vet::class);
+        return $this->belongsTo(User::class);
     }
 
     public function medicalLog()

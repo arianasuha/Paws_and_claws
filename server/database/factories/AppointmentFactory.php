@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Appointment;
 use App\Models\Pet;
-use App\Models\Vet;
+use App\Models\User;
 
 class AppointmentFactory extends Factory
 {
@@ -25,7 +25,7 @@ class AppointmentFactory extends Factory
     {
         return [
             'pet_id' => Pet::factory(),
-            'vet_id' => Vet::factory(),
+            'user_id' => User::factory(),
             'app_date' => $this->faker->date(),
             'app_time' => $this->faker->time(),
             'visit_reason' => $this->faker->sentence(),

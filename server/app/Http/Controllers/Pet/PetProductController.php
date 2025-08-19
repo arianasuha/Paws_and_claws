@@ -104,7 +104,7 @@ class PetProductController extends Controller
     {
         try {
             $perPage = $request->input('per_page', 10);
-            $petProducts = PetProduct::paginate($perPage);
+            $petProducts = PetProduct::with('category')->paginate($perPage);
 
             return response()->json($petProducts, 200);
         } catch (\Exception $e) {
@@ -125,11 +125,12 @@ class PetProductController extends Controller
      * @OA\MediaType(
      * mediaType="multipart/form-data",
      * @OA\Schema(
-     * required={"name","description","price","stock"},
+     * required={"name","description","price","stock", "category_id"},
      * @OA\Property(property="name", type="string", example="Dog Food"),
      * @OA\Property(property="description", type="string", example="A high-quality dog food for all breeds."),
      * @OA\Property(property="price", type="number", format="float", example="25.50"),
      * @OA\Property(property="stock", type="integer", example="100"),
+     * @OA\Property(property="category_id", type="integer", example="1", description="ID of the category"),
      * @OA\Property(property="image_url", type="string", format="binary", description="Image file of the product"),
      * )
      * )
@@ -170,9 +171,11 @@ class PetProductController extends Controller
             $validatedData = $request->validated();
             $this->imageHandler($request, $validatedData);
 
-            $petProduct = PetProduct::create($validatedData);
+            PetProduct::create($validatedData);
 
-            return response()->json($petProduct, 201);
+            return response()->json([
+                "success" => "Pet Product created successfully.",
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'errors' => 'Failed to create pet product.'
@@ -216,7 +219,7 @@ class PetProductController extends Controller
     public function show(string $petProductid): JsonResponse
     {
         try {
-            $petProduct = PetProduct::find($petProductid);
+            $petProduct = PetProduct::with('category')->find($petProductid);
 
             if (!$petProduct) {
                 return response()->json([
@@ -253,6 +256,7 @@ class PetProductController extends Controller
      * @OA\Property(property="description", type="string", example="Updated description."),
      * @OA\Property(property="price", type="number", format="float", example="29.99"),
      * @OA\Property(property="stock", type="integer", example="150"),
+     * @OA\Property(property="category_id", type="integer", example="1", description="ID of the category"),
      * @OA\Property(property="image_url", type="string", format="binary", description="New image file of the product"),
      * @OA\Property(property="_method", type="string", example="PATCH", description="Method override for form submission"),
      * )

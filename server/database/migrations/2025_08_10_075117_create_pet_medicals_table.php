@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
             $table->foreignId('medical_id')->constrained('medical_logs')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

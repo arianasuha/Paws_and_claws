@@ -149,7 +149,7 @@ class VetController extends Controller
         } catch (AuthorizationException $e) {
             return response()->json(["errors" => "You are not authorized to view this vet profile."], 403);
         } catch (\Exception $e) {
-            Log::error("Error fetching vet profile: " . $e->getMessage(), ['vet_id' => $vet->id]);
+            Log::error($e->getMessage());
             return response()->json(["errors" => "Failed to retrieve vet profile."], 500);
         }
     }
@@ -268,7 +268,7 @@ class VetController extends Controller
                 return response()->json(['error' => 'Vet user not found'], 404);
             }
 
-            if (Auth::id() !== $foundUser->id) {
+            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
                 return response()->json([
                     'errors' => 'You are not authorized to delete this vet profile.'
                 ], 403);

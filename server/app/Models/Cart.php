@@ -19,9 +19,8 @@ class Cart extends Model
      * @var array
      */
     protected $fillable = [
+        'cart_id',
         'user_id',
-        'product_id',
-        'quantity',
     ];
 
     /**
@@ -35,8 +34,8 @@ class Cart extends Model
     /**
      * Get the product that is in the cart.
      */
-    public function petProduct(): BelongsTo
+    public function cartitems()
     {
-        return $this->belongsTo(PetProduct::class, 'product_id');
+        return $this->hasMany(CartItems::class);
     }
 }

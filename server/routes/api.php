@@ -6,16 +6,22 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Vet\VetController;
 use App\Http\Controllers\Pet\PetProductController;
+use App\Http\Controllers\Pet\PetMarketController;
 use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Order\OrderItemsController;
 use App\Http\Controllers\Order\CartController;
-use App\Http\Controllers\Vet\AppointmentController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Pet\ReportLostPetController;
 use App\Http\Controllers\Medical\MedicalLogController;
 use App\Http\Controllers\Medical\DiseaseLogController;
 use App\Http\Controllers\Pet\PetMedicalController;
 use App\Http\Controllers\Pet\PetDiseaseController;
 use App\Http\Controllers\Pet\PetReminderController;
+use App\Http\Controllers\User\UserReminderController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ServiceProviderController;
 
 
 Route::post('/login', [AuthController::class, 'login'])
@@ -87,6 +93,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/pet-products/{petProduct}', [PetProductController::class, 'destroy'])
         ->name('api.deletePetProduct');
+
+    Route::get('/pet-markets', [PetMarketController::class, 'index'])
+        ->name('api.getPetMarkets');
+
+    Route::post('/pet-markets', [PetMarketController::class, 'create'])
+        ->name('api.createPetMarket');
+
+    Route::get('/pet-markets/{petMarket}', [PetMarketController::class, 'show'])
+        ->name('api.getPetMarket');
+
+    Route::patch('/pet-markets/{petMarket}', [PetMarketController::class, 'update'])
+        ->name('api.updatePetMarket');
+
+    Route::delete('/pet-markets/{petMarket}', [PetMarketController::class, 'destroy'])
+        ->name('api.deletePetMarket');
 
     Route::get('/orders', [OrderController::class, 'index'])
         ->name('api.getOrders');
@@ -234,4 +255,79 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/reminders/{reminder}', [PetReminderController::class, 'destroy'])
         ->name('api.deleteReminder');
+
+    Route::get('/user-reminders', [UserReminderController::class, 'index'])
+        ->name('api.getUserReminders');
+
+    Route::post('/user-reminders', [UserReminderController::class, 'store'])
+        ->name('api.createUserReminder');
+
+    Route::get('/user-reminders/{userReminder}', [UserReminderController::class, 'show'])
+        ->name('api.getUserReminder');
+
+    Route::patch('/user-reminders/{userReminder}', [UserReminderController::class, 'update'])
+        ->name('api.updateUserReminder');
+
+    Route::delete('/user-reminders/{userReminder}', [UserReminderController::class, 'destroy'])
+        ->name('api.deleteUserReminder');
+
+    Route::get('/reviews', [ReviewController::class, 'index'])
+        ->name('api.getReviews');
+
+    Route::post('/reviews', [ReviewController::class, 'store'])
+        ->name('api.createReview');
+
+    Route::get('/reviews/{review}', [ReviewController::class, 'show'])
+        ->name('api.getReview');
+
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])
+        ->name('api.updateReview');
+
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
+        ->name('api.deleteReview');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('api.getNotifications');
+
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])
+        ->name('api.getNotification');
+
+    Route::post('/notifications', [NotificationController::class, 'store'])
+        ->name('api.createNotification');
+
+    Route::patch('/notifications/{notification}', [NotificationController::class, 'update'])
+        ->name('api.updateNotification');
+
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
+        ->name('api.deleteNotification');
+
+    Route::get('/categories', [CategoryController::class, 'index'])
+        ->name('api.getCategories');
+
+    Route::get('/categories/{id}', [CategoryController::class, 'show'])
+        ->name('api.getCategory');
+
+    Route::post('/categories', [CategoryController::class, 'create'])
+        ->name('api.createCategory');
+
+    Route::patch('/categories/{id}', [CategoryController::class, 'update'])
+        ->name('api.updateCategory');
+
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])
+        ->name('api.deleteCategory');
+
+    Route::get('/service-providers', [ServiceProviderController::class, 'index'])
+        ->name('api.getServiceProviders');
+
+    Route::get('/service-providers/{id}', [ServiceProviderController::class, 'show'])
+        ->name('api.getServiceProvider');
+
+    Route::post('/service-providers', [ServiceProviderController::class, 'create'])
+        ->name('api.createServiceProvider');
+
+    Route::patch('/service-providers/{id}', [ServiceProviderController::class, 'update'])
+        ->name('api.updateServiceProvider');
+
+    Route::delete('/service-providers/{id}', [ServiceProviderController::class, 'destroy'])
+        ->name('api.deleteServiceProvider');
 });

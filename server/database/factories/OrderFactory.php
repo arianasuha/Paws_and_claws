@@ -25,6 +25,9 @@ class OrderFactory extends Factory
         return [
             'user_id' => User::factory(),
             'order_date' => $this->faker->date(),
+            'total_amount' => $this->faker->numberBetween(100, 500),
+            'order_status' => $this->faker->randomElement(['pending', 'delivered', 'cancelled']),
+            'payment_status' => $this->faker->randomElement(['pending', 'paid', 'failed']),
         ];
     }
 }

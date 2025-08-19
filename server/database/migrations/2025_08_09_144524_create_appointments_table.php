@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Create the 'appointments' table
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->foreignId('vet_id')->constrained()->onDelete('cascade');
-            $table->date('app_date');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->time('app_time');
             $table->text('visit_reason');
             $table->string('status');
+            $table->string('type')->default('vet');
         });
     }
 

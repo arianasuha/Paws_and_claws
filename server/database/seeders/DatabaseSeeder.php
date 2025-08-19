@@ -23,6 +23,8 @@ use App\Models\PetMedical;
 use App\Models\MedicalLog;
 use App\Models\Review;
 use Illuminate\Database\Seeder;
+use App\Models\Notification;
+use App\Models\CartItems;
 
 class DatabaseSeeder extends Seeder
 {
@@ -46,9 +48,11 @@ class DatabaseSeeder extends Seeder
         Review::factory()->count(10)->create();
         Order::factory()->count(10)->create();
         ReportLostPet::factory()->count(10)->create();
+        Notification::factory()->count(10)->create();
 
         // 3. Seed tables that depend on the previous two groups.
         Appointment::factory()->count(10)->create();
+        CartItems::factory()->count(10)->create();
         // \Log::info('Created 10 appointments');
 
         // 4. Finally, seed the many-to-many pivot tables, which depend on multiple other tables.
