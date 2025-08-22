@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Product Catalog API",
-        "description": "API documentation for the Product Catalog project",
+        "title": "Paws and Claws API",
+        "description": "API documentation for the Paws and Claws project",
         "contact": {
             "email": "support@example.com"
         },
@@ -10,10 +10,265 @@
     },
     "servers": [
         {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local API Server"
+        },
+        {
             "url": "http://localhost:8000"
         }
     ],
     "paths": {
+        "/api/appointments": {
+            "get": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Get a list of appointments for the authenticated user",
+                "description": "Returns a list of appointments. Vets and service providers can see all appointments they are associated with, while regular users can only see their own.",
+                "operationId": "getAppointmentsList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "appointments": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Appointment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Create a new appointment",
+                "description": "Creates a new appointment for the authenticated user.",
+                "operationId": "createAppointment",
+                "requestBody": {
+                    "description": "Appointment data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppointmentRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Appointment created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Appointment created successfully."
+                                        },
+                                        "appointment": {
+                                            "$ref": "#/components/schemas/Appointment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/appointments/{appointment}": {
+            "get": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Get a single appointment by ID",
+                "description": "Returns a single appointment by its ID. Accessible by the appointment's owner or a vet/service provider.",
+                "operationId": "getAppointmentById",
+                "parameters": [
+                    {
+                        "name": "appointment",
+                        "in": "path",
+                        "description": "ID of the appointment",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "appointment": {
+                                            "$ref": "#/components/schemas/Appointment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to view this appointment."
+                    },
+                    "404": {
+                        "description": "Appointment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Delete an appointment",
+                "description": "Deletes an appointment. Only the appointment's owner can delete it.",
+                "operationId": "deleteAppointment",
+                "parameters": [
+                    {
+                        "name": "appointment",
+                        "in": "path",
+                        "description": "ID of the appointment to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Appointment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Appointment deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete this appointment."
+                    },
+                    "404": {
+                        "description": "Appointment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Update an existing appointment",
+                "description": "Updates an appointment. Only the appointment's owner can update it.",
+                "operationId": "updateAppointment",
+                "parameters": [
+                    {
+                        "name": "appointment",
+                        "in": "path",
+                        "description": "ID of the appointment to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Appointment update data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppointmentUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Appointment updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Appointment updated successfully."
+                                        },
+                                        "appointment": {
+                                            "$ref": "#/components/schemas/Appointment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to update this appointment."
+                    },
+                    "404": {
+                        "description": "Appointment not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -35,12 +290,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "user@example.com"
+                                        "example": "suha@example.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "Password123!"
+                                        "example": "Laravel@123"
                                     }
                                 },
                                 "type": "object"
@@ -140,9 +395,3100 @@
                     }
                 ]
             }
+        },
+        "/api/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get authenticated user's notifications",
+                "description": "Retrieves a paginated list of all notifications for the authenticated user.",
+                "operationId": "getNotifications",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationPagination"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/{notification}": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get a single notification",
+                "description": "Retrieves a single notification by its ID. Requires authentication and authorization to ensure the user can only view their own notifications.",
+                "operationId": "getNotificationById",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "ID of the notification to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Notification"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden: Not authorized to view this notification.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found: Notification not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Mark a notification as read",
+                "description": "Marks a specific notification as read. The notification ID is provided in the URL.",
+                "operationId": "markNotificationAsRead",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "ID of the notification to mark as read",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Notification marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden: Not authorized to mark this notification as read.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found: Notification not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Delete a notification",
+                "description": "Deletes a single notification by its ID. Requires authentication and authorization to ensure the user can only delete their own notifications.",
+                "operationId": "deleteNotification",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "ID of the notification to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation. No content to return."
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden: Not authorized to delete this notification.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found: Notification not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/available": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Check for unread notifications",
+                "description": "Checks if the authenticated user has any unread notifications.",
+                "operationId": "isNotiAvailable",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "is_read": {
+                                            "description": "True if no unread notifications exist, false otherwise.",
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pets": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Get a list of all pets",
+                "description": "Returns a paginated list of all pets. Requires authentication.",
+                "operationId": "indexPets",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Create a new pet",
+                "description": "Registers a new pet for the authenticated user.",
+                "operationId": "createPet",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "gender",
+                                    "species",
+                                    "dob"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "enum": [
+                                            "male",
+                                            "female"
+                                        ]
+                                    },
+                                    "species": {
+                                        "type": "string"
+                                    },
+                                    "breed": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "dob": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "image_url": {
+                                        "description": "Pet's profile image file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "height": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "nullable": true
+                                    },
+                                    "weight": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pet created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pets/{pet}": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Get a single pet by ID",
+                "description": "Returns a single pet by its ID. Requires authentication.",
+                "operationId": "showPet",
+                "parameters": [
+                    {
+                        "name": "pet",
+                        "in": "path",
+                        "description": "ID of the pet to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Delete a pet",
+                "description": "Deletes an authenticated user's pet. Requires the user to be the owner of the pet.",
+                "operationId": "deletePet",
+                "parameters": [
+                    {
+                        "name": "pet",
+                        "in": "path",
+                        "description": "ID of the pet to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Pet deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Update a pet by ID",
+                "description": "Updates an authenticated user's pet. Requires the user to be the owner of the pet.",
+                "operationId": "updatePet",
+                "parameters": [
+                    {
+                        "name": "pet",
+                        "in": "path",
+                        "description": "ID of the pet to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "enum": [
+                                            "male",
+                                            "female"
+                                        ],
+                                        "nullable": true
+                                    },
+                                    "species": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "breed": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "dob": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "image_url": {
+                                        "description": "Pet's profile image file",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "height": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "nullable": true
+                                    },
+                                    "weight": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pet updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        },
+                                        "pet": {
+                                            "$ref": "#/components/schemas/Pet"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pet-markets": {
+            "get": {
+                "tags": [
+                    "PetMarket"
+                ],
+                "summary": "Get all pet market listings",
+                "description": "Returns a paginated list of all pet market listings, including associated pet data.",
+                "operationId": "getPetMarkets",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetMarketPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "PetMarket"
+                ],
+                "summary": "Create a new pet market listing",
+                "description": "Registers a new pet and creates a market listing for the authenticated user.",
+                "operationId": "createPetMarketListing",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetMarketRegisterRequest"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetMarketRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pet market listing created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "pet_market": {
+                                            "$ref": "#/components/schemas/PetMarket"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pet market listing created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pet-markets/{id}": {
+            "get": {
+                "tags": [
+                    "PetMarket"
+                ],
+                "summary": "Get a specific pet market listing",
+                "description": "Returns a single pet market listing by its ID, including associated pet data.",
+                "operationId": "showPetMarket",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the pet market listing to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetMarket"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "PetMarket"
+                ],
+                "summary": "Delete a pet market listing and its associated pet",
+                "description": "Deletes a pet market listing and the related pet data by ID.",
+                "operationId": "deletePetMarket",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the pet market listing to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation (no content)"
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "PetMarket"
+                ],
+                "summary": "Update an existing pet market listing",
+                "description": "Updates a pet market listing. Supports multipart/form-data with _method spoofing.",
+                "operationId": "updatePetMarketListing",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the pet market listing to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetMarketUpdateRequest"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetMarketUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pet market listing updated successfully."
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/service-providers": {
+            "get": {
+                "tags": [
+                    "Service Providers"
+                ],
+                "summary": "Get a list of all service providers",
+                "description": "Returns a list of all registered service providers, including their user information.",
+                "operationId": "getServiceProvidersList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ServiceProvider"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Service Providers"
+                ],
+                "summary": "Register a new service provider",
+                "description": "Registers a new user and creates a service provider profile. No authentication is required.",
+                "operationId": "createServiceProvider",
+                "requestBody": {
+                    "description": "Service Provider registration data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceProviderRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Service Provider profile created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Service Provider profile created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/service-providers/{id}": {
+            "get": {
+                "tags": [
+                    "Service Providers"
+                ],
+                "summary": "Get a single service provider by ID",
+                "description": "Returns a single service provider by its ID.",
+                "operationId": "getServiceProviderById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the service provider",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServiceProvider"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Service provider not found."
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/service-providers/{user}": {
+            "delete": {
+                "tags": [
+                    "Service Providers"
+                ],
+                "summary": "Delete a service provider profile",
+                "description": "Deletes a service provider profile. Accessible by the service provider themselves or an admin.",
+                "operationId": "deleteServiceProvider",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user associated with the service provider",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Service Provider profile deleted successfully"
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete this Service Provider profile."
+                    },
+                    "404": {
+                        "description": "Service Provider profile not found."
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Service Providers"
+                ],
+                "summary": "Update a service provider profile",
+                "description": "Updates a service provider's profile. Accessible by the service provider themselves or an admin.",
+                "operationId": "updateServiceProvider",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user associated with the service provider",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Service Provider update data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceProviderUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Service Provider profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Service Provider profile updated successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to update this Service Provider profile."
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all users (Admin only)",
+                "description": "Returns a paginated list of all users. Requires admin privileges.",
+                "operationId": "indexUsers",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new user",
+                "description": "Creates a new user account.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "User registration payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/users/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a single user by ID or slug",
+                "description": "Returns a single user by their ID or slug. Requires authentication. A user can view their own profile, but only an admin can view others.",
+                "operationId": "showUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete a user",
+                "description": "Deletes an authenticated user's account. Requires user to be authenticated and deleting their own account.",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update a user by ID or slug",
+                "description": "Updates an existing user. Requires authentication. A user can update their own profile, but only an admin can update others. Restricted fields like `is_admin` cannot be updated.",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "User update payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new admin user",
+                "description": "Creates a new admin user account. Requires a specific auth mechanism not detailed here.",
+                "operationId": "createAdminUser",
+                "requestBody": {
+                    "description": "Admin user registration payload",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Admin user created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/vets": {
+            "get": {
+                "tags": [
+                    "Vets"
+                ],
+                "summary": "Get a list of all vet profiles",
+                "description": "Returns a paginated list of vet profiles. Requires authentication and administrative privileges.",
+                "operationId": "indexVets",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VetPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vets"
+                ],
+                "summary": "Create a new vet profile",
+                "description": "Registers a new user as a veterinarian and creates their vet profile.",
+                "operationId": "createVet",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VetRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vet profile created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Vet profile created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/vets/{userId}": {
+            "get": {
+                "tags": [
+                    "Vets"
+                ],
+                "summary": "Get a single vet profile by user ID",
+                "description": "Returns a single vet profile by its user ID. Requires authentication.",
+                "operationId": "showVet",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of the user associated with the vet profile to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Vet"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Vet profile not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/vets/{user}": {
+            "delete": {
+                "tags": [
+                    "Vets"
+                ],
+                "summary": "Delete a vet profile by user ID or slug",
+                "description": "Deletes a vet profile and the associated user. Requires the user to be the owner of the profile or an admin.",
+                "operationId": "deleteVet",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user associated with the vet profile to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Vet profile deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Vet profile not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Vets"
+                ],
+                "summary": "Update a vet profile by user ID or slug",
+                "description": "Updates a vet profile. Requires the user to be the owner of the profile or an admin.",
+                "operationId": "updateVet",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID or slug of the user associated with the vet profile to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VetUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vet profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Vet profile updated successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Vet profile not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "title": "Error Response",
+                "description": "Standard error response format for generic errors (e.g., 401, 403, 404, 500)",
+                "properties": {
+                    "errors": {
+                        "description": "Error message",
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "errors": "Something went wrong."
+                }
+            },
+            "SuccessResponse": {
+                "title": "Success Response",
+                "description": "Standard success response format for updates and deletes",
+                "properties": {
+                    "success": {
+                        "description": "Success message",
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "success": "Operation successful."
+                }
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "description": "User ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "description": "Is the user an admin?",
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "description": "Is the user active?",
+                        "type": "boolean"
+                    },
+                    "is_vet": {
+                        "description": "Is the user a veterinarian?",
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserPaginatedResponse": {
+                "title": "UserPaginatedResponse",
+                "description": "Paginated list of users",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "title": "RegisterUserRequest",
+                "description": "User registration request payload",
+                "required": [
+                    "email",
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "title": "UpdateUserRequest",
+                "description": "User update request payload",
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Pet": {
+                "title": "Pet",
+                "description": "Pet model",
+                "properties": {
+                    "id": {
+                        "description": "Pet ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the pet's owner",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the pet",
+                        "type": "string"
+                    },
+                    "gender": {
+                        "description": "Gender of the pet",
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "species": {
+                        "description": "Species of the pet",
+                        "type": "string"
+                    },
+                    "breed": {
+                        "description": "Breed of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dob": {
+                        "description": "Date of birth of the pet",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "image_url": {
+                        "description": "URL to the pet's profile image",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "height": {
+                        "description": "Height of the pet in cm",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "weight": {
+                        "description": "Weight of the pet in kg",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PetPaginatedResponse": {
+                "title": "PetPaginatedResponse",
+                "description": "Paginated list of pets",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Pet"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "PetRegisterRequest": {
+                "title": "PetRegisterRequest",
+                "description": "Pet registration payload",
+                "required": [
+                    "name",
+                    "gender",
+                    "species",
+                    "dob"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the pet",
+                        "type": "string"
+                    },
+                    "gender": {
+                        "description": "Gender of the pet",
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "species": {
+                        "description": "Species of the pet",
+                        "type": "string"
+                    },
+                    "breed": {
+                        "description": "Breed of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dob": {
+                        "description": "Date of birth of the pet",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "image_url": {
+                        "description": "Pet's profile image file",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "height": {
+                        "description": "Height of the pet in cm",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "weight": {
+                        "description": "Weight of the pet in kg",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PetUpdateRequest": {
+                "title": "PetUpdateRequest",
+                "description": "Pet update payload",
+                "properties": {
+                    "name": {
+                        "description": "Name of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "description": "Gender of the pet",
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ],
+                        "nullable": true
+                    },
+                    "species": {
+                        "description": "Species of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "breed": {
+                        "description": "Breed of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dob": {
+                        "description": "Date of birth of the pet",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "description": "Pet's profile image file",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "height": {
+                        "description": "Height of the pet in cm",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "weight": {
+                        "description": "Weight of the pet in kg",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Vet": {
+                "title": "Vet",
+                "description": "Vet model",
+                "properties": {
+                    "id": {
+                        "description": "Vet ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the associated user",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "clinic_name": {
+                        "description": "Name of the vet's clinic",
+                        "type": "string"
+                    },
+                    "specialization": {
+                        "description": "Specialization of the vet",
+                        "type": "string"
+                    },
+                    "services_offered": {
+                        "description": "Description of services offered",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "working_hour": {
+                        "description": "Working hours of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "VetPaginatedResponse": {
+                "title": "VetPaginatedResponse",
+                "description": "Paginated list of vets",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Vet"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "VetRegisterRequest": {
+                "title": "VetRegisterRequest",
+                "description": "Vet registration payload",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "username",
+                    "password",
+                    "clinic_name",
+                    "specialization"
+                ],
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the vet",
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "description": "Last name of the vet",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email address of the vet",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the vet",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "address": {
+                        "description": "Address of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string"
+                    },
+                    "specialization": {
+                        "description": "Specialization of the vet",
+                        "type": "string"
+                    },
+                    "services_offered": {
+                        "description": "Description of services offered",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "working_hour": {
+                        "description": "Working hours of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "VetUpdateRequest": {
+                "title": "VetUpdateRequest",
+                "description": "Vet update payload",
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the vet",
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "username": {
+                        "description": "Username of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "Address of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "specialization": {
+                        "description": "Specialization of the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "services_offered": {
+                        "description": "Description of services offered",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "working_hour": {
+                        "description": "Working hours of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PetMarket": {
+                "title": "PetMarket",
+                "description": "Pet Market model",
+                "properties": {
+                    "id": {
+                        "description": "Pet Market ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user selling the pet",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "pet_id": {
+                        "description": "ID of the pet being sold",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "date": {
+                        "description": "Date of the listing",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "type": {
+                        "description": "Type of listing (e.g., sale, adoption)",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status of the pet listing",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the pet for sale",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fee": {
+                        "description": "Fee associated with the listing",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "pet": {
+                        "$ref": "#/components/schemas/Pet"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "PetMarketPaginatedResponse": {
+                "title": "PetMarketPaginatedResponse",
+                "description": "Paginated list of pet market entries",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PetMarket"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "PetMarketRegisterRequest": {
+                "title": "PetMarketRegisterRequest",
+                "description": "Pet market registration payload",
+                "required": [
+                    "pet",
+                    "market"
+                ],
+                "properties": {
+                    "pet": {
+                        "description": "Pet details for the listing",
+                        "required": [
+                            "name",
+                            "species",
+                            "gender",
+                            "dob"
+                        ],
+                        "properties": {
+                            "name": {
+                                "description": "Name of the pet",
+                                "type": "string"
+                            },
+                            "species": {
+                                "description": "Species of the pet",
+                                "type": "string"
+                            },
+                            "breed": {
+                                "description": "Breed of the pet",
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "dob": {
+                                "description": "Date of birth of the pet",
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "gender": {
+                                "description": "Gender of the pet",
+                                "type": "string"
+                            },
+                            "weight": {
+                                "description": "Weight of the pet",
+                                "type": "integer",
+                                "nullable": true
+                            },
+                            "height": {
+                                "description": "Height of the pet",
+                                "type": "integer",
+                                "nullable": true
+                            },
+                            "image_url": {
+                                "description": "Image file of the pet",
+                                "type": "string",
+                                "format": "binary",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "market": {
+                        "description": "Pet market listing details",
+                        "required": [
+                            "date",
+                            "type",
+                            "status"
+                        ],
+                        "properties": {
+                            "date": {
+                                "description": "Date of the listing",
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "type": {
+                                "description": "Type of listing",
+                                "type": "string",
+                                "enum": [
+                                    "sale",
+                                    "adoption"
+                                ]
+                            },
+                            "description": {
+                                "description": "Description of the listing",
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "fee": {
+                                "description": "Fee associated with the listing",
+                                "type": "number",
+                                "format": "float",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PetMarketUpdateRequest": {
+                "title": "PetMarketUpdateRequest",
+                "description": "Pet market update payload",
+                "properties": {
+                    "_method": {
+                        "description": "Method spoofing for PUT/PATCH requests with multipart/form-data",
+                        "type": "string",
+                        "example": "PUT"
+                    },
+                    "type": {
+                        "description": "Type of listing",
+                        "type": "string",
+                        "enum": [
+                            "sale",
+                            "adoption"
+                        ],
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the listing",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fee": {
+                        "description": "Fee associated with the listing",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "description": "Image file of the pet",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Appointment": {
+                "title": "Appointment",
+                "description": "Appointment model",
+                "properties": {
+                    "id": {
+                        "description": "Appointment ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who made the appointment",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "provider_id": {
+                        "description": "ID of the service provider or vet for the appointment",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "pet_id": {
+                        "description": "ID of the pet for the appointment",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "app_date": {
+                        "description": "Date of the appointment",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "app_time": {
+                        "description": "Time of the appointment",
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "visit_reason": {
+                        "description": "Reason for the visit",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status of the appointment",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "completed",
+                            "canceled"
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "AppointmentRegisterRequest": {
+                "title": "AppointmentRegisterRequest",
+                "description": "Appointment registration payload",
+                "required": [
+                    "pet_id",
+                    "provider_id",
+                    "app_date",
+                    "app_time",
+                    "visit_reason"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the pet for the appointment",
+                        "type": "integer"
+                    },
+                    "provider_id": {
+                        "description": "ID of the service provider or vet for the appointment",
+                        "type": "integer"
+                    },
+                    "app_date": {
+                        "description": "Date of the appointment (YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "app_time": {
+                        "description": "Time of the appointment (HH:MM:SS)",
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "visit_reason": {
+                        "description": "Reason for the visit",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "AppointmentUpdateRequest": {
+                "title": "AppointmentUpdateRequest",
+                "description": "Appointment update payload",
+                "properties": {
+                    "status": {
+                        "description": "Status of the appointment",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "completed",
+                            "canceled"
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ServiceProvider": {
+                "title": "ServiceProvider",
+                "description": "Service Provider model",
+                "properties": {
+                    "id": {
+                        "description": "Service Provider ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the associated user",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "service_type": {
+                        "description": "Type of service",
+                        "type": "string",
+                        "enum": [
+                            "walker",
+                            "groomer",
+                            "trainer"
+                        ]
+                    },
+                    "service_desc": {
+                        "description": "Description of the service provided",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rate_per_hour": {
+                        "description": "Rate charged per hour",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "rating": {
+                        "description": "Rating of the service provider (0.0 to 5.0)",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "ServiceProviderRegisterRequest": {
+                "title": "ServiceProviderRegisterRequest",
+                "description": "Service Provider registration payload",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "username",
+                    "password",
+                    "service_type",
+                    "rate_per_hour"
+                ],
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "service_type": {
+                        "description": "Type of service",
+                        "type": "string",
+                        "enum": [
+                            "walker",
+                            "groomer",
+                            "trainer"
+                        ]
+                    },
+                    "service_desc": {
+                        "description": "Description of the service provided",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rate_per_hour": {
+                        "description": "Rate charged per hour",
+                        "type": "number",
+                        "format": "float"
+                    }
+                },
+                "type": "object"
+            },
+            "ServiceProviderUpdateRequest": {
+                "title": "ServiceProviderUpdateRequest",
+                "description": "Service Provider update payload",
+                "properties": {
+                    "first_name": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "description": "Password (min: 8 characters, confirmed)",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "Address of the user",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "service_type": {
+                        "description": "Type of service",
+                        "type": "string",
+                        "enum": [
+                            "walker",
+                            "groomer",
+                            "trainer"
+                        ],
+                        "nullable": true
+                    },
+                    "service_desc": {
+                        "description": "Description of the service provided",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rate_per_hour": {
+                        "description": "Rate charged per hour",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "rating": {
+                        "description": "Rating of the service provider (0.0 to 5.0)",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Notification": {
+                "title": "Notification",
+                "description": "Notification model",
+                "properties": {
+                    "id": {
+                        "description": "Notification ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user the notification belongs to",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "message": {
+                        "description": "The notification message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "The type of notification",
+                        "type": "string",
+                        "enum": [
+                            "info",
+                            "problem",
+                            "proposal",
+                            "project",
+                            "transaction",
+                            "review"
+                        ]
+                    },
+                    "link": {
+                        "description": "URL or link related to the notification",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "is_read": {
+                        "description": "Indicates if the notification has been read",
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the notification was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp of last update",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "user_id": 1,
+                    "message": "Your proposal has been accepted.",
+                    "type": "proposal",
+                    "link": "/proposals/123",
+                    "is_read": false,
+                    "created_at": "2025-08-16T12:00:00.000000Z",
+                    "updated_at": "2025-08-16T12:00:00.000000Z"
+                }
+            },
+            "NotificationPagination": {
+                "title": "Notification Pagination",
+                "description": "Paginated list of notifications",
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Notification"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/notifications?page=1"
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "last_page_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/notifications?page=2"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "example": "http://localhost:8000/api/notifications?page=1",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string",
+                                    "example": "&laquo; Previous"
+                                },
+                                "active": {
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/notifications?page=2",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/notifications"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 14
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
@@ -151,6 +3497,34 @@
         }
     },
     "tags": [
+        {
+            "name": "Users",
+            "description": "API Endpoints of Users"
+        },
+        {
+            "name": "Pets",
+            "description": "API Endpoints of Pets"
+        },
+        {
+            "name": "Vets",
+            "description": "API Endpoints of Vets"
+        },
+        {
+            "name": "PetMarket",
+            "description": "API Endpoints of Pet Market"
+        },
+        {
+            "name": "Appointments",
+            "description": "API Endpoints of Appointments"
+        },
+        {
+            "name": "Service Providers",
+            "description": "API Endpoints for Service Providers"
+        },
+        {
+            "name": "Notifications",
+            "description": "API Endpoints for Notifications"
+        },
         {
             "name": "Authentication",
             "description": "Authentication"

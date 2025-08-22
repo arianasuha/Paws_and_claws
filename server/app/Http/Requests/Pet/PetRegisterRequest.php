@@ -27,7 +27,7 @@ class PetRegisterRequest extends BaseRequest
             'species' => 'required|string|max:255',
             'breed' => 'nullable|string|max:255',
             'dob' => 'required|date',
-            'image_url' => 'nullable|image|max:2048',
+            'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'user_id' => 'prohibited', // Prevent user_id from being sent
             'height' => 'nullable|numeric|min:0',
             'weight' => 'nullable|numeric|min:0',

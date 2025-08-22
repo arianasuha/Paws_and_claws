@@ -45,6 +45,36 @@ class Pet extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function diseases()
+    {
+        return $this->belongsToMany(DiseaseLog::class, 'pet_diseases', 'pet_id', 'disease_id');
+    }
+
+    public function petMarkets()
+    {
+        return $this->hasMany(PetMarket::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function reportLostPet()
+    {
+        return $this->hasOne(ReportLostPet::class);
+    }
+
+    public function reminders()
+    {
+        return $this->hasMany(Reminder::class);
+    }
+
+    public function medicalLogs()
+    {
+        return $this->belongsToMany(MedicalLog::class, 'pet_medicals');
     }
 }
