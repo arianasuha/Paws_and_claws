@@ -10,11 +10,6 @@ use Illuminate\Http\JsonResponse;
 
 class PetDiseaseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
         // Retrieve all pet disease records.
@@ -23,12 +18,7 @@ class PetDiseaseController extends Controller
         return response()->json($petDiseases);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  PetDiseaseRegisterRequest  $request
-     * @return JsonResponse
-     */
+
     public function store(PetDiseaseRegisterRequest $request): JsonResponse
     {
         // The validated data is used to create a new PetDisease record.
@@ -40,12 +30,7 @@ class PetDiseaseController extends Controller
         return response()->json($petDisease, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  PetDisease  $petDisease
-     * @return JsonResponse
-     */
+
     public function show(PetDisease $petDisease): JsonResponse
     {
         // Eager load the relationships for the specific record.
@@ -53,13 +38,7 @@ class PetDiseaseController extends Controller
         return response()->json($petDisease);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  PetDiseaseUpdateRequest  $request
-     * @param  PetDisease  $petDisease
-     * @return JsonResponse
-     */
+
     public function update(PetDiseaseUpdateRequest $request, PetDisease $petDisease): JsonResponse
     {
         // Update the pet disease record with the validated data from the request.
@@ -70,12 +49,7 @@ class PetDiseaseController extends Controller
         return response()->json($petDisease);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  PetDisease  $petDisease
-     * @return JsonResponse
-     */
+
     public function destroy(PetDisease $petDisease): JsonResponse
     {
         // Delete the pet disease record.

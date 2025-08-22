@@ -10,11 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class PetMedicalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return JsonResponse
-     */
+
     public function index(): JsonResponse
     {
         // Retrieve all pet medical records.
@@ -23,12 +19,7 @@ class PetMedicalController extends Controller
         return response()->json($petMedicals);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  PetMedicalRegisterRequest  $request
-     * @return JsonResponse
-     */
+
     public function store(PetMedicalRegisterRequest $request): JsonResponse
     {
         // The validated data is used to create a new PetMedical record.
@@ -40,12 +31,7 @@ class PetMedicalController extends Controller
         return response()->json($petMedical, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  PetMedical  $petMedical
-     * @return JsonResponse
-     */
+
     public function show(PetMedical $petMedical): JsonResponse
     {
         // Eager load the relationships for the specific record.
@@ -53,13 +39,7 @@ class PetMedicalController extends Controller
         return response()->json($petMedical);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  PetMedicalUpdateRequest  $request
-     * @param  PetMedical  $petMedical
-     * @return JsonResponse
-     */
+
     public function update(PetMedicalUpdateRequest $request, PetMedical $petMedical): JsonResponse
     {
         // Update the pet medical record with the validated data from the request.
@@ -70,12 +50,7 @@ class PetMedicalController extends Controller
         return response()->json($petMedical);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  PetMedical  $petMedical
-     * @return JsonResponse
-     */
+
     public function destroy(PetMedical $petMedical): JsonResponse
     {
         // Delete the pet medical record.

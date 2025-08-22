@@ -10,11 +10,7 @@ use Illuminate\Http\Request;
 
 class UserReminderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function index()
     {
         // This will return all user_reminder pivot records.
@@ -28,12 +24,7 @@ class UserReminderController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\User\UserReminderRegisterRequest  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function store(UserReminderRegisterRequest $request)
     {
         $userReminder = UserReminder::create($request->validated());
@@ -44,12 +35,6 @@ class UserReminderController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\UserReminder  $userReminder
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show(UserReminder $userReminder)
     {
         return response()->json([
@@ -58,13 +43,7 @@ class UserReminderController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\User\UserReminderUpdateRequest  $request
-     * @param  \App\Models\UserReminder  $userReminder
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function update(UserReminderUpdateRequest $request, UserReminder $userReminder)
     {
         $userReminder->update($request->validated());
@@ -75,12 +54,7 @@ class UserReminderController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\UserReminder  $userReminder
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function destroy(UserReminder $userReminder)
     {
         $userReminder->delete();

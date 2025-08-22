@@ -12,31 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderItemsController extends Controller
 {
-    /**
-     * @OA\Get(
-     * path="/api/order-items",
-     * tags={"Order Items"},
-     * summary="Get list of all order items",
-     * description="Returns a paginated list of all order items.",
-     * @OA\Response(
-     * response=200,
-     * description="Successful operation",
-     * @OA\JsonContent(
-     * type="object",
-     * @OA\Property(
-     * property="data",
-     * type="array",
-     * @OA\Items(ref="#/components/schemas/OrderItem")
-     * )
-     * )
-     * ),
-     * @OA\Response(
-     * response=401,
-     * description="Unauthorized"
-     * ),
-     * security={{"sanctum": {}}}
-     * )
-     */
+
     public function index(string $order): JsonResponse
     {
         try {
@@ -74,33 +50,7 @@ class OrderItemsController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     * path="/api/order-items",
-     * tags={"Order Items"},
-     * summary="Create a new order item",
-     * description="Creates a new order item and returns the created item.",
-     * @OA\RequestBody(
-     * required=true,
-     * description="Order item data",
-     * @OA\JsonContent(ref="#/components/schemas/OrderItemRegisterRequest")
-     * ),
-     * @OA\Response(
-     * response=201,
-     * description="Order item created successfully",
-     * @OA\JsonContent(ref="#/components/schemas/OrderItem")
-     * ),
-     * @OA\Response(
-     * response=422,
-     * description="Validation error"
-     * ),
-     * @OA\Response(
-     * response=401,
-     * description="Unauthorized"
-     * ),
-     * security={{"sanctum": {}}}
-     * )
-     */
+
     public function store(OrderItemRegisterRequest $request, string $order): JsonResponse
     {
         try {
@@ -126,44 +76,7 @@ class OrderItemsController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     * path="/api/order-items/{orderItem}",
-     * tags={"Order Items"},
-     * summary="Update an order item",
-     * description="Updates an existing order item and returns the updated item.",
-     * @OA\Parameter(
-     * name="orderItem",
-     * in="path",
-     * description="ID of the order item to update",
-     * required=true,
-     * @OA\Schema(type="integer")
-     * ),
-     * @OA\RequestBody(
-     * required=true,
-     * description="Order item data",
-     * @OA\JsonContent(ref="#/components/schemas/OrderItemUpdateRequest")
-     * ),
-     * @OA\Response(
-     * response=200,
-     * description="Order item updated successfully",
-     * @OA\JsonContent(ref="#/components/schemas/OrderItem")
-     * ),
-     * @OA\Response(
-     * response=404,
-     * description="Order item not found"
-     * ),
-     * @OA\Response(
-     * response=422,
-     * description="Validation error"
-     * ),
-     * @OA\Response(
-     * response=401,
-     * description="Unauthorized"
-     * ),
-     * security={{"sanctum": {}}}
-     * )
-     */
+
     public function update(OrderItemUpdateRequest $request, string $order): JsonResponse
     {
         try {
@@ -201,34 +114,7 @@ class OrderItemsController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     * path="/api/order-items/{orderItem}",
-     * tags={"Order Items"},
-     * summary="Delete an order item",
-     * description="Deletes an order item by its ID.",
-     * @OA\Parameter(
-     * name="orderItem",
-     * in="path",
-     * description="ID of the order item to delete",
-     * required=true,
-     * @OA\Schema(type="integer")
-     * ),
-     * @OA\Response(
-     * response=204,
-     * description="No content"
-     * ),
-     * @OA\Response(
-     * response=404,
-     * description="Order item not found"
-     * ),
-     * @OA\Response(
-     * response=401,
-     * description="Unauthorized"
-     * ),
-     * security={{"sanctum": {}}}
-     * )
-     */
+
     public function destroy(Order $order, OrderItem $item): JsonResponse
     {
         try {

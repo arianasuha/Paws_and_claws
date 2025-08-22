@@ -6,11 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class DiseaseLogUpdateRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+
     public function authorize(): bool
     {
         // Set to true to allow the request to be processed.
@@ -19,11 +15,7 @@ class DiseaseLogUpdateRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
-     */
+
     public function rules(): array
     {
         return [

@@ -11,11 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class PetReminderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return JsonResponse
-     */
+
     public function index(): JsonResponse
     {
         // Get all reminders for the authenticated user's pets
@@ -26,12 +22,7 @@ class PetReminderController extends Controller
         return response()->json($reminders);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  PetReminderRegisterRequest  $request
-     * @return JsonResponse
-     */
+
     public function store(PetReminderRegisterRequest $request): JsonResponse
     {
         $reminder = Reminder::create($request->validated());
@@ -39,12 +30,7 @@ class PetReminderController extends Controller
         return response()->json($reminder, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Reminder  $reminder
-     * @return JsonResponse
-     */
+
     public function show(Reminder $reminder): JsonResponse
     {
         // Check if the authenticated user owns the pet associated with this reminder
@@ -55,13 +41,7 @@ class PetReminderController extends Controller
         return response()->json($reminder);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  PetReminderUpdateRequest  $request
-     * @param  Reminder  $reminder
-     * @return JsonResponse
-     */
+
     public function update(PetReminderUpdateRequest $request, Reminder $reminder): JsonResponse
     {
         // Check if the authenticated user owns the pet associated with this reminder
@@ -74,12 +54,6 @@ class PetReminderController extends Controller
         return response()->json($reminder);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Reminder  $reminder
-     * @return JsonResponse
-     */
     public function destroy(Reminder $reminder): JsonResponse
     {
         // Check if the authenticated user owns the pet associated with this reminder

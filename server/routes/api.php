@@ -36,6 +36,10 @@ Route::post('/admin/users', [UserController::class, 'createAdminUser'])
 Route::post('/vets', [VetController::class, 'createVet'])
     ->name('api.createVet');
 
+Route::post('/service-providers', [ServiceProviderController::class, 'create'])
+    ->name('api.createServiceProvider');
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('api.logout');
@@ -286,20 +290,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
         ->name('api.deleteReview');
 
-    Route::get('/notifications', [NotificationController::class, 'index'])
-        ->name('api.getNotifications');
+    Route::get('/api/notifications', [NotificationController::class, 'index'])->name('api.getNotifications');
 
-    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])
-        ->name('api.getNotification');
+    Route::get('/api/notifications/{notification}', [NotificationController::class, 'show'])->name('api.getNotification');
 
-    Route::post('/notifications', [NotificationController::class, 'store'])
-        ->name('api.createNotification');
+    Route::get('/api/notifications/check-unread', [NotificationController::class, 'isNotiAvailable'])->name('api.isNotiAvailable');
 
-    Route::patch('/notifications/{notification}', [NotificationController::class, 'update'])
-        ->name('api.updateNotification');
+    Route::put('/api/notifications/{notification}', [NotificationController::class, 'markAsRead'])->name('api.markNotificationAsRead');
 
-    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
-        ->name('api.deleteNotification');
+    Route::delete('/api/notifications/{notification}', [NotificationController::class, 'destroy'])->name('api.deleteNotification');
 
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('api.getCategories');
@@ -321,9 +320,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/service-providers/{id}', [ServiceProviderController::class, 'show'])
         ->name('api.getServiceProvider');
-
-    Route::post('/service-providers', [ServiceProviderController::class, 'create'])
-        ->name('api.createServiceProvider');
 
     Route::patch('/service-providers/{id}', [ServiceProviderController::class, 'update'])
         ->name('api.updateServiceProvider');

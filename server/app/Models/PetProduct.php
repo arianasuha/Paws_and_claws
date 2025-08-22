@@ -18,6 +18,7 @@ class PetProduct extends Model
      */
     protected $fillable = [
         'name',
+        'category_id',
         'description',
         'price',
         'stock',

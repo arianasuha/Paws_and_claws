@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,8 +15,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('pet_id')->constrained()->onDelete('cascade');
             $table->date('date');
-            $table->string('type');
-            $table->string('status');
+            $table->enum('type', ['sale', 'adoption'])->default('sale');
+            $table->enum('status', ['available', 'adopted', 'sold'])->default('available');
             $table->text('description')->nullable();
             $table->decimal('fee', 8, 2)->nullable();
         });

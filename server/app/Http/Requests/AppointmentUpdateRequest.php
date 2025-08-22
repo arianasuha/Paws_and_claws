@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class AppointmentUpdateRequest extends FormRequest
+class AppointmentUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class AppointmentUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'app_date' => 'date|nullable',
-            'app_time' => 'nullable',
-            'visit_reason' => 'string|nullable',
-            'status' => 'string|nullable',
+            'status' => 'string|required|in:accepted,completed,canceled',
         ];
     }
 }

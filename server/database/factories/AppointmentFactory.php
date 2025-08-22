@@ -24,12 +24,14 @@ class AppointmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'pet_id' => Pet::factory(),
             'user_id' => User::factory(),
+            'provider_id' => User::factory(),
+            'pet_id' => Pet::factory(),
             'app_date' => $this->faker->date(),
             'app_time' => $this->faker->time(),
             'visit_reason' => $this->faker->sentence(),
-            'status' => $this->faker->randomElement(['pending', 'confirmed', 'completed', 'canceled']),
+            'status' => $this->faker->randomElement(['pending', 'accepted', 'completed', 'canceled']),
+
         ];
     }
 }

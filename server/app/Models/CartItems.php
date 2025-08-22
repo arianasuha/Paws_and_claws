@@ -20,13 +20,6 @@ class CartItems extends Model
     protected $table = 'cart_items';
 
     /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'cart_item_id';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array<string>

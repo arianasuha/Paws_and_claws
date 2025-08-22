@@ -7,97 +7,247 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRegisterRequest;
 use App\Http\Requests\AppointmentUpdateRequest;
 use Illuminate\Support\Facades\Auth;
+use Notification;
 
 class AppointmentController extends Controller
 {
+
     /**
-     * Display a listing of appointments for the authenticated user.
-     * The appointments shown depend on the user's role.
+     * @OA\Get(
+     * path="/api/appointments",
+     * operationId="getAppointmentsList",
+     * tags={"Appointments"},
+     * summary="Get a list of appointments for the authenticated user",
+     * description="Returns a list of appointments. Vets and service providers can see all appointments they are associated with, while regular users can only see their own.",
+     * security={{"sanctum":{}}},
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * @OA\Property(
+     * property="appointments",
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/Appointment")
+     * )
+     * )
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error"
+     * )
+     * )
      */
     public function index()
     {
         $user = Auth::user();
 
-        // Check the user's role to determine which appointments they can view.
         if ($user->role === 'vet' || $user->role === 'service_provider') {
-            // Vets and service providers can see all appointments.
-            $appointments = Appointment::all();
+            $appointments = Appointment::where('provider_id', $user->id)->get();
         } else {
-            // Regular users can only see their own appointments.
             $appointments = Appointment::where('user_id', $user->id)->get();
         }
 
         return response()->json(['appointments' => $appointments]);
     }
 
+
     /**
-     * Store a newly created appointment in the database.
+     * @OA\Post(
+     * path="/api/appointments",
+     * operationId="createAppointment",
+     * tags={"Appointments"},
+     * summary="Create a new appointment",
+     * description="Creates a new appointment for the authenticated user.",
+     * security={{"sanctum":{}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Appointment data",
+     * @OA\JsonContent(ref="#/components/schemas/AppointmentRegisterRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Appointment created successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Appointment created successfully."),
+     * @OA\Property(property="appointment", ref="#/components/schemas/Appointment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error"
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error"
+     * )
+     * )
      */
     public function store(AppointmentRegisterRequest $request)
     {
-        // Get the currently authenticated user.
         $user = Auth::user();
 
-        // Determine the user's role and create the appointment.
-        $appointment = new Appointment([
+        $appointment = Appointment::create([
+            'user_id' => $user->id,
+            'provider_id' => $request->provider_id,
             'pet_id' => $request->pet_id,
             'app_date' => $request->app_date,
             'app_time' => $request->app_time,
             'visit_reason' => $request->visit_reason,
-            'status' => 'pending', // Default status for a new appointment
+            'status' => 'pending',
         ]);
 
-        // 🚨 IMPORTANT: The user_id is assigned here from the authenticated user.
-        // It is NOT taken from the user's request, which is a key security practice.
-        if ($user->role === 'vet' || $user->role === 'service_provider') {
-            $appointment->user_id = $user->id;
-        } else {
-            // This is for a standard user creating an appointment for their pet.
-            $appointment->user_id = $user->id;
-        }
+        Notification::create([
+            'user_id' => $appointment->user_id,
+            'subject' => 'Appointment Created',
+            'message' => 'Your appointment has been created.',
+        ]);
 
-        // Save the appointment to the database.
-        $appointment->save();
+        Notification::create([
+            'user_id' => $appointment->provider_id,
+            'subject' => 'New Appointment',
+            'message' => 'You have a new appointment.',
+        ]);
+
 
         return response()->json(['message' => 'Appointment created successfully.', 'appointment' => $appointment], 201);
     }
 
+
     /**
-     * Display a single appointment.
+     * @OA\Get(
+     * path="/api/appointments/{appointment}",
+     * operationId="getAppointmentById",
+     * tags={"Appointments"},
+     * summary="Get a single appointment by ID",
+     * description="Returns a single appointment by its ID. Accessible by the appointment's owner or a vet/service provider.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="appointment",
+     * description="ID of the appointment",
+     * required=true,
+     * in="path",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(
+     * @OA\Property(property="appointment", ref="#/components/schemas/Appointment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Unauthorized to view this appointment."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Appointment not found"
+     * )
+     * )
      */
     public function show(Appointment $appointment)
     {
-        // We can use route model binding to automatically find the appointment.
-        // We also check if the authenticated user is authorized to view this appointment.
+
         $user = Auth::user();
 
-        // Check if the user is the owner of the appointment or a vet/service provider.
-        if ($appointment->user_id !== $user->id && $user->role !== 'vet' && $user->role !== 'service_provider') {
+        if ($appointment->user_id !== $user->id && $appointment->provider_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized to view this appointment.'], 403);
         }
 
         return response()->json(['appointment' => $appointment]);
     }
 
+
     /**
-     * Update an existing appointment.
+     * @OA\Patch(
+     * path="/api/appointments/{appointment}",
+     * operationId="updateAppointment",
+     * tags={"Appointments"},
+     * summary="Update an existing appointment",
+     * description="Updates an appointment. Only the appointment's owner can update it.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="appointment",
+     * description="ID of the appointment to update",
+     * required=true,
+     * in="path",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Appointment update data",
+     * @OA\JsonContent(ref="#/components/schemas/AppointmentUpdateRequest")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Appointment updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Appointment updated successfully."),
+     * @OA\Property(property="appointment", ref="#/components/schemas/Appointment")
+     * )
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Unauthorized to update this appointment."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Appointment not found"
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error"
+     * )
+     * )
      */
     public function update(AppointmentUpdateRequest $request, Appointment $appointment)
     {
-        // Check for authorization first. Only the user who created it, or an admin can edit it.
         $user = Auth::user();
-        if ($appointment->user_id !== $user->id) {
+        if ($appointment->provider_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized to update this appointment.'], 403);
         }
 
-        // Update the appointment.
         $appointment->update($request->validated());
+        Notification::create([
+            'user_id' => $appointment->user_id,
+            'subject' => 'Appointment Updated',
+            'message' => 'Your appointment has been updated.',
+        ]);
 
         return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment]);
     }
 
     /**
-     * Delete an appointment.
+     * @OA\Delete(
+     * path="/api/appointments/{appointment}",
+     * operationId="deleteAppointment",
+     * tags={"Appointments"},
+     * summary="Delete an appointment",
+     * description="Deletes an appointment. Only the appointment's owner can delete it.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="appointment",
+     * description="ID of the appointment to delete",
+     * required=true,
+     * in="path",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Appointment deleted successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Appointment deleted successfully.")
+     * )
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Unauthorized to delete this appointment."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Appointment not found"
+     * )
+     * )
      */
     public function destroy(Appointment $appointment)
     {
@@ -108,6 +258,6 @@ class AppointmentController extends Controller
 
         $appointment->delete();
 
-        return response()->json(['message' => 'Appointment deleted successfully.']);
+        return response()->json(null, 204);
     }
 }

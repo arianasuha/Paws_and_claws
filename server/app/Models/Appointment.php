@@ -20,6 +20,7 @@ class Appointment extends Model
     protected $fillable = [
         'pet_id',
         'user_id',
+        'provider_id',
         'app_date',
         'app_time',
         'visit_reason',

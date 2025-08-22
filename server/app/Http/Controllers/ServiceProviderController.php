@@ -10,14 +10,11 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ServiceProviderController extends Controller
 {
-    /**
-     * ServiceProviderController constructor.
-     * This middleware ensures that all methods in this controller
-     * can only be accessed by authenticated users.
-     */
+
     public function __construct()
     {
         $this->middleware('auth:sanctum')->except('create');
@@ -26,8 +23,10 @@ class ServiceProviderController extends Controller
     /**
      * @OA\Get(
      * path="/api/service-providers",
+     * operationId="getServiceProvidersList",
      * tags={"Service Providers"},
      * summary="Get a list of all service providers",
+     * description="Returns a list of all registered service providers, including their user information.",
      * security={{"sanctum":{}}},
      * @OA\Response(
      * response=200,
@@ -38,14 +37,10 @@ class ServiceProviderController extends Controller
      * )
      * ),
      * @OA\Response(
-     * response=401,
-     * description="Unauthenticated"
+     * response=500,
+     * description="Internal Server Error"
      * )
      * )
-     *
-     * Display a listing of all service providers.
-     *
-     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -59,58 +54,48 @@ class ServiceProviderController extends Controller
         }
     }
 
+
     /**
      * @OA\Post(
      * path="/api/service-providers",
+     * operationId="createServiceProvider",
      * tags={"Service Providers"},
-     * summary="Create a new service provider (Admin only)",
-     * security={{"sanctum":{}}},
+     * summary="Register a new service provider",
+     * description="Registers a new user and creates a service provider profile. No authentication is required.",
      * @OA\RequestBody(
      * required=true,
-     * @OA\JsonContent(
-     * required={"user_id","service_type","rate_per_hour"},
-     * @OA\Property(property="user_id", type="integer", example="1", description="ID of the user this service provider is associated with"),
-     * @OA\Property(property="service_type", type="string", enum={"walker", "groomer", "trainer"}, example="walker"),
-     * @OA\Property(property="service_desc", type="string", nullable=true, example="Experienced dog walker available on weekends."),
-     * @OA\Property(property="rate_per_hour", type="number", format="float", example="25.00"),
-     * @OA\Property(property="rating", type="number", format="float", nullable=true, example="4.5"),
-     * )
+     * description="Service Provider registration data",
+     * @OA\JsonContent(ref="#/components/schemas/ServiceProviderRegisterRequest")
      * ),
      * @OA\Response(
      * response=201,
-     * description="Service provider created successfully",
-     * @OA\JsonContent(ref="#/components/schemas/ServiceProvider")
-     * ),
-     * @OA\Response(
-     * response=403,
-     * description="Forbidden: User does not have admin privileges"
+     * description="Service Provider profile created successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="success", type="string", example="Service Provider profile created successfully.")
+     * )
      * ),
      * @OA\Response(
      * response=422,
      * description="Validation error"
      * ),
      * @OA\Response(
-     * response=401,
-     * description="Unauthenticated"
+     * response=500,
+     * description="Internal Server Error"
      * )
      * )
-     *
-     * Store a newly created service provider in storage.
-     *
-     * @param ServiceProviderRegisterRequest $request
-     * @return JsonResponse
      */
     public function create(ServiceProviderRegisterRequest $request): JsonResponse
     {
         try {
             $validated = $request->validated();
 
+            // Separate user data from service provider data
             $userData = [
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'username' => $validated['username'],
-                'password' => $validated['password'],
+                'password' => Hash::make($validated['password']),
             ];
 
             if (isset($validated['address'])) {
@@ -119,32 +104,36 @@ class ServiceProviderController extends Controller
 
             $user = User::create($userData);
 
-            $serviceproviderData = array_diff_key($validated, $userData);
+            // Separate service provider data from user data
+            $serviceproviderData = $request->only(['service_type', 'service_desc', 'rate_per_hour', 'rating']);
 
-            $serrviceproviderData['user_id'] = $user->id;
-            $serviceprovider = ServiceProvider::create($serviceproviderData);
+            $serviceproviderData['user_id'] = $user->id;
+            ServiceProvider::create($serviceproviderData);
 
             return response()->json([
                 "success" => "Service Provider profile created successfully.",
             ], 201);
         } catch (\Exception $e) {
-            Log::error("Error creating Service Proider profile: " . $e->getMessage(), ['request_data' => $request->all()]);
+            Log::error("Error creating Service Provider profile: " . $e->getMessage(), ['request_data' => $request->all()]);
             return response()->json(["errors" => "Failed to create Service Provider profile."], 500);
         }
     }
 
+
     /**
      * @OA\Get(
      * path="/api/service-providers/{id}",
+     * operationId="getServiceProviderById",
      * tags={"Service Providers"},
-     * summary="Get a service provider by ID",
+     * summary="Get a single service provider by ID",
+     * description="Returns a single service provider by its ID.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
      * name="id",
-     * in="path",
+     * description="ID of the service provider",
      * required=true,
-     * @OA\Schema(type="integer"),
-     * description="ID of the service provider to retrieve"
+     * in="path",
+     * @OA\Schema(type="integer")
      * ),
      * @OA\Response(
      * response=200,
@@ -153,18 +142,13 @@ class ServiceProviderController extends Controller
      * ),
      * @OA\Response(
      * response=404,
-     * description="Service provider not found"
+     * description="Service provider not found."
      * ),
      * @OA\Response(
-     * response=401,
-     * description="Unauthenticated"
+     * response=500,
+     * description="Internal Server Error"
      * )
      * )
-     *
-     * Display the specified service provider.
-     *
-     * @param string $id
-     * @return JsonResponse
      */
     public function show(string $id): JsonResponse
     {
@@ -184,56 +168,51 @@ class ServiceProviderController extends Controller
         }
     }
 
+
     /**
      * @OA\Patch(
-     * path="/api/service-providers/{id}",
+     * path="/api/service-providers/{user}",
+     * operationId="updateServiceProvider",
      * tags={"Service Providers"},
-     * summary="Update an existing service provider (Admin only)",
+     * summary="Update a service provider profile",
+     * description="Updates a service provider's profile. Accessible by the service provider themselves or an admin.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
-     * name="id",
-     * in="path",
+     * name="user",
+     * description="ID or slug of the user associated with the service provider",
      * required=true,
-     * @OA\Schema(type="integer"),
-     * description="ID of the service provider to update"
+     * in="path",
+     * @OA\Schema(type="string")
      * ),
      * @OA\RequestBody(
      * required=true,
-     * @OA\JsonContent(
-     * @OA\Property(property="service_type", type="string", enum={"walker", "groomer", "trainer"}, example="groomer"),
-     * @OA\Property(property="service_desc", type="string", nullable=true, example="Certified groomer with 5 years experience."),
-     * @OA\Property(property="rate_per_hour", type="number", format="float", example="30.50"),
-     * @OA\Property(property="rating", type="number", format="float", nullable=true, example="4.8"),
-     * )
+     * description="Service Provider update data",
+     * @OA\JsonContent(ref="#/components/schemas/ServiceProviderUpdateRequest")
      * ),
      * @OA\Response(
      * response=200,
-     * description="Service provider updated successfully",
-     * @OA\JsonContent(ref="#/components/schemas/ServiceProvider")
-     * ),
-     * @OA\Response(
-     * response=404,
-     * description="Service provider not found"
+     * description="Service Provider profile updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="success", type="string", example="Service Provider profile updated successfully.")
+     * )
      * ),
      * @OA\Response(
      * response=403,
-     * description="Forbidden: User does not have admin privileges"
+     * description="Unauthorized to update this Service Provider profile."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="User not found"
      * ),
      * @OA\Response(
      * response=422,
      * description="Validation error"
      * ),
      * @OA\Response(
-     * response=401,
-     * description="Unauthenticated"
+     * response=500,
+     * description="Internal Server Error"
      * )
      * )
-     *
-     * Update the specified service provider in storage.
-     *
-     * @param ServiceProviderUpdateRequest $request
-     * @param string $id
-     * @return JsonResponse
      */
     public function update(ServiceProviderUpdateRequest $request, string $user): JsonResponse
     {
@@ -246,34 +225,42 @@ class ServiceProviderController extends Controller
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
+            if (Auth::id() !== $foundUser->id) {
                 return response()->json([
                     "errors" => "You are not authorized to update this Service Provider profile."
                 ], 403);
             }
 
             $validated = $request->validated();
-            $userFields = ['first_name', 'last_name', 'email', 'username', 'password', 'address'];
 
-            if (isset($validated['password'])) {
-                $foundUser->password = $validated['password'];
-                unset($validated['password']);
-            }
+
+            $userFields = ['first_name', 'last_name', 'email', 'username', 'password', 'address'];
+            $serviceProviderFields = ['service_type', 'service_desc', 'rate_per_hour', 'rating'];
+
 
             $userData = array_intersect_key($validated, array_flip($userFields));
-            $serviceproviderData = array_diff_key($validated, array_flip($userFields));
+            $serviceproviderData = array_intersect_key($validated, array_flip($serviceProviderFields));
 
-            $foundUser->update($userData);
 
-            $serviceprovider = ServiceProvider::where('user_id', $foundUser->id)->first();
-            if ($serviceprovider && !empty($serviceproviderData)) {
-                $serviceprovider->update($serviceproviderData);
+            if (isset($userData['password'])) {
+                $userData['password'] = Hash::make($userData['password']);
             }
 
+
+            if (!empty($userData)) {
+                $foundUser->update($userData);
+            }
+
+
+            $serviceProvider = ServiceProvider::where('user_id', $foundUser->id)->first();
+            if ($serviceProvider && !empty($serviceproviderData)) {
+                $serviceProvider->update($serviceproviderData);
+            }
 
             return response()->json([
                 "success" => "Service Provider profile updated successfully.",
             ], 200);
+
         } catch (\Exception $e) {
             Log::error("Error updating Service Provider profile: " . $e->getMessage(), ['request_data' => $request->all()]);
             return response()->json([
@@ -283,44 +270,39 @@ class ServiceProviderController extends Controller
     }
 
 
-
     /**
      * @OA\Delete(
-     * path="/api/service-providers/{id}",
+     * path="/api/service-providers/{user}",
+     * operationId="deleteServiceProvider",
      * tags={"Service Providers"},
-     * summary="Delete a service provider (Admin only)",
+     * summary="Delete a service provider profile",
+     * description="Deletes a service provider profile. Accessible by the service provider themselves or an admin.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
-     * name="id",
-     * in="path",
+     * name="user",
+     * description="ID or slug of the user associated with the service provider",
      * required=true,
-     * @OA\Schema(type="integer"),
-     * description="ID of the service provider to delete"
+     * in="path",
+     * @OA\Schema(type="string")
      * ),
      * @OA\Response(
      * response=204,
-     * description="Service provider deleted successfully"
-     * ),
-     * @OA\Response(
-     * response=404,
-     * description="Service provider not found"
+     * description="Service Provider profile deleted successfully"
      * ),
      * @OA\Response(
      * response=403,
-     * description="Forbidden: User does not have admin privileges"
+     * description="Unauthorized to delete this Service Provider profile."
      * ),
      * @OA\Response(
-     * response=401,
-     * description="Unauthenticated"
+     * response=404,
+     * description="Service Provider profile not found."
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error"
      * )
      * )
-     *
-     * Remove the specified service provider from storage.
-     *
-     * @param string $id
-     * @return JsonResponse
      */
-
     public function destroy(string $user): JsonResponse
     {
         try {

@@ -22,12 +22,20 @@ class PetMarketRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'pet_id' => 'required|exists:pets,id',
-            'date' => 'required|date',
-            'type' => 'required|in:sell,adopt,breed',
-            'status' => 'required|in:active,completed,canceled',
-            'description' => 'nullable|string',
-            'fee' => 'required|numeric|min:0',
+            // Rules for the nested 'pet' array
+            'pet.name' => 'required|string|max:255',
+            'pet.species' => 'required|string|max:255',
+            'pet.breed' => 'required|string|max:255',
+            'pet.gender' => 'required|in:male,female',
+            'pet.dob' => 'required|date',
+            'pet.height' => 'sometimes|numeric|min:1',
+            'pet.weight' => 'sometimes|numeric|min:1',
+            'pet.image_url' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', // Rule for image file
+
+            // Rules for the nested 'market' array
+            'market.type' => 'required|string|in:sale,adoption', // 'adopt' is corrected to 'adoption'
+            'market.description' => 'nullable|string',
+            'market.fee' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -37,9 +45,9 @@ class PetMarketRegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'pet_id.exists' => 'The selected pet does not exist.',
-            'type.in' => 'The selected type is invalid.',
-            'status.in' => 'The selected status is invalid.',
+            'pet.image_url.image' => 'The file must be an image.',
+            'pet.image_url.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'market.type.in' => 'The selected market type is invalid. It must be either "sale" or "adoption".',
         ];
     }
 

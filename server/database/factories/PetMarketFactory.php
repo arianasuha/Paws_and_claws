@@ -23,14 +23,24 @@ class PetMarketFactory extends Factory
      */
     public function definition(): array
     {
+        // First, randomly select a type
+        $type = $this->faker->randomElement(['sale', 'adoption']);
+
+        // Then, select a valid status based on the chosen type
+        if ($type === 'adoption') {
+            $status = $this->faker->randomElement(['available', 'adopted']);
+        } else { // 'sale'
+            $status = $this->faker->randomElement(['available', 'sold']);
+        }
+
         return [
             'user_id' => User::factory(),
             'pet_id' => Pet::factory(),
             'date' => $this->faker->date(),
-            'type' => $this->faker->randomElement(['sale', 'adoption']),
-            'status' => $this->faker->randomElement(['available', 'sold', 'adopted', 'pending']),
+            'type' => $type,
+            'status' => $status,
             'description' => $this->faker->text(200),
-            'fee' => $this->faker->randomFloat(2, 50, 500),
+            'fee' => ($type === 'sale') ? $this->faker->randomFloat(2, 50, 500) : null,
         ];
     }
 }
