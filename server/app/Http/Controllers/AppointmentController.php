@@ -7,7 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRegisterRequest;
 use App\Http\Requests\AppointmentUpdateRequest;
 use Illuminate\Support\Facades\Auth;
-use Notification;
+use App\Models\Notification;
+use App\Models\User;
 
 class AppointmentController extends Controller
 {
@@ -86,21 +87,26 @@ class AppointmentController extends Controller
     {
         $user = Auth::user();
 
+        $validated = $request->validated();
+
         $appointment = Appointment::create([
             'user_id' => $user->id,
-            'provider_id' => $request->provider_id,
-            'pet_id' => $request->pet_id,
-            'app_date' => $request->app_date,
-            'app_time' => $request->app_time,
-            'visit_reason' => $request->visit_reason,
+            'pet_id' => $validated['pet_id'],
+            'provider_id' => $validated['provider_id'],
+            'app_date' => $validated['app_date'],
+            'app_time' => $validated['app_time'],
+            'visit_reason' => $validated['visit_reason'],
             'status' => 'pending',
         ]);
+
+        $provider = User::find($validated['provider_id']);
 
         Notification::create([
             'user_id' => $appointment->user_id,
             'subject' => 'Appointment Created',
-            'message' => 'Your appointment has been created.',
+            'message' => 'Your appointment has been created with.'.$provider->username,
         ]);
+
 
         Notification::create([
             'user_id' => $appointment->provider_id,

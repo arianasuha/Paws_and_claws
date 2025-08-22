@@ -290,15 +290,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
         ->name('api.deleteReview');
 
-    Route::get('/api/notifications', [NotificationController::class, 'index'])->name('api.getNotifications');
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('api.getNotifications');
 
-    Route::get('/api/notifications/{notification}', [NotificationController::class, 'show'])->name('api.getNotification');
+    Route::get('/notifications/available', [NotificationController::class, 'isNotiAvailable'])
+        ->name('api.isNotiAvailable');
 
-    Route::get('/api/notifications/check-unread', [NotificationController::class, 'isNotiAvailable'])->name('api.isNotiAvailable');
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])
+        ->name('api.getNotification');
 
-    Route::put('/api/notifications/{notification}', [NotificationController::class, 'markAsRead'])->name('api.markNotificationAsRead');
+    Route::put('/notifications/{notification}', [NotificationController::class, 'markAsRead'])
+        ->name('api.markNotificationAsRead');
 
-    Route::delete('/api/notifications/{notification}', [NotificationController::class, 'destroy'])->name('api.deleteNotification');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
+        ->name('api.deleteNotification');
 
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('api.getCategories');
