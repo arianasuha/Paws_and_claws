@@ -170,19 +170,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])
         ->name('api.deleteAppointment');
 
-    Route::get('/lost-pets', [ReportLostPetController::class, 'index'])
+    Route::get('/reports/lost-pets', [ReportLostPetController::class, 'index'])
         ->name('api.getLostPets');
 
-    Route::post('/lost-pets', [ReportLostPetController::class, 'store'])
+    Route::post('/reports/lost-pets', [ReportLostPetController::class, 'store'])
         ->name('api.createLostPetReport');
 
-    Route::get('/lost-pets/{lostPetReport}', [ReportLostPetController::class, 'show'])
+    Route::get('/reports/lost-pets/{id}', [ReportLostPetController::class, 'show'])
         ->name('api.getLostPetReport');
 
-    Route::patch('/lost-pets/{lostPetReport}', [ReportLostPetController::class, 'update'])
+    Route::patch('reports/lost-pets/{id}', [ReportLostPetController::class, 'update'])
         ->name('api.updateLostPetReport');
 
-    Route::delete('/lost-pets/{lostPetReport}', [ReportLostPetController::class, 'destroy'])
+    Route::delete('reports/lost-pets/{id}', [ReportLostPetController::class, 'destroy'])
         ->name('api.deleteLostPetReport');
 
     Route::get('/medical-logs', [MedicalLogController::class, 'index'])

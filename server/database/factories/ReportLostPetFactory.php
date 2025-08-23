@@ -23,12 +23,11 @@ class ReportLostPetFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['missing', 'found', 'resolved'];
+        $statuses = ['missing', 'found'];
 
         return [
             'location' => fake()->city(),
             'date_lost' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            // Use nested factories to create a User and a Pet automatically
             'user_id' => User::factory(),
             'pet_id' => Pet::factory(),
             'status' => fake()->randomElement($statuses),
