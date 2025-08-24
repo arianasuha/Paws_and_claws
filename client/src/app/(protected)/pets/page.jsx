@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getPetsAction } from "@/app/actions/petActions"
+import { getPetsAction } from "@/actions/petActions"
 import PetCard from "@/components/cards/pet-card"
 import CreatePetButton from "@/components/buttons/create-pet-button"
 import styles from "./page.module.css"

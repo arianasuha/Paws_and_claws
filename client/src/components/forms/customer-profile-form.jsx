@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getUserAction, updateUserAction, deleteUserAction } from "@/app/actions/userActions" // Import updateUserAction directly for form submission
-import UpdateButton from "@/components/buttons/update-button"
-import DeleteButton from "@/components/buttons/delete-button"
-import ShowPetsButton from "@/components/buttons/show-pets-button"
+import { getUserAction, updateUserAction, deleteUserAction } from "@/actions/userActions" // Import updateUserAction directly for form submission
+import {
+  UpdateButton,
+  DeleteButton,
+  ShowPetsButton
+} from "@/components/buttons/buttons"
 import ConfirmationModal from "@/components/modals/confirmation-modal"
 import styles from "./customer-profile-form.module.css"
 

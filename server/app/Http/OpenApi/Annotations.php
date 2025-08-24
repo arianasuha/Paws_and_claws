@@ -60,6 +60,11 @@ use OpenApi\Annotations as OA;
  * description="API Endpoints for Notifications"
  * )
  *
+ * @OA\Tag(
+ * name="Lost Pets",
+ * description="API Endpoints for reporting and managing lost pets"
+ * )
+ *
  * @OA\Schema(
  * schema="ErrorResponse",
  * title="Error Response",
@@ -510,6 +515,94 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="total", type="integer", example=14)
  * )
  *
+ * @OA\Schema(
+ * schema="ReportLostPet",
+ * title="ReportLostPet",
+ * description="Lost pet report model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Report ID"),
+ * @OA\Property(property="user_id", type="integer", format="int64", description="ID of the user who reported the pet"),
+ * @OA\Property(property="pet_id", type="integer", format="int64", description="ID of the lost pet"),
+ * @OA\Property(property="location", type="string", description="Last known location of the pet"),
+ * @OA\Property(property="date_lost", type="string", format="date", description="Date the pet was lost"),
+ * @OA\Property(property="status", type="string", enum={"lost", "found"}, description="Status of the report"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * @OA\Property(property="user", ref="#/components/schemas/User", description="Associated user information"),
+ * @OA\Property(property="pet", ref="#/components/schemas/Pet", description="Associated pet information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="ReportLostPetRegisterRequest",
+ * title="ReportLostPetRegisterRequest",
+ * description="Lost pet report registration payload",
+ * required={"pet_id", "location", "date_lost", "status"},
+ * @OA\Property(property="pet_id", type="integer", description="ID of the lost pet"),
+ * @OA\Property(property="location", type="string", description="Last known location of the pet"),
+ * @OA\Property(property="date_lost", type="string", format="date", description="Date the pet was lost (YYYY-MM-DD)"),
+ * @OA\Property(property="status", type="string", enum={"missing", "found"}, description="Status of the report"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="ReportLostPetUpdateRequest",
+ * title="ReportLostPetUpdateRequest",
+ * description="Lost pet report update payload",
+ * @OA\Property(property="location", type="string", nullable=true, description="Last known location of the pet"),
+ * @OA\Property(property="date_lost", type="string", format="date", nullable=true, description="Date the pet was lost (YYYY-MM-DD)"),
+ * @OA\Property(property="status", type="string", nullable=true, enum={"missing", "found"}, description="Status of the report"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="Category",
+ * title="Category",
+ * description="Category model",
+ * @OA\Property(
+ * property="id",
+ * type="integer",
+ * format="int64",
+ * description="Category ID"
+ * ),
+ * @OA\Property(
+ * property="name",
+ * type="string",
+ * description="Name of the category"
+ * ),
+ * @OA\Property(
+ * property="created_at",
+ * type="string",
+ * format="date-time",
+ * description="Creation timestamp"
+ * ),
+ * @OA\Property(
+ * property="updated_at",
+ * type="string",
+ * format="date-time",
+ * description="Last update timestamp"
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="CategoryRegisterRequest",
+ * title="CategoryRegisterRequest",
+ * description="Category registration payload",
+ * required={"name"},
+ * @OA\Property(
+ * property="name",
+ * type="string",
+ * description="Name of the category"
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="CategoryUpdateRequest",
+ * title="CategoryUpdateRequest",
+ * description="Category update payload",
+ * required={"name"},
+ * @OA\Property(
+ * property="name",
+ * type="string",
+ * description="Name of the category"
+ * )
+ * )
  */
 class Annotations
 {

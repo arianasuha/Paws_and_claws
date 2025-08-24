@@ -2,22 +2,26 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getVetAction, updateVetAction, deleteVetAction } from "@/actions/vetActions"
+import { 
+  getServiceProviderAction, 
+  updateServiceProviderAction, 
+  deleteServiceProviderAction 
+} from "@/actions/serviceActions"
 import {UpdateButton, DeleteButton, ShowPetsButton} from "@/components/buttons/buttons"
 import ConfirmationModal from "@/components/modals/confirmation-modal"
-import styles from "./vet-profile-form.module.css"
+import styles from "./service-profile-form.module.css"
 
-export default function VetProfileForm({ userId }) {
+export default function ServiceProfileForm({ userId }) {
   const [formData, setFormData] = useState({
     email: "",
     username: "",
     first_name: "",
     last_name: "",
     address: "",
-    clinic_name: "",
-    specialization: "",
-    services_offered: "",
-    working_hour: "",
+    service_type: "",
+    service_desc: "",
+    rating: "",
+    rate_per_hour: "",
     password: "",
     password_confirmation: "",
   })
@@ -28,13 +32,14 @@ export default function VetProfileForm({ userId }) {
   const router = useRouter()
 
   useEffect(() => {
-    async function fetchVetData() {
+    async function fetchServiceData() {
       if (!userId) {
         setErrors({ general: "User ID not found. Please log in." })
         setIsLoading(false)
         return
       }
-      const result = await getVetAction(userId)
+      const result = await getServiceProviderAction(userId)
+   
       if (result.data) {
         setFormData({
           email: result.data.user.email || "",
@@ -42,20 +47,22 @@ export default function VetProfileForm({ userId }) {
           first_name: result.data.user.first_name || "",
           last_name: result.data.user.last_name || "",
           address: result.data.user.address || "",
-          clinic_name: result.data.clinic_name || "",
-          specialization: result.data.specialization || "",
-          services_offered: result.data.services_offered || "",
-          working_hour: result.data.working_hour || "",
+          service_type: result.data.service_type || "",
+          service_desc: result.data.service_desc || "",
+          rating: result.data.rating || "",
+          rate_per_hour: result.data.rate_per_hour || "",
           password: "",
           password_confirmation: "",
         })
         setSuccessMessage("")
+  
       } else if (result.error) {
-        setErrors({ general: result.error.detail || "Failed to load vet data." })
+        setErrors({ general: result.error.detail || "Failed to load provider data." })
       }
+      
       setIsLoading(false)
     }
-    fetchVetData()
+    fetchServiceData()
   }, [userId])
 
   const handleChange = (e) => {
@@ -79,12 +86,12 @@ export default function VetProfileForm({ userId }) {
       return
     }
 
-    const result = await updateVetAction(userId, dataToUpdate)
+    const result = await updateServiceProviderAction(userId, dataToUpdate)
 
     if (result.success) {
       setSuccessMessage(result.success)
       // Re-fetch data to ensure UI is up-to-date after successful update
-      const updatedResult = await getVetAction(userId)
+      const updatedResult = await getServiceProviderAction(userId)
       if (updatedResult.data) {
         setFormData({
           email: result.data.user.email || "",
@@ -92,10 +99,10 @@ export default function VetProfileForm({ userId }) {
           first_name: result.data.user.first_name || "",
           last_name: result.data.user.last_name || "",
           address: result.data.user.address || "",
-          clinic_name: updatedResult.data.clinic_name || "",
-          specialization: updatedResult.data.specialization || "",
-          services_offered: updatedResult.data.services_offered || "",
-          working_hour: updatedResult.data.working_hour || "",
+          service_type: updatedResult.data.service_type || "",
+          service_desc: updatedResult.data.service_desc || "",
+          rating: updatedResult.data.rating || "",
+          rate_per_hour: updatedResult.data.rate_per_hour || "",
           password: "",
           password_confirmation: "",
         })
@@ -113,7 +120,7 @@ export default function VetProfileForm({ userId }) {
 
   const handleConfirmDelete = async () => {
     setIsModalOpen(false)
-    const result = await deleteVetAction(userId)
+    const result = await deleteServiceProviderAction(userId)
     if (result.success) {
       alert(result.success)
       router.push("/login") // Redirect to login after deletion
@@ -123,13 +130,13 @@ export default function VetProfileForm({ userId }) {
   }
 
   if (isLoading) {
-    return <div className={styles["loading-message"]}>Loading vet profile...</div>
+    return <div className={styles["loading-message"]}>Loading service provider profile...</div>
   }
 
   return (
     <div className={styles["profile-form-container"]}>
       <form onSubmit={handleSubmit} className={styles["profile-form"]}>
-        <h2 className={styles["form-title"]}>Veterinarian Profile</h2>
+        <h2 className={styles["form-title"]}>Service Provider Profile</h2>
 
         {errors.general && <div className={styles["error-message"]}>{errors.general}</div>}
         {successMessage && <div className={styles["success-message"]}>{successMessage}</div>}
@@ -216,71 +223,83 @@ export default function VetProfileForm({ userId }) {
         </div>
 
         <div className={styles["form-group"]}>
-          <label htmlFor="clinic_name" className={styles["form-label"]}>
-            Clinic Name
+          <label htmlFor="service_type" className={styles["form-label"]}>
+            Service Type
           </label>
-          <input
-            id="clinic_name"
-            name="clinic_name"
-            type="text"
-            placeholder="Your clinic's name"
-            value={formData.clinic_name}
+          <select
+            id="service_type"
+            name="service_type"
+            value={formData.service_type}
             onChange={handleChange}
             required
             className={styles["form-input"]}
-          />
-          {errors.clinic_name && <p className={styles["field-error"]}>{errors.clinic_name}</p>}
+          >
+            <option value="" disabled>
+              Select a service type
+            </option>
+            <option value="walker">Walker</option>
+            <option value="groomer">Groomer</option>
+            <option value="trainer">Trainer</option>
+          </select>
+          {errors.service_type && (
+            <p className={styles["field-error"]}>{errors.service_type}</p>
+          )}
         </div>
 
         <div className={styles["form-group"]}>
-          <label htmlFor="specialization" className={styles["form-label"]}>
-            Specialization
+          <label htmlFor="service_desc" className={styles["form-label"]}>
+            Service Description
           </label>
           <input
-            id="specialization"
-            name="specialization"
+            id="service_desc"
+            name="service_desc"
             type="text"
-            placeholder="e.g., Dermatology, Orthopedics"
-            value={formData.specialization}
+            placeholder="Service Description"
+            value={formData.service_desc}
             onChange={handleChange}
             required
             className={styles["form-input"]}
           />
-          {errors.specialization && <p className={styles["field-error"]}>{errors.specialization}</p>}
+          {errors.service_desc && (
+            <p className={styles["field-error"]}>{errors.service_desc}</p>
+          )}
         </div>
 
         <div className={styles["form-group"]}>
-          <label htmlFor="services_offered" className={styles["form-label"]}>
-            Services Offered
+          <label htmlFor="rate_per_hour" className={styles["form-label"]}>
+            Rate Per Hour
           </label>
           <input
-            id="services_offered"
-            name="services_offered"
-            type="text"
-            placeholder="e.g., Vaccinations, Surgery"
-            value={formData.services_offered}
+            id="rate_per_hour"
+            name="rate_per_hour"
+            type="float"
+            placeholder="10.00"
+            value={formData.rate_per_hour}
             onChange={handleChange}
             required
             className={styles["form-input"]}
           />
-          {errors.services_offered && <p className={styles["field-error"]}>{errors.services_offered}</p>}
+          {errors.rate_per_hour && (
+            <p className={styles["field-error"]}>{errors.rate_per_hour}</p>
+          )}
         </div>
 
         <div className={styles["form-group"]}>
-          <label htmlFor="working_hour" className={styles["form-label"]}>
-            Working Hours
+          <label htmlFor="rating" className={styles["form-label"]}>
+            Rating
           </label>
           <input
-            id="working_hour"
-            name="working_hour"
-            type="text"
-            placeholder="e.g., Mon-Fri 9 AM - 5 PM"
-            value={formData.working_hour}
+            id="rating"
+            name="rating"
+            type="float"
+            value={formData.rating}
             onChange={handleChange}
-            required
+            disabled
             className={styles["form-input"]}
           />
-          {errors.working_hour && <p className={styles["field-error"]}>{errors.working_hour}</p>}
+          {errors.rating && (
+            <p className={styles["field-error"]}>{errors.rating}</p>
+          )}
         </div>
 
         <div className={styles["form-group"]}>
@@ -325,7 +344,7 @@ export default function VetProfileForm({ userId }) {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Confirm Deletion"
-        message="Are you sure you want to delete your vet account? This action cannot be undone."
+        message="Are you sure you want to delete your service provider account? This action cannot be undone."
       />
     </div>
   )

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Http\Requests\User\RegisterUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Traits\AuthenticateUser;
+use App\Models\Cart;
 
 class UserController extends Controller
 {
@@ -171,7 +172,8 @@ class UserController extends Controller
         $validated = $request->validated();
 
         try {
-            User::create($validated);
+            $user = User::create($validated);
+            Cart::create(['user_id' => $user->id]);
 
             return response()->json([
                 "success" => "User created successfully.",
@@ -216,7 +218,8 @@ class UserController extends Controller
         $validated['is_admin'] = true;
 
         try {
-            User::create($validated);
+            $user = User::create($validated);
+            Cart::create(['user_id' => $user->id]);
 
             return response()->json([
                 "success" => "User created successfully.",

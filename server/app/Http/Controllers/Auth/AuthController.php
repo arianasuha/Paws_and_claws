@@ -66,6 +66,8 @@ class AuthController extends Controller
             $role = 'admin';
         } elseif ($user->is_vet) {
             $role = 'vet';
+        } elseif ($user->serviceProvider()->exists()) {
+            $role = 'provider';
         }
 
         return response()->json([

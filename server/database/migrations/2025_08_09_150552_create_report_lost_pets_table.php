@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('date_lost');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->string('status');
+            $table->enum('status', ['missing', 'found'])->default('missing');
         });
     }
 

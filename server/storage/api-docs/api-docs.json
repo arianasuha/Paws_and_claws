@@ -396,6 +396,233 @@
                 ]
             }
         },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get a list of all categories",
+                "operationId": "3f5817a34833d0a1f4af4548dd3aeaba",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create a new category (Admin only)",
+                "operationId": "c7568de7109834ae917e2041e9193428",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Toys"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden: User does not have admin privileges"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get a category by ID",
+                "operationId": "c68e76d323c008827a9e47398b1583de",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update an existing category (Admin only)",
+                "operationId": "0e686b2748211cc688333ed705dc111f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Food"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "403": {
+                        "description": "Forbidden: User does not have admin privileges"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category (Admin only)",
+                "operationId": "4c12e22a7f8c617bd83bfa1fdc05428d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Category deleted successfully"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    },
+                    "403": {
+                        "description": "Forbidden: User does not have admin privileges"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/notifications": {
             "get": {
                 "tags": [
@@ -1315,6 +1542,303 @@
                     },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/lost-pets": {
+            "get": {
+                "tags": [
+                    "Lost Pets"
+                ],
+                "summary": "Get a list of all lost pet reports",
+                "description": "Returns a list of all lost pet reports, including associated user and pet details.",
+                "operationId": "getLostPetReports",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ReportLostPet"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Lost Pets"
+                ],
+                "summary": "Create a new lost pet report",
+                "description": "Creates a new lost pet report for a specific pet.",
+                "operationId": "createLostPetReport",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "pet_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Hogwarts"
+                                    },
+                                    "date_lost": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-08-23"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "default": "missing",
+                                        "enum": [
+                                            "missing",
+                                            "found"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Report created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReportLostPet"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/lost-pets/{id}": {
+            "get": {
+                "tags": [
+                    "Lost Pets"
+                ],
+                "summary": "Get a specific lost pet report",
+                "description": "Returns a single lost pet report by its ID, with associated user and pet details.",
+                "operationId": "getLostPetReportById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the lost pet report",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReportLostPet"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Report not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Lost Pets"
+                ],
+                "summary": "Delete a lost pet report",
+                "description": "Deletes a specific lost pet report. Only the owner can delete it.",
+                "operationId": "deleteLostPetReport",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the lost pet report to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Report deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete this report",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Report not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Lost Pets"
+                ],
+                "summary": "Update a lost pet report",
+                "description": "Updates an existing lost pet report. Only the owner of the report can update it.",
+                "operationId": "updateLostPetReport",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the lost pet report to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportLostPetUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Report updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReportLostPet"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to update this report",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Report not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     },
                     "422": {
                         "description": "Validation error"
@@ -3487,6 +4011,176 @@
                     }
                 },
                 "type": "object"
+            },
+            "ReportLostPet": {
+                "title": "ReportLostPet",
+                "description": "Lost pet report model",
+                "properties": {
+                    "id": {
+                        "description": "Report ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who reported the pet",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "pet_id": {
+                        "description": "ID of the lost pet",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "location": {
+                        "description": "Last known location of the pet",
+                        "type": "string"
+                    },
+                    "date_lost": {
+                        "description": "Date the pet was lost",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "status": {
+                        "description": "Status of the report",
+                        "type": "string",
+                        "enum": [
+                            "lost",
+                            "found"
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "pet": {
+                        "$ref": "#/components/schemas/Pet"
+                    }
+                },
+                "type": "object"
+            },
+            "ReportLostPetRegisterRequest": {
+                "title": "ReportLostPetRegisterRequest",
+                "description": "Lost pet report registration payload",
+                "required": [
+                    "pet_id",
+                    "location",
+                    "date_lost",
+                    "status"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the lost pet",
+                        "type": "integer"
+                    },
+                    "location": {
+                        "description": "Last known location of the pet",
+                        "type": "string"
+                    },
+                    "date_lost": {
+                        "description": "Date the pet was lost (YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "status": {
+                        "description": "Status of the report",
+                        "type": "string",
+                        "enum": [
+                            "missing",
+                            "found"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "ReportLostPetUpdateRequest": {
+                "title": "ReportLostPetUpdateRequest",
+                "description": "Lost pet report update payload",
+                "properties": {
+                    "location": {
+                        "description": "Last known location of the pet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "date_lost": {
+                        "description": "Date the pet was lost (YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Status of the report",
+                        "type": "string",
+                        "enum": [
+                            "missing",
+                            "found"
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "description": "Category model",
+                "properties": {
+                    "id": {
+                        "description": "Category ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the category",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryRegisterRequest": {
+                "title": "CategoryRegisterRequest",
+                "description": "Category registration payload",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the category",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryUpdateRequest": {
+                "title": "CategoryUpdateRequest",
+                "description": "Category update payload",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the category",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -3526,8 +4220,16 @@
             "description": "API Endpoints for Notifications"
         },
         {
+            "name": "Lost Pets",
+            "description": "API Endpoints for reporting and managing lost pets"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Categories",
+            "description": "Categories"
         }
     ]
 }

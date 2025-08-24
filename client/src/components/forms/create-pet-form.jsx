@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createPetAction } from "@/app/actions/petActions"
-import UpdatePetButton from "@/components/buttons/update-pet-button" // Reusing the update button for submission
+import { createPetAction } from "@/actions/petActions"
+import {UpdatePetButton} from "@/components/buttons/buttons" // Reusing the update button for submission
 import styles from "./create-pet-form.module.css"
 
 export default function CreatePetForm() {

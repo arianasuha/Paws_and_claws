@@ -2,18 +2,15 @@
 
 namespace App\Http\Requests\Pet;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Http\Requests\BaseRequest;
 
-class ReportLostPetUpdateRequest extends FormRequest
+class ReportLostPetUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Assuming the user must be the owner of the report to update it.
-        // The controller will handle the specific authorization check using a policy.
         return $this->user() !== null;
     }
 
@@ -27,8 +24,7 @@ class ReportLostPetUpdateRequest extends FormRequest
         return [
             'location' => ['sometimes', 'string', 'max:255'],
             'date_lost' => ['sometimes', 'date'],
-            'pet_id' => ['sometimes', 'integer', 'exists:pets,id'],
-            'status' => ['sometimes', 'string', 'in:Lost,Found'],
+            'status' => ['sometimes', 'string', 'in:found'],
         ];
     }
 }

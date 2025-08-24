@@ -1,6 +1,6 @@
 "use client"
 
-import OptionButton from "@/components/buttons/option-button"
+import {OptionButton} from "@/components/buttons/buttons"
 import styles from "./signup-option-card.module.css"
 
 export default function SignupOptionCard({ title, description, buttonText, buttonHref }) {

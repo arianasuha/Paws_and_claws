@@ -134,7 +134,7 @@ class User extends Authenticatable
 
     public function serviceProvider()
     {
-        return $this->hasMany(ServiceProvider::class);
+        return $this->hasOne(ServiceProvider::class);
     }
 
     public function carts()

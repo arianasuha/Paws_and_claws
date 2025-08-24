@@ -153,7 +153,7 @@ class ServiceProviderController extends Controller
     public function show(string $id): JsonResponse
     {
         try {
-            $serviceProvider = ServiceProvider::with('user')->find($id);
+            $serviceProvider = ServiceProvider::with('user')->where('user_id', $id)->first();
 
             if (!$serviceProvider) {
                 return response()->json([

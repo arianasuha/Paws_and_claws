@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation" // Used for redirection after successful signup
-import { createUserAction } from "@/app/actions/userActions" // Updated import path
-import SignupButton from "@/components/buttons/customer-signup-button"
+import { createUserAction } from "@/actions/userActions" // Updated import path
+import {SignupButton} from "@/components/buttons/buttons"
 import styles from "./customer-signup-form.module.css"
+import { DEFAULT_LOGIN_REDIRECT } from "@/route"
 
 export default function SignupForm() {
   const [errors, setErrors] = useState({}) // Object to hold field-specific errors
@@ -24,7 +25,7 @@ export default function SignupForm() {
       setSuccessMessage(result.success)
       setErrors({}) // Clear any lingering errors on success
       // Redirect to a login page or dashboard after successful signup
-      router.push("/dashboard") // Updated redirect path
+      router.push(DEFAULT_LOGIN_REDIRECT) // Updated redirect path
     } else if (result.error) {
       setErrors(result.error) // Set the error object
       setSuccessMessage("") // Clear success message on error

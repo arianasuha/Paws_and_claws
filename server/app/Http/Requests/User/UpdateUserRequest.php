@@ -25,6 +25,14 @@ class UpdateUserRequest extends BaseRequest
     {
         $userId = $this->route('user');
 
+        if (!$userId) {
+            $userId = $this->route('id');
+        }
+
+        if (!$userId) {
+            $userId = $this->route('vet');
+        }
+        
         return [
             'first_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
