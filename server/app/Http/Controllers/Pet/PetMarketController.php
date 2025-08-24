@@ -103,14 +103,13 @@ class PetMarketController extends Controller
             }
 
             $pet = Pet::create(array_merge($petData, ['user_id' => Auth::id()]));
-            $petMarket = PetMarket::create(array_merge($marketData, [
+            PetMarket::create(array_merge($marketData, [
                 'user_id' => Auth::id(),
                 'pet_id' => $pet->id,
             ]));
 
             return response()->json([
-                'pet_market' => $petMarket->load('pet'),
-                'message' => 'Pet market listing created successfully.'
+                'success' => 'Pet market listing created successfully.'
             ], 201);
         } catch (\Exception $e) {
             Log::error('Error creating pet market listing: ' . $e->getMessage());

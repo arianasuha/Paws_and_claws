@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar/navbar"
-import { getUserIdAction } from "@/app/actions/authActions" // Import server action
+import { getUserIdAction } from "@/actions/authActions" // Import server action
 
 const Layout = async ({ children }) => {
   const currentUserId = await getUserIdAction() // Fetch user ID on the server

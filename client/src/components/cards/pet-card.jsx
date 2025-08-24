@@ -1,6 +1,6 @@
 "use client"
 
-import DetailButton from "@/components/buttons/detail-button"
+import {DetailButton} from "@/components/buttons/buttons"
 import styles from "./pet-card.module.css"
 
 export default function PetCard({ pet }) {

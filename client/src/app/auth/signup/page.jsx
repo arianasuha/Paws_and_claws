@@ -22,6 +22,12 @@ export default function SignupSelectionPage() {
             buttonText="Sign Up as Vet"
             buttonHref="/auth/signup/vet"
           />
+          <SignupOptionCard
+            title="Service Provider"
+            description="Offer services to pet owners and expand your practice."
+            buttonText="Sign Up as Service Provider"
+            buttonHref="/auth/signup/service-provider"
+          />
         </div>
       </div>
     </div>

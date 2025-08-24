@@ -1,15 +1,13 @@
-/* Vet Profile Form Styles - Adapted from Customer Profile Form */
-.profile-form-container {
+/* Vet Signup Form Styles - Adapted from Login Form */
+.service-signup-form-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2);
   overflow: hidden;
   position: relative;
-  max-width: 500px; /* Slightly wider for profile forms */
-  margin: 40px auto; /* Center the form */
 }
-.profile-form-container::before {
+.service-signup-form-container::before {
   content: "";
   position: absolute;
   top: 0;
@@ -29,7 +27,7 @@
     background-position: 100% 50%;
   }
 }
-.profile-form {
+.service-signup-form {
   padding: 48px 40px;
 }
 .form-title {
@@ -177,7 +175,7 @@
 }
 /* Responsive Design for Form */
 @media (max-width: 480px) {
-  .profile-form {
+  .service-signup-form {
     padding: 36px 24px;
   }
   .form-title {
@@ -186,14 +184,4 @@
   .form-input {
     padding: 14px 16px;
   }
-  .profile-form-container {
-    margin: 20px 16px;
-  }
-}
-
-.loading-message {
-  text-align: center;
-  font-size: 18px;
-  color: #ffffff;
-  padding: 50px;
 }

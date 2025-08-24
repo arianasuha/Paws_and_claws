@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createVetAction } from "@/app/actions/vetActions"
-import VetSignupButton from "@/components/buttons/vet-signup-button"
+import { createVetAction } from "@/actions/vetActions"
+import {VetSignupButton} from "@/components/buttons/buttons"
 import styles from "./vet-signup-form.module.css"
 
 export default function VetSignupForm() {

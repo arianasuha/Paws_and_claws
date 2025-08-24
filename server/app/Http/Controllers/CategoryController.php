@@ -98,7 +98,7 @@ class CategoryController extends Controller
         try {
             if (!auth()->user()->is_admin) {
                 return response()->json([
-                    'errors' => 'You do not have permission to perform this action.'
+                    'errors' => 'You do not have permission to create category.'
                 ], 403);
             }
 

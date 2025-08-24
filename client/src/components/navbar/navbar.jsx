@@ -1,7 +1,6 @@
 "use client"
 
-import ProfileButton from "@/components/buttons/profile-button"
-import LogoutButton from "@/components/buttons/logout-button" // Import the new LogoutButton
+import {ProfileButton, LogoutButton} from "@/components/buttons/buttons"
 import styles from "./navbar.module.css"
 
 export default function Navbar({ currentUserId }) {

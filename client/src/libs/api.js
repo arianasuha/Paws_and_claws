@@ -75,3 +75,46 @@ export const updateVet = async (id, data) => {
 export const deleteVet = async (id) => {
   return apiClient.delete(`/vets/${id}/`);
 };
+
+export const getServiceProviders = async () => {
+  return apiClient.get(`/service-providers/`);
+};
+
+export const getServiceProvider = async (id) => {
+  return apiClient.get(`/service-providers/${id}/`);
+};
+
+export const createServiceProvider = async (data) => {
+  return apiClient.post("/service-providers/", data);
+};
+
+export const updateServiceProvider = async (id, data) => {
+  return apiClient.patch(`/service-providers/${id}/`, data);
+};
+
+export const deleteServiceProvider = async (id) => {
+  return apiClient.delete(`/service-providers/${id}/`);
+};
+
+export const getPetMarkets = async (queryParams = {}) => {
+  const params = new URLSearchParams(queryParams);
+  return apiClient.get(`/pet-markets/?${params.toString()}`);
+};
+
+
+export const getPetMarket = async (id) => {
+  return apiClient.get(`/pet-markets/${id}/`);
+};
+
+export const createPetMarket = async (data) => {
+  return apiClient.post("/pet-markets/", data);
+};
+
+export const updatePetMarket = async (id, data) => {
+  return apiClient.patch(`/pet-markets/${id}/`, data);
+};
+
+export const deletePetMarket = async (id) => {
+  return apiClient.delete(`/pet-markets/${id}/`);
+};
+

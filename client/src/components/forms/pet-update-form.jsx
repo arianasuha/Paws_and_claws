@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getPetAction, updatePetAction, deletePetAction } from "@/app/actions/petActions"
-import UpdatePetButton from "@/components/buttons/update-pet-button"
-import DeletePetButton from "@/components/buttons/delete-pet-button"
+import { getPetAction, updatePetAction, deletePetAction } from "@/actions/petActions"
+import {UpdatePetButton, DeletePetButton} from "@/components/buttons/buttons"
 import ConfirmationModal from "@/components/modals/confirmation-modal"
 import styles from "./pet-update-form.module.css"
 

@@ -3,8 +3,8 @@
 import { DEFAULT_LOGIN_REDIRECT } from "@/route"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { loginAction } from "@/app/actions/authActions" // Adjust path as needed
-import LoginButton from "@/components/buttons/login-button"
+import { loginAction } from "@/actions/authActions" // Adjust path as needed
+import {LoginButton} from "@/components/buttons/buttons"
 import styles from "./login-form.module.css"
 
 export default function LoginForm() {
