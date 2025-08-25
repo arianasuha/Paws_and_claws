@@ -603,6 +603,63 @@ use OpenApi\Annotations as OA;
  * description="Name of the category"
  * )
  * )
+ *
+ * @OA\Schema(
+ * schema="MedicalLog",
+ * title="MedicalLog",
+ * description="Medical Log model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Medical Log ID"),
+ * @OA\Property(property="pet_id", type="integer", format="int64", description="ID of the pet the log is for"),
+ * @OA\Property(property="vet_id", type="integer", format="int64", description="ID of the vet who created the log"),
+ * @OA\Property(property="log_date", type="string", format="date", description="Date of the medical log"),
+ * @OA\Property(property="diagnosis", type="string", description="Diagnosis from the vet"),
+ * @OA\Property(property="treatment", type="string", nullable=true, description="Treatment plan or medication"),
+ * @OA\Property(property="notes", type="string", nullable=true, description="Additional notes for the log"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * @OA\Property(property="pet", ref="#/components/schemas/Pet", description="The pet associated with the log"),
+ * @OA\Property(property="vet", ref="#/components/schemas/Vet", description="The vet who created the log")
+ * )
+ *
+ * @OA\Schema(
+ * schema="MedicalLogRequest",
+ * title="MedicalLogRequest",
+ * description="Medical log creation request payload",
+ * required={"pet_id", "vet_id", "log_date", "diagnosis"},
+ * @OA\Property(property="pet_id", type="integer", format="int64", description="ID of the pet the log is for"),
+ * @OA\Property(property="vet_id", type="integer", format="int64", description="ID of the vet who created the log"),
+ * @OA\Property(property="log_date", type="string", format="date", description="Date of the medical log"),
+ * @OA\Property(property="diagnosis", type="string", description="Diagnosis from the vet"),
+ * @OA\Property(property="treatment", type="string", nullable=true, description="Treatment plan or medication"),
+ * @OA\Property(property="notes", type="string", nullable=true, description="Additional notes for the log")
+ * )
+ *
+ * @OA\Schema(
+ * schema="MedicalLogPaginatedResponse",
+ * title="MedicalLogPaginatedResponse",
+ * description="Paginated list of medical logs",
+ * @OA\Property(property="current_page", type="integer"),
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/MedicalLog")),
+ * @OA\Property(property="first_page_url", type="string"),
+ * @OA\Property(property="from", type="integer"),
+ * @OA\Property(property="last_page", type="integer"),
+ * @OA\Property(property="last_page_url", type="string"),
+ * @OA\Property(
+ * property="links",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="url", type="string", nullable=true),
+ * @OA\Property(property="label", type="string"),
+ * @OA\Property(property="active", type="boolean")
+ * )
+ * ),
+ * @OA\Property(property="next_page_url", type="string", nullable=true),
+ * @OA\Property(property="path", type="string"),
+ * @OA\Property(property="per_page", type="integer"),
+ * @OA\Property(property="prev_page_url", type="string", nullable=true),
+ * @OA\Property(property="to", type="integer"),
+ * @OA\Property(property="total", type="integer"),
+ * )
  */
 class Annotations
 {

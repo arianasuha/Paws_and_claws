@@ -7,7 +7,6 @@ use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Vet\VetController;
 use App\Http\Controllers\Pet\PetProductController;
 use App\Http\Controllers\Pet\PetMarketController;
-use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Order\OrderItemsController;
 use App\Http\Controllers\Order\CartController;
 use App\Http\Controllers\AppointmentController;
@@ -113,48 +112,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/pet-markets/{petMarket}', [PetMarketController::class, 'destroy'])
         ->name('api.deletePetMarket');
 
-    Route::get('/orders', [OrderController::class, 'index'])
-        ->name('api.getOrders');
-
-    Route::post('/orders', [OrderController::class, 'createOrder'])
-        ->name('api.createOrder');
-
-    Route::get('/orders/{order}', [OrderController::class, 'show'])
-        ->name('api.getOrder');
-
-    Route::patch('/orders/{order}', [OrderController::class, 'update'])
-        ->name('api.updateOrder');
-
-    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])
-        ->name('api.deleteOrder');
-
-    Route::get('/order-items', [OrderItemsController::class, 'index'])
-        ->name('api.getOrderItems');
-
-    Route::post('/order-items', [OrderItemsController::class, 'store'])
-        ->name('api.createOrderItem');
-
-    Route::get('/order-items/{item}', [OrderItemsController::class, 'show'])
-        ->name('api.getOrderItem');
-
-    Route::patch('/order-items/{item}', [OrderItemsController::class, 'update'])
-        ->name('api.updateOrderItem');
-
-    Route::delete('/order-items/{item}', [OrderItemsController::class, 'destroy'])
-        ->name('api.deleteOrderItem');
-
-    Route::get('/carts', [CartController::class, 'index'])
-        ->name('api.getCarts');
-
-    Route::post('/carts', [CartController::class, 'store'])
-        ->name('api.createCart');
-
-    Route::patch('/carts/{cart}', [CartController::class, 'update'])
-        ->name('api.updateCart');
-
-    Route::delete('/carts/{cart}', [CartController::class, 'destroy'])
-        ->name('api.deleteCart');
-
     Route::get('/appointments', [AppointmentController::class, 'index'])
         ->name('api.getAppointments');
 
@@ -185,7 +142,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('reports/lost-pets/{id}', [ReportLostPetController::class, 'destroy'])
         ->name('api.deleteLostPetReport');
 
-    Route::get('/medical-logs', [MedicalLogController::class, 'index'])
+    Route::get('medical-logs/{petId}', [MedicalLogController::class, 'index'])
         ->name('api.getMedicalLogs');
 
     Route::get('/medical-logs/{medicalLog}', [MedicalLogController::class, 'show'])
@@ -193,9 +150,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/medical-logs', [MedicalLogController::class, 'store'])
         ->name('api.createMedicalLog');
-
-    Route::patch('/medical-logs/{medicalLog}', [MedicalLogController::class, 'update'])
-        ->name('api.updateMedicalLog');
 
     Route::delete('/medical-logs/{medicalLog}', [MedicalLogController::class, 'destroy'])
         ->name('api.deleteMedicalLog');
@@ -214,21 +168,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/disease-logs/{diseaseLog}', [DiseaseLogController::class, 'destroy'])
         ->name('api.deleteDiseaseLog');
-
-    Route::get('/pet-medicals', [PetMedicalController::class, 'index'])
-        ->name('api.getPetMedicals');
-
-    Route::get('/pet-medicals/{petMedical}', [PetMedicalController::class, 'show'])
-        ->name('api.getPetMedical');
-
-    Route::post('/pet-medicals', [PetMedicalController::class, 'store'])
-        ->name('api.createPetMedical');
-
-    Route::patch('/pet-medicals/{petMedical}', [PetMedicalController::class, 'update'])
-        ->name('api.updatePetMedical');
-
-    Route::delete('/pet-medicals/{petMedical}', [PetMedicalController::class, 'destroy'])
-        ->name('api.deletePetMedical');
 
     Route::get('/pet-diseases', [PetDiseaseController::class, 'index'])
         ->name('api.getPetDiseases');

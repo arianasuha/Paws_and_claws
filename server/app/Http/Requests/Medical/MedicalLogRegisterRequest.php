@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Requests\Medical;
+use App\Http\Requests\BaseRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class MedicalLogRegisterRequest extends FormRequest
+class MedicalLogRegisterRequest extends BaseRequest
 {
 
     public function authorize(): bool
@@ -12,13 +11,17 @@ class MedicalLogRegisterRequest extends FormRequest
         return true;
     }
 
-
+    /**
+     * Get the validation rules that apply to the request.
+     */
     public function rules(): array
     {
         return [
-            'app_id' => ['required', 'integer', 'exists:appointments,id'],
-            'treat_pres' => ['required', 'string'],
-            'diagnosis' => ['required', 'string'],
+            'app_id' => ['required', 'exists:appointments,id'],
+            'treat_pres' => ['required', 'string', 'max:255'],
+            'diagnosis' => ['required', 'string', 'max:255'],
+
+            'pet_id' => ['required', 'exists:pets,id'],
         ];
     }
 }

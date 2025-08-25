@@ -623,6 +623,295 @@
                 ]
             }
         },
+        "/api/medical-logs/{petId}": {
+            "get": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Get medical logs for a specific pet",
+                "description": "Returns a list of all medical logs associated with the specified pet, accessible only by the pet's owner.",
+                "operationId": "getMedicalLogsByPet",
+                "parameters": [
+                    {
+                        "name": "petId",
+                        "in": "path",
+                        "description": "ID of the pet",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MedicalLog"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/medical-logs": {
+            "post": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Create a new medical log",
+                "description": "Creates a new medical log and associates it with a pet.",
+                "operationId": "storeMedicalLog",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalLogRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medical log created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Medical log created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/medical-logs/show/{medicalLog}": {
+            "get": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Get a single medical log",
+                "description": "Returns a single medical log by ID, accessible only by the pet's owner.",
+                "operationId": "showMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalLog"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/medical-logs/{medicalLog}": {
+            "delete": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Delete a medical log",
+                "description": "Deletes a medical log by ID, accessible only by the pet's owner.",
+                "operationId": "deleteMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Medical log deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Medical log deleted successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/notifications": {
             "get": {
                 "tags": [
@@ -4181,6 +4470,171 @@
                     }
                 },
                 "type": "object"
+            },
+            "MedicalLog": {
+                "title": "MedicalLog",
+                "description": "Medical Log model",
+                "properties": {
+                    "id": {
+                        "description": "Medical Log ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "vet_id": {
+                        "description": "ID of the vet who created the log",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "log_date": {
+                        "description": "Date of the medical log",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
+                        "type": "string"
+                    },
+                    "treatment": {
+                        "description": "Treatment plan or medication",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "pet": {
+                        "$ref": "#/components/schemas/Pet"
+                    },
+                    "vet": {
+                        "$ref": "#/components/schemas/Vet"
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalLogRequest": {
+                "title": "MedicalLogRequest",
+                "description": "Medical log creation request payload",
+                "required": [
+                    "pet_id",
+                    "vet_id",
+                    "log_date",
+                    "diagnosis"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "vet_id": {
+                        "description": "ID of the vet who created the log",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "log_date": {
+                        "description": "Date of the medical log",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
+                        "type": "string"
+                    },
+                    "treatment": {
+                        "description": "Treatment plan or medication",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalLogPaginatedResponse": {
+                "title": "MedicalLogPaginatedResponse",
+                "description": "Paginated list of medical logs",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MedicalLog"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -4230,6 +4684,10 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Medical Logs",
+            "description": "Medical Logs"
         }
     ]
 }
