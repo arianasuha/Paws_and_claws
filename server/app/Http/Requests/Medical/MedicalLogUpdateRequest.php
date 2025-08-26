@@ -31,7 +31,7 @@ class MedicalLogUpdateRequest extends FormRequest
             'vet_name' => 'nullable|string|max:255',
             'clinic_name' => 'nullable|string|max:255',
             'prescribed_medication' => 'nullable|string|max:255',
-            'attachment_url' => 'nullable|url|max:2048',
+            'attachment_url' => 'sometimes|string|max:2048',
         ];
     }
 }

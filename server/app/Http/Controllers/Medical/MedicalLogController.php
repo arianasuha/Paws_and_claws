@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Medical;
 
+use App\Http\Requests\Medical\MedicalLogUpdateRequest;
 use App\Models\MedicalLog;
-use App\Models\PetMedical;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Medical\MedicalLogRegisterRequest;
 use App\Jobs\ScheduleMedicalReminders; // We'll need to create this job
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class MedicalLogController extends Controller
      * Display a listing of medical logs for a specific pet with filtering and sorting.
      *
      * @OA\Get(
-     * path="/api/medical-logs/{petId}",
+     * path="/api/medicalpet-logs/{petId}",
      * operationId="getMedicalLogsByPet",
      * tags={"Medical Logs"},
      * summary="Get and filter medical logs for a specific pet",
@@ -185,16 +186,21 @@ class MedicalLogController extends Controller
      * @OA\Response(response=404, description="Medical log not found", @OA\JsonContent(ref="#/components/schemas/ErrorResponse"))
      * )
      */
-    public function show(MedicalLog $medicalLog)
+    public function show(string $medicalLogId): JsonResponse
     {
         try {
+            $medicalLog = MedicalLog::find($medicalLogId);
+
+            if (!$medicalLog) {
+                return response()->json(['error' => 'Medical log not found.'], 404);
+            }
+
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'Unauthorized to view this medical log.'], 403);
+                return response()->json(['error' => 'You are unauthorized to view this medical log.'], 403);
             }
 
-            // Load the pet relationship for the medical log
             $medicalLog->load('pets');
 
             return response()->json($medicalLog, 200);
@@ -239,35 +245,32 @@ class MedicalLogController extends Controller
      * @OA\Response(response=404, description="Medical log not found", @OA\JsonContent(ref="#/components/schemas/ErrorResponse"))
      * )
      */
-    public function update(Request $request, MedicalLog $medicalLog)
+    public function update(MedicalLogUpdateRequest $request, string $medicalLogId)
     {
         try {
-            // First, check if the user is authorized to update this log.
+            $medicalLog = MedicalLog::find($medicalLogId);
+
+            if (!$medicalLog) {
+                return response()->json(['error' => 'Medical log not found.'], 404);
+            }
+
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'Unauthorized to update this medical log.'], 403);
+                return response()->json(['error' => 'You are unauthorized to update this medical log.'], 403);
             }
 
             // Update the medical log with the new data
-            $medicalLog->update($request->all());
-
-            // If a prescription exists, we should re-schedule the reminders.
-            // First, delete any existing reminders for this medical log.
-            MedicalReminder::where('medical_log_id', $medicalLog->id)->delete();
-
-            // Then, dispatch a new job to create the updated set of reminders.
-            if ($medicalLog->prescribed_end_date && $medicalLog->prescribed_end_date > now()) {
-                ScheduleMedicalReminders::dispatch($medicalLog);
-            }
+            $validated = $request->validated();
+            $medicalLog->update($validated);
 
             return response()->json([
-                "message" => "Medical log updated successfully.",
-                "medical_log" => $medicalLog
-            ]);
+                'success' => 'Pet Medical Log information updated successfully.'],
+                 200);
         } catch (\Exception $e) {
-            Log::error('Error updating medical log: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not update medical log.'], 500);
+            return response()->json([
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -304,24 +307,19 @@ class MedicalLogController extends Controller
     public function destroy(MedicalLog $medicalLog)
     {
         try {
-            // First, check if the user is authorized to delete this log.
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'Unauthorized to delete this medical log.'], 403);
+                return response()->json(['error' => 'You are unauthorized to delete this medical log.'], 403);
             }
 
-            // Assuming a many-to-many relationship, we detach the pet's association.
             $medicalLog->pets()->detach(Auth::id());
 
-            // Check if the medical log is now orphaned (not linked to any pet) before deleting it completely
-            if ($medicalLog->pets()->count() === 0) {
-                // Delete all associated medical reminders first to avoid orphaned records
-                MedicalReminder::where('medical_log_id', $medicalLog->id)->delete();
-                $medicalLog->delete();
-            }
 
-            return response()->json(['message' => 'Medical log deleted successfully!']);
+            $medicalLog->delete();
+
+
+            return response()->json(null, 204);
 
         } catch (\Exception $e) {
             Log::error('Error deleting medical log: ' . $e->getMessage());

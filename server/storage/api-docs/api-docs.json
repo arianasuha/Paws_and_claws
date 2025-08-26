@@ -623,7 +623,7 @@
                 ]
             }
         },
-        "/api/medical-logs/{petId}": {
+        "/api/medicalpet-logs/{petId}": {
             "get": {
                 "tags": [
                     "Medical Logs"

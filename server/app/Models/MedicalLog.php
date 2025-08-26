@@ -36,7 +36,12 @@ class MedicalLog extends Model
      */
     public function pets()
     {
-        return $this->belongsToMany(Pet::class, 'pet_medicals');
+        return $this->belongsToMany(
+            Pet::class,
+            'pet_medicals',
+            'medical_id',
+            'pet_id'
+        );
     }
 
 }
