@@ -7,17 +7,9 @@ use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Vet\VetController;
 use App\Http\Controllers\Pet\PetProductController;
 use App\Http\Controllers\Pet\PetMarketController;
-use App\Http\Controllers\Order\OrderItemsController;
-use App\Http\Controllers\Order\CartController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Pet\ReportLostPetController;
 use App\Http\Controllers\Medical\MedicalLogController;
-use App\Http\Controllers\Medical\DiseaseLogController;
-use App\Http\Controllers\Pet\PetMedicalController;
-use App\Http\Controllers\Pet\PetDiseaseController;
-use App\Http\Controllers\Pet\PetReminderController;
-use App\Http\Controllers\User\UserReminderController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceProviderController;
@@ -156,81 +148,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/medical-logs/{medicalLog}', [MedicalLogController::class, 'destroy'])
         ->name('api.deleteMedicalLog');
-
-    Route::get('/disease-logs', [DiseaseLogController::class, 'index'])
-        ->name('api.getDiseaseLogs');
-
-    Route::get('/disease-logs/{diseaseLog}', [DiseaseLogController::class, 'show'])
-        ->name('api.getDiseaseLog');
-
-    Route::post('/disease-logs', [DiseaseLogController::class, 'store'])
-        ->name('api.createDiseaseLog');
-
-    Route::patch('/disease-logs/{diseaseLog}', [DiseaseLogController::class, 'update'])
-        ->name('api.updateDiseaseLog');
-
-    Route::delete('/disease-logs/{diseaseLog}', [DiseaseLogController::class, 'destroy'])
-        ->name('api.deleteDiseaseLog');
-
-    Route::get('/pet-diseases', [PetDiseaseController::class, 'index'])
-        ->name('api.getPetDiseases');
-
-    Route::get('/pet-diseases/{petDisease}', [PetDiseaseController::class, 'show'])
-        ->name('api.getPetDisease');
-
-    Route::post('/pet-diseases', [PetDiseaseController::class, 'store'])
-        ->name('api.createPetDisease');
-
-    Route::patch('/pet-diseases/{petDisease}', [PetDiseaseController::class, 'update'])
-        ->name('api.updatePetDisease');
-
-    Route::delete('/pet-diseases/{petDisease}', [PetDiseaseController::class, 'destroy'])
-        ->name('api.deletePetDisease');
-
-    Route::get('/reminders', [PetReminderController::class, 'index'])
-        ->name('api.getReminders');
-
-    Route::post('/reminders', [PetReminderController::class, 'store'])
-        ->name('api.createReminder');
-
-    Route::get('/reminders/{reminder}', [PetReminderController::class, 'show'])
-        ->name('api.getReminder');
-
-    Route::patch('/reminders/{reminder}', [PetReminderController::class, 'update'])
-        ->name('api.updateReminder');
-
-    Route::delete('/reminders/{reminder}', [PetReminderController::class, 'destroy'])
-        ->name('api.deleteReminder');
-
-    Route::get('/user-reminders', [UserReminderController::class, 'index'])
-        ->name('api.getUserReminders');
-
-    Route::post('/user-reminders', [UserReminderController::class, 'store'])
-        ->name('api.createUserReminder');
-
-    Route::get('/user-reminders/{userReminder}', [UserReminderController::class, 'show'])
-        ->name('api.getUserReminder');
-
-    Route::patch('/user-reminders/{userReminder}', [UserReminderController::class, 'update'])
-        ->name('api.updateUserReminder');
-
-    Route::delete('/user-reminders/{userReminder}', [UserReminderController::class, 'destroy'])
-        ->name('api.deleteUserReminder');
-
-    Route::get('/reviews', [ReviewController::class, 'index'])
-        ->name('api.getReviews');
-
-    Route::post('/reviews', [ReviewController::class, 'store'])
-        ->name('api.createReview');
-
-    Route::get('/reviews/{review}', [ReviewController::class, 'show'])
-        ->name('api.getReview');
-
-    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])
-        ->name('api.updateReview');
-
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
-        ->name('api.deleteReview');
 
     Route::get('/notifications', [NotificationController::class, 'index'])
         ->name('api.getNotifications');

@@ -26,17 +26,12 @@ class NotificationFactory extends Factory
     public function definition(): array
     {
         return [
-            // Associate a notification with a user by creating a new User
-            // or using an existing one. `User::factory()` is the standard way.
             'user_id' => User::factory(),
 
-            // Generate a fake sentence for the notification subject
             'subject' => $this->faker->sentence(),
 
-            // Generate a fake paragraph for the notification message
             'message' => $this->faker->paragraph(),
 
-            // Randomly set the notification as read or unread
             'is_read' => $this->faker->boolean(),
         ];
     }
