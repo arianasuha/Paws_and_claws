@@ -1,14 +1,17 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PetMedical extends Model
 {
     use HasFactory;
+
     public const UPDATED_AT = null;
     public const CREATED_AT = null;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -24,7 +27,7 @@ class PetMedical extends Model
      */
     public function pet()
     {
-        return $this->belongsTo(Pet::class, 'pet_id');
+        return $this->belongsTo(Pet::class);
     }
 
     /**
@@ -32,6 +35,6 @@ class PetMedical extends Model
      */
     public function medicallog()
     {
-        return $this->belongsTo(MedicalLog::class, 'medical_id');
+        return $this->belongsTo(MedicalLog::class);
     }
 }

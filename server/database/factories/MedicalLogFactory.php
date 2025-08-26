@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\MedicalLog;
-use App\Models\Appointment;
+use Illuminate\Support\Carbon; // Import Carbon for date generation
 
 class MedicalLogFactory extends Factory
 {
@@ -23,9 +23,16 @@ class MedicalLogFactory extends Factory
     public function definition(): array
     {
         return [
-            'app_id' => Appointment::factory(),
-            'treat_pres' => $this->faker->text(200),
-            'diagnosis' => $this->faker->text(200),
+            'visit_date' => $this->faker->date(),
+            'vet_name' => $this->faker->optional(0.8)->name('male' | 'female'), // 80% chance of having a vet name
+            'clinic_name' => $this->faker->optional(0.7)->company(), // 70% chance of having a clinic name
+            'reason_for_visit' => $this->faker->sentence(5),
+            'diagnosis' => $this->faker->sentence(4),
+            'treatment_prescribed' => $this->faker->text(200),
+            'notes' => $this->faker->optional(0.9)->text(500), // 90% chance of having notes
+            'attachment_url' => $this->faker->optional(0.2)->imageUrl(), // 20% chance of a mock URL
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ];
     }
 }

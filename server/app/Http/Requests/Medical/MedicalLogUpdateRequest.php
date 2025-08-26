@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Http\Requests\Medical;
-use App\Http\Requests\BaseRequest;
 
-class MedicalLogRegisterRequest extends BaseRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class MedicalLogUpdateRequest extends FormRequest
 {
-
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
+
         return true;
     }
 
@@ -18,7 +22,7 @@ class MedicalLogRegisterRequest extends BaseRequest
      */
     public function rules(): array
     {
-        return [
+       return [
             'pet_id' => 'required|integer|exists:pets,id',
             'visit_date' => 'required|date',
             'visit_reason' => 'nullable|string|max:255',

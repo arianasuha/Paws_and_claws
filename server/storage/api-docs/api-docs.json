@@ -628,8 +628,8 @@
                 "tags": [
                     "Medical Logs"
                 ],
-                "summary": "Get medical logs for a specific pet",
-                "description": "Returns a list of all medical logs associated with the specified pet, accessible only by the pet's owner.",
+                "summary": "Get and filter medical logs for a specific pet",
+                "description": "Returns a chronological list of medical logs for a pet, with optional filtering by date range, diagnosis, or keyword.",
                 "operationId": "getMedicalLogsByPet",
                 "parameters": [
                     {
@@ -641,6 +641,22 @@
                             "type": "integer",
                             "format": "int64"
                         }
+                    },
+                    {
+                        "name": "diagnosis",
+                        "in": "query",
+                        "description": "Filter by diagnosis keyword",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination (if enabled)",
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -649,10 +665,15 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/MedicalLog"
-                                    }
+                                    "properties": {
+                                        "medical_logs": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/MedicalLog"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -708,7 +729,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/MedicalLogRequest"
+                                "$ref": "#/components/schemas/MedicalLogRegisterRequest"
                             }
                         }
                     }
@@ -720,9 +741,12 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
+                                        "message": {
                                             "type": "string",
                                             "example": "Medical log created successfully."
+                                        },
+                                        "medical_log": {
+                                            "$ref": "#/components/schemas/MedicalLog"
                                         }
                                     },
                                     "type": "object"
@@ -768,7 +792,7 @@
                 ]
             }
         },
-        "/api/medical-logs/show/{medicalLog}": {
+        "/api/medical-logs/{medicalLog}": {
             "get": {
                 "tags": [
                     "Medical Logs"
@@ -835,9 +859,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/api/medical-logs/{medicalLog}": {
+            },
             "delete": {
                 "tags": [
                     "Medical Logs"
@@ -867,6 +889,92 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Medical log deleted successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Update a medical log",
+                "description": "Updates an existing medical log.",
+                "operationId": "updateMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalLogUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medical log updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Medical log updated successfully."
+                                        },
+                                        "medical_log": {
+                                            "$ref": "#/components/schemas/MedicalLog"
                                         }
                                     },
                                     "type": "object"
@@ -4485,13 +4593,8 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "vet_id": {
-                        "description": "ID of the vet who created the log",
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "log_date": {
-                        "description": "Date of the medical log",
+                    "visit_date": {
+                        "description": "Date of the medical visit",
                         "type": "string",
                         "format": "date"
                     },
@@ -4499,13 +4602,28 @@
                         "description": "Diagnosis from the vet",
                         "type": "string"
                     },
-                    "treatment": {
-                        "description": "Treatment plan or medication",
+                    "notes": {
+                        "description": "Additional notes for the log",
                         "type": "string",
                         "nullable": true
                     },
-                    "notes": {
-                        "description": "Additional notes for the log",
+                    "vet_name": {
+                        "description": "Name of the attending vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attachment_url": {
+                        "description": "URL of the attachment",
                         "type": "string",
                         "nullable": true
                     },
@@ -4518,23 +4636,16 @@
                         "description": "Last update timestamp",
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "pet": {
-                        "$ref": "#/components/schemas/Pet"
-                    },
-                    "vet": {
-                        "$ref": "#/components/schemas/Vet"
                     }
                 },
                 "type": "object"
             },
-            "MedicalLogRequest": {
-                "title": "MedicalLogRequest",
+            "MedicalLogRegisterRequest": {
+                "title": "MedicalLogRegisterRequest",
                 "description": "Medical log creation request payload",
                 "required": [
                     "pet_id",
-                    "vet_id",
-                    "log_date",
+                    "visit_date",
                     "diagnosis"
                 ],
                 "properties": {
@@ -4543,13 +4654,8 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "vet_id": {
-                        "description": "ID of the vet who created the log",
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "log_date": {
-                        "description": "Date of the medical log",
+                    "visit_date": {
+                        "description": "Date of the medical visit",
                         "type": "string",
                         "format": "date"
                     },
@@ -4557,8 +4663,52 @@
                         "description": "Diagnosis from the vet",
                         "type": "string"
                     },
-                    "treatment": {
-                        "description": "Treatment plan or medication",
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vet_name": {
+                        "description": "Name of the attending vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attachment_url": {
+                        "description": "URL of the attachment",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalLogUpdateRequest": {
+                "title": "MedicalLogUpdateRequest",
+                "description": "Medical log update request payload",
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "visit_date": {
+                        "description": "Date of the medical visit",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
                         "type": "string",
                         "nullable": true
                     },
@@ -4566,72 +4716,26 @@
                         "description": "Additional notes for the log",
                         "type": "string",
                         "nullable": true
-                    }
-                },
-                "type": "object"
-            },
-            "MedicalLogPaginatedResponse": {
-                "title": "MedicalLogPaginatedResponse",
-                "description": "Paginated list of medical logs",
-                "properties": {
-                    "current_page": {
-                        "type": "integer"
                     },
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MedicalLog"
-                        }
-                    },
-                    "first_page_url": {
-                        "type": "string"
-                    },
-                    "from": {
-                        "type": "integer"
-                    },
-                    "last_page": {
-                        "type": "integer"
-                    },
-                    "last_page_url": {
-                        "type": "string"
-                    },
-                    "links": {
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "url": {
-                                    "type": "string",
-                                    "nullable": true
-                                },
-                                "label": {
-                                    "type": "string"
-                                },
-                                "active": {
-                                    "type": "boolean"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "next_page_url": {
+                    "vet_name": {
+                        "description": "Name of the attending vet",
                         "type": "string",
                         "nullable": true
                     },
-                    "path": {
-                        "type": "string"
-                    },
-                    "per_page": {
-                        "type": "integer"
-                    },
-                    "prev_page_url": {
+                    "clinic_name": {
+                        "description": "Name of the clinic",
                         "type": "string",
                         "nullable": true
                     },
-                    "to": {
-                        "type": "integer"
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
                     },
-                    "total": {
-                        "type": "integer"
+                    "attachment_url": {
+                        "description": "URL of the attachment",
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "type": "object"

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Pet extends Model
 {
@@ -73,8 +74,10 @@ class Pet extends Model
         return $this->hasMany(Reminder::class);
     }
 
-    public function medicalLogs()
+    // In your Pet.php model file
+
+    public function medicalLogs(): BelongsToMany
     {
-        return $this->belongsToMany(MedicalLog::class, 'pet_medicals');
+        return $this->belongsToMany(MedicalLog::class, 'pet_medicals', 'pet_id', 'medical_id');
     }
 }
