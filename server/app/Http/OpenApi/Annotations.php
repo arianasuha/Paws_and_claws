@@ -649,7 +649,67 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="prescribed_medication", type="string", nullable=true, description="Medication name"),
  * @OA\Property(property="attachment_url", type="string", nullable=true, description="URL of the attachment"),
  * )
+ *
+ * @OA\Tag(
+ * name="Emergency Shelters",
+ * description="API Endpoints for managing emergency pet shelter requests"
+ * )
+ *
+ * @OA\Schema(
+ * schema="EmergencyShelter",
+ * title="EmergencyShelter",
+ * description="Emergency shelter request model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Emergency Shelter Request ID"),
+ * @OA\Property(property="user_id", type="integer", format="int64", description="ID of the user who made the request"),
+ * @OA\Property(property="reason", type="string", description="Reason for the emergency shelter request"),
+ * @OA\Property(property="status", type="string", enum={"pending", "accepted", "rejected", "completed"}, description="Status of the request"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * example={
+ * "id": 1, "user_id": 1, "reason": "My house was flooded due to heavy rain.",
+ * "status": "pending",
+ * "created_at": "2025-08-16T12:00:00.000000Z", "updated_at": "2025-08-16T12:00:00.000000Z"
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="EmergencyShelterRegisterRequest",
+ * title="EmergencyShelterRegisterRequest",
+ * description="Emergency shelter request creation payload",
+ * required={"pet_id", "request_date"},
+ * @OA\Property(property="pet_id", type="integer", description="ID of the lost pet"),
+ * @OA\Property(property="request_date", type="string", format="date", description="Date of the placing request for emergency shelter"),
+ * )
+ *
+ * @OA\Schema(
+ * schema="EmergencyShelterPaginatedResponse",
+ * title="EmergencyShelterPaginatedResponse",
+ * description="Paginated list of emergency shelter requests",
+ * @OA\Property(property="current_page", type="integer"),
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/EmergencyShelter")),
+ * @OA\Property(property="first_page_url", type="string"),
+ * @OA\Property(property="from", type="integer"),
+ * @OA\Property(property="last_page", type="integer"),
+ * @OA\Property(property="last_page_url", type="string"),
+ * @OA\Property(
+ * property="links",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="url", type="string", nullable=true),
+ * @OA\Property(property="label", type="string"),
+ * @OA\Property(property="active", type="boolean")
+ * )
+ * ),
+ * @OA\Property(property="next_page_url", type="string", nullable=true),
+ * @OA\Property(property="path", type="string"),
+ * @OA\Property(property="per_page", type="integer"),
+ * @OA\Property(property="prev_page_url", type="string", nullable=true),
+ * @OA\Property(property="to", type="integer"),
+ * @OA\Property(property="total", type="integer"),
+ * )
+ * )
  */
+
 class Annotations
 {
     // This class is just a container for the annotations. No actual code needed here.

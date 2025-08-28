@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Pet;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EmergencyShelter\EmergencyShelterRegisterRequest;
+use App\Http\Requests\Pet\EmergencyShelterRegisterRequest;
 use App\Models\EmergencyShelter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +15,43 @@ class EmergencyShelterController extends Controller
 {
     /**
      * Store a newly created emergency pet shelter request.
+     *
+     * @OA\Post(
+     * path="/api/shelters",
+     * operationId="createShelterRequest",
+     * tags={"Emergency Shelters"},
+     * summary="Create a new emergency pet shelter request",
+     * description="Creates a new emergency shelter request for a pet. The request is associated with the authenticated user.",
+     * security={{"sanctum": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Request payload for creating a new emergency shelter request",
+     * @OA\JsonContent(ref="#/components/schemas/EmergencyShelterRegisterRequest")
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Emergency pet shelter request created successfully.",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Emergency pet shelter request created successfully."),
+     * @OA\Property(property="shelter_request", ref="#/components/schemas/EmergencyShelter")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
      *
      * @param  EmergencyShelterRegisterRequest  $request
      * @return JsonResponse
@@ -29,15 +66,17 @@ class EmergencyShelterController extends Controller
             // Assign the authenticated user's ID
             $validatedData['user_id'] = Auth::id();
 
-            // Create the new emergency shelter request
+
+
             $emergencyShelter = EmergencyShelter::create($validatedData);
+
+            $emergencyShelter->load(['user', 'pet']);
 
             DB::commit();
 
             return response()->json([
-                "message" => "Emergency pet shelter request created successfully.",
-                "shelter_request" => $emergencyShelter
-            ], 201);
+                "success" => "Emergency pet shelter request created successfully."],
+                 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -48,6 +87,33 @@ class EmergencyShelterController extends Controller
 
     /**
      * Display a list of all emergency pet shelter requests for the authenticated user.
+     *
+     * @OA\Get(
+     * path="/api/shelters",
+     * operationId="getShelterRequests",
+     * tags={"Emergency Shelters"},
+     * summary="Get all emergency pet shelter requests for the authenticated user",
+     * description="Retrieves a list of all emergency shelter requests submitted by the currently authenticated user.",
+     * security={{"sanctum": {}}},
+     * @OA\Response(
+     * response=200,
+     * description="A list of emergency shelter requests.",
+     * @OA\JsonContent(
+     * type="array",
+     * @OA\Items(ref="#/components/schemas/EmergencyShelter")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
      *
      * @return JsonResponse
      */
@@ -68,15 +134,58 @@ class EmergencyShelterController extends Controller
     /**
      * Display the specified emergency pet shelter request.
      *
+     * @OA\Get(
+     * path="/api/shelters/{shelterId}",
+     * operationId="showShelterRequest",
+     * tags={"Emergency Shelters"},
+     * summary="Get a specific emergency pet shelter request",
+     * description="Retrieves a single emergency shelter request by its ID, for the authenticated user.",
+     * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="shelterId",
+     * in="path",
+     * required=true,
+     * description="ID of the emergency shelter request",
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Emergency shelter request details.",
+     * @OA\JsonContent(ref="#/components/schemas/EmergencyShelter")
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Not Found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     *
      * @param  string  $shelterId
      * @return JsonResponse
      */
     public function show(string $shelterId): JsonResponse
     {
         try {
-            $shelterRequest = EmergencyShelter::where('shelter_id', $shelterId)
-                ->where('user_id', Auth::id())
-                ->firstOrFail();
+            $shelterRequest = EmergencyShelter::with([
+                'user' => function ($query) {
+                    $query->select('id', 'username', 'email');
+                },
+                'pet'
+            ])->find($shelterId);
+
+            if (!$shelterRequest) {
+                return response()->json(['error' => 'Emergency shelter request not found or unauthorized.'], 404);
+            }
 
             return response()->json($shelterRequest, 200);
 
@@ -90,6 +199,41 @@ class EmergencyShelterController extends Controller
 
     /**
      * Remove the specified emergency pet shelter request.
+     *
+     * @OA\Delete(
+     * path="/api/shelters/{shelterId}",
+     * operationId="deleteShelterRequest",
+     * tags={"Emergency Shelters"},
+     * summary="Delete an emergency pet shelter request",
+     * description="Deletes an emergency shelter request by its ID, if the request belongs to the authenticated user.",
+     * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="shelterId",
+     * in="path",
+     * required=true,
+     * description="ID of the emergency shelter request to delete",
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Emergency shelter request deleted successfully."
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Not Found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
      *
      * @param  string  $shelterId
      * @return JsonResponse
@@ -107,7 +251,7 @@ class EmergencyShelterController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Emergency shelter request deleted successfully.'], 200);
+            return response()->json(null, 204);
 
         } catch (ModelNotFoundException $e) {
             DB::rollBack();

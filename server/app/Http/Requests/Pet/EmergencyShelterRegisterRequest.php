@@ -8,22 +8,26 @@ class EmergencyShelterRegisterRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return true;
+        // Still a good idea to ensure an authenticated user is making the request
+        return $this->user() !== null;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'pet_id' => 'required|integer|exists:pets,id',
-            'request_date' => 'required|date',
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'pet_id' => ['required', 'integer', 'exists:pets,id'],
+            'request_date' => ['sometimes', 'date'],
         ];
     }
 }

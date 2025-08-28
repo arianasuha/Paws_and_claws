@@ -1361,6 +1361,258 @@
                 ]
             }
         },
+        "/api/shelters": {
+            "get": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Get all emergency pet shelter requests for the authenticated user",
+                "description": "Retrieves a list of all emergency shelter requests submitted by the currently authenticated user.",
+                "operationId": "getShelterRequests",
+                "responses": {
+                    "200": {
+                        "description": "A list of emergency shelter requests.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/EmergencyShelter"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Create a new emergency pet shelter request",
+                "description": "Creates a new emergency shelter request for a pet. The request is associated with the authenticated user.",
+                "operationId": "createShelterRequest",
+                "requestBody": {
+                    "description": "Request payload for creating a new emergency shelter request",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmergencyShelterRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Emergency pet shelter request created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Emergency pet shelter request created successfully."
+                                        },
+                                        "shelter_request": {
+                                            "$ref": "#/components/schemas/EmergencyShelter"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/shelters/{shelterId}": {
+            "get": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Get a specific emergency pet shelter request",
+                "description": "Retrieves a single emergency shelter request by its ID, for the authenticated user.",
+                "operationId": "showShelterRequest",
+                "parameters": [
+                    {
+                        "name": "shelterId",
+                        "in": "path",
+                        "description": "ID of the emergency shelter request",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Emergency shelter request details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmergencyShelter"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Delete an emergency pet shelter request",
+                "description": "Deletes an emergency shelter request by its ID, if the request belongs to the authenticated user.",
+                "operationId": "deleteShelterRequest",
+                "parameters": [
+                    {
+                        "name": "shelterId",
+                        "in": "path",
+                        "description": "ID of the emergency shelter request to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Emergency shelter request deleted successfully."
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/pets": {
             "get": {
                 "tags": [
@@ -4739,6 +4991,141 @@
                     }
                 },
                 "type": "object"
+            },
+            "EmergencyShelter": {
+                "title": "EmergencyShelter",
+                "description": "Emergency shelter request model",
+                "properties": {
+                    "id": {
+                        "description": "Emergency Shelter Request ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who made the request",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "reason": {
+                        "description": "Reason for the emergency shelter request",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status of the request",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "rejected",
+                            "completed"
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "user_id": 1,
+                    "reason": "My house was flooded due to heavy rain.",
+                    "status": "pending",
+                    "created_at": "2025-08-16T12:00:00.000000Z",
+                    "updated_at": "2025-08-16T12:00:00.000000Z"
+                }
+            },
+            "EmergencyShelterRegisterRequest": {
+                "title": "EmergencyShelterRegisterRequest",
+                "description": "Emergency shelter request creation payload",
+                "required": [
+                    "pet_id",
+                    "request_date"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the lost pet",
+                        "type": "integer"
+                    },
+                    "request_date": {
+                        "description": "Date of the placing request for emergency shelter",
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "EmergencyShelterPaginatedResponse": {
+                "title": "EmergencyShelterPaginatedResponse",
+                "description": "Paginated list of emergency shelter requests",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmergencyShelter"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -4780,6 +5167,10 @@
         {
             "name": "Lost Pets",
             "description": "API Endpoints for reporting and managing lost pets"
+        },
+        {
+            "name": "Emergency Shelters",
+            "description": "API Endpoints for managing emergency pet shelter requests"
         },
         {
             "name": "Authentication",

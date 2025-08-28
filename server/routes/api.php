@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Requests\EmergencyShelter\EmergencyShelterUpdateRequest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
@@ -13,7 +14,7 @@ use App\Http\Controllers\Medical\MedicalLogController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceProviderController;
-
+use App\Http\Controllers\Pet\EmergencyShelterController;
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('api.login');
@@ -189,5 +190,17 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.updateServiceProvider');
 
     Route::delete('/service-providers/{id}', [ServiceProviderController::class, 'destroy'])
+        ->name('api.deleteServiceProvider');
+
+    Route::get('/shelters', [EmergencyShelterController::class, 'index'])
+        ->name('api.getServiceProviders');
+
+    Route::get('/shelters/{shelterId}', [EmergencyShelterController::class, 'show'])
+        ->name('api.getServiceProvider');
+
+    Route::post('/shelters', [EmergencyShelterController::class, 'store'])
+        ->name('api.updateServiceProvider');
+
+    Route::delete('/shelters/{shelterId}', [EmergencyShelterController::class, 'destroy'])
         ->name('api.deleteServiceProvider');
 });
