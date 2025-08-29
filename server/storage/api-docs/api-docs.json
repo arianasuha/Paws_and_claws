@@ -623,6 +623,403 @@
                 ]
             }
         },
+        "/api/medicalpet-logs/{petId}": {
+            "get": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Get and filter medical logs for a specific pet",
+                "description": "Returns a chronological list of medical logs for a pet, with optional filtering by date range, diagnosis, or keyword.",
+                "operationId": "getMedicalLogsByPet",
+                "parameters": [
+                    {
+                        "name": "petId",
+                        "in": "path",
+                        "description": "ID of the pet",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "diagnosis",
+                        "in": "query",
+                        "description": "Filter by diagnosis keyword",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination (if enabled)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "medical_logs": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/MedicalLog"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/medical-logs": {
+            "post": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Create a new medical log",
+                "description": "Creates a new medical log and associates it with a pet.",
+                "operationId": "storeMedicalLog",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalLogRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medical log created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Medical log created successfully."
+                                        },
+                                        "medical_log": {
+                                            "$ref": "#/components/schemas/MedicalLog"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/medical-logs/{medicalLog}": {
+            "get": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Get a single medical log",
+                "description": "Returns a single medical log by ID, accessible only by the pet's owner.",
+                "operationId": "showMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalLog"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Delete a medical log",
+                "description": "Deletes a medical log by ID, accessible only by the pet's owner.",
+                "operationId": "deleteMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Medical log deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Medical log deleted successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Medical Logs"
+                ],
+                "summary": "Update a medical log",
+                "description": "Updates an existing medical log.",
+                "operationId": "updateMedicalLog",
+                "parameters": [
+                    {
+                        "name": "medicalLog",
+                        "in": "path",
+                        "description": "ID of the medical log to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalLogUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medical log updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Medical log updated successfully."
+                                        },
+                                        "medical_log": {
+                                            "$ref": "#/components/schemas/MedicalLog"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical log not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/notifications": {
             "get": {
                 "tags": [
@@ -932,6 +1329,285 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/shelters": {
+            "get": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Get all emergency pet shelter requests for the authenticated user",
+                "description": "Retrieves a list of all emergency shelter requests submitted by the currently authenticated user.",
+                "operationId": "getShelterRequests",
+                "responses": {
+                    "200": {
+                        "description": "A list of emergency shelter requests.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/EmergencyShelter"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Create a new emergency pet shelter request",
+                "description": "Creates a new emergency shelter request for the authenticated user's pet. The system validates that the pet belongs to the user before creating the request.",
+                "operationId": "createEmergencyShelterRequest",
+                "requestBody": {
+                    "description": "Request payload for creating a new emergency shelter request",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pet_id",
+                                    "request_date"
+                                ],
+                                "properties": {
+                                    "pet_id": {
+                                        "description": "ID of the pet needing shelter",
+                                        "type": "integer"
+                                    },
+                                    "request_date": {
+                                        "description": "Date of the placing request for emergency shelter",
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Emergency pet shelter request created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Emergency pet shelter request created successfully."
+                                        },
+                                        "shelter_request": {
+                                            "$ref": "#/components/schemas/EmergencyShelter"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error or Unauthorized Pet Access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "pet_id": [
+                                                    "The selected pet does not belong to your account."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/shelterspet/{shelterId}": {
+            "get": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Get a specific emergency pet shelter request",
+                "description": "Retrieves a single emergency shelter request by its ID, for the authenticated user.",
+                "operationId": "showShelterRequest",
+                "parameters": [
+                    {
+                        "name": "shelterId",
+                        "in": "path",
+                        "description": "ID of the emergency shelter request",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Emergency shelter request details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmergencyShelter"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/shelters/{shelterId}": {
+            "delete": {
+                "tags": [
+                    "Emergency Shelters"
+                ],
+                "summary": "Delete an emergency pet shelter request",
+                "description": "Deletes an emergency shelter request by its ID, if the request belongs to the authenticated user.",
+                "operationId": "deleteShelterRequest",
+                "parameters": [
+                    {
+                        "name": "shelterId",
+                        "in": "path",
+                        "description": "ID of the emergency shelter request to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Emergency shelter request deleted successfully."
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -4181,6 +4857,302 @@
                     }
                 },
                 "type": "object"
+            },
+            "MedicalLog": {
+                "title": "MedicalLog",
+                "description": "Medical Log model",
+                "properties": {
+                    "id": {
+                        "description": "Medical Log ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "visit_date": {
+                        "description": "Date of the medical visit",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
+                        "type": "string"
+                    },
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vet_name": {
+                        "description": "Name of the attending vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attachment_url": {
+                        "description": "URL of the attachment",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalLogRegisterRequest": {
+                "title": "MedicalLogRegisterRequest",
+                "description": "Medical log creation request payload",
+                "required": [
+                    "pet_id",
+                    "visit_date",
+                    "diagnosis"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "visit_date": {
+                        "description": "Date of the medical visit",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
+                        "type": "string"
+                    },
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vet_name": {
+                        "description": "Name of the attending vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attachment_url": {
+                        "description": "URL of the attachment",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalLogUpdateRequest": {
+                "title": "MedicalLogUpdateRequest",
+                "description": "Medical log update request payload",
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the pet the log is for",
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "visit_date": {
+                        "description": "Date of the medical visit",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "diagnosis": {
+                        "description": "Diagnosis from the vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "description": "Additional notes for the log",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vet_name": {
+                        "description": "Name of the attending vet",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "clinic_name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "prescribed_medication": {
+                        "description": "Medication name",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attachment_url": {
+                        "description": "URL of the attachment",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "EmergencyShelter": {
+                "title": "EmergencyShelter",
+                "description": "Emergency shelter request model",
+                "properties": {
+                    "id": {
+                        "description": "Emergency Shelter Request ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who made the request",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "reason": {
+                        "description": "Reason for the emergency shelter request",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status of the request",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "rejected",
+                            "completed"
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "user_id": 1,
+                    "reason": "My house was flooded due to heavy rain.",
+                    "status": "pending",
+                    "created_at": "2025-08-16T12:00:00.000000Z",
+                    "updated_at": "2025-08-16T12:00:00.000000Z"
+                }
+            },
+            "EmergencyShelterRegisterRequest": {
+                "title": "EmergencyShelterRegisterRequest",
+                "description": "Emergency shelter request creation payload",
+                "required": [
+                    "pet_id",
+                    "request_date"
+                ],
+                "properties": {
+                    "pet_id": {
+                        "description": "ID of the lost pet",
+                        "type": "integer"
+                    },
+                    "request_date": {
+                        "description": "Date of the placing request for emergency shelter",
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "EmergencyShelterPaginatedResponse": {
+                "title": "EmergencyShelterPaginatedResponse",
+                "description": "Paginated list of emergency shelter requests",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmergencyShelter"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -4224,12 +5196,20 @@
             "description": "API Endpoints for reporting and managing lost pets"
         },
         {
+            "name": "Emergency Shelters",
+            "description": "API Endpoints for managing emergency pet shelter requests"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
         },
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Medical Logs",
+            "description": "Medical Logs"
         }
     ]
 }

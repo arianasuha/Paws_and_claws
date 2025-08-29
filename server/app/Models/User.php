@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use \Illuminate\Validation\ValidationException;
@@ -12,6 +13,7 @@ use Spatie\Sluggable\SlugOptions;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Vet;
+use App\Models\EmergencyShelter;
 
 class User extends Authenticatable
 {
@@ -150,6 +152,11 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function emergencyShelters(): HasMany
+    {
+        return $this->hasMany(EmergencyShelter::class);
     }
 
 }

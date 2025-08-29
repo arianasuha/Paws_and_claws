@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pet extends Model
 {
@@ -48,11 +50,6 @@ class Pet extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function diseases()
-    {
-        return $this->belongsToMany(DiseaseLog::class, 'pet_diseases', 'pet_id', 'disease_id');
-    }
-
     public function petMarkets()
     {
         return $this->hasMany(PetMarket::class);
@@ -68,13 +65,13 @@ class Pet extends Model
         return $this->hasOne(ReportLostPet::class);
     }
 
-    public function reminders()
+    public function medicalLogs(): BelongsToMany
     {
-        return $this->hasMany(Reminder::class);
+        return $this->belongsToMany(MedicalLog::class, 'pet_medicals', 'pet_id', 'medical_id');
     }
 
-    public function medicalLogs()
+    public function emergencyShelters(): HasMany
     {
-        return $this->belongsToMany(MedicalLog::class, 'pet_medicals');
+        return $this->hasMany(EmergencyShelter::class, 'pet_id', 'id');
     }
 }

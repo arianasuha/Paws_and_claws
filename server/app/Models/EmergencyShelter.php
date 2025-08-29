@@ -6,11 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Reminder extends Model
+class EmergencyShelter extends Model
 {
     use HasFactory;
     public const UPDATED_AT = null;
     public const CREATED_AT = null;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'emergency_pet_shelter';
+
 
     /**
      * The attributes that are mass assignable.
@@ -19,23 +27,19 @@ class Reminder extends Model
      */
     protected $fillable = [
         'pet_id',
-        'med_name',
-        'dosage',
-        'start_date',
-        'end_date',
-        'reminder_time',
+        'user_id',
+        'request_date',
     ];
 
-    /**
-     * Get the pet that the reminder is for.
-     */
+
     public function pet(): BelongsTo
     {
         return $this->belongsTo(Pet::class);
     }
 
-    public function users()
+
+    public function user(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'user_reminders');
+        return $this->belongsTo(User::class);
     }
 }

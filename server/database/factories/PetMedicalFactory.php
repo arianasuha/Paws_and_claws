@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Factories;
+
 use App\Models\MedicalLog;
 use App\Models\Pet;
 use Illuminate\Database\Eloquent\Factories\Factory;
