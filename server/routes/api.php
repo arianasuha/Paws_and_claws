@@ -195,7 +195,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/shelters', [EmergencyShelterController::class, 'index'])
         ->name('api.getServiceProviders');
 
-    Route::get('/shelters/{shelterId}', [EmergencyShelterController::class, 'show'])
+    Route::get('/shelterspet/{shelterId}', [EmergencyShelterController::class, 'show'])
         ->name('api.getServiceProvider');
 
     Route::post('/shelters', [EmergencyShelterController::class, 'store'])

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\EmergencyShelter;
+namespace App\Http\Requests\Pet;
 
 use App\Http\Requests\BaseRequest;
 
@@ -25,7 +25,6 @@ class EmergencyShelterRegisterRequest extends BaseRequest
     public function rules()
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
             'pet_id' => ['required', 'integer', 'exists:pets,id'],
             'request_date' => ['sometimes', 'date'],
         ];

@@ -9,24 +9,27 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Pet;
+
 
 class EmergencyShelterController extends Controller
 {
     /**
-     * Store a newly created emergency pet shelter request.
-     *
      * @OA\Post(
      * path="/api/shelters",
-     * operationId="createShelterRequest",
+     * operationId="createEmergencyShelterRequest",
      * tags={"Emergency Shelters"},
      * summary="Create a new emergency pet shelter request",
-     * description="Creates a new emergency shelter request for a pet. The request is associated with the authenticated user.",
+     * description="Creates a new emergency shelter request for the authenticated user's pet. The system validates that the pet belongs to the user before creating the request.",
      * security={{"sanctum": {}}},
      * @OA\RequestBody(
      * required=true,
      * description="Request payload for creating a new emergency shelter request",
-     * @OA\JsonContent(ref="#/components/schemas/EmergencyShelterRegisterRequest")
+     * @OA\JsonContent(
+     * required={"pet_id", "request_date"},
+     * @OA\Property(property="pet_id", type="integer", description="ID of the pet needing shelter"),
+     * @OA\Property(property="request_date", type="string", format="date", description="Date of the placing request for emergency shelter"),
+     * )
      * ),
      * @OA\Response(
      * response=201,
@@ -38,8 +41,10 @@ class EmergencyShelterController extends Controller
      * ),
      * @OA\Response(
      * response=422,
-     * description="Validation Error",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * description="Validation Error or Unauthorized Pet Access",
+     * @OA\JsonContent(
+     * @OA\Property(property="errors", type="object", example={"pet_id": {"The selected pet does not belong to your account."}})
+     * )
      * ),
      * @OA\Response(
      * response=401,
@@ -52,38 +57,54 @@ class EmergencyShelterController extends Controller
      * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      * )
      * )
-     *
-     * @param  EmergencyShelterRegisterRequest  $request
-     * @return JsonResponse
      */
     public function store(EmergencyShelterRegisterRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-
         try {
-            $validatedData = $request->validated();
+            $userId = $request->user()->id;
+            $requestDate = $request->request_date;
 
-            // Assign the authenticated user's ID
-            $validatedData['user_id'] = Auth::id();
+            $pet = Pet::where('id', $request->pet_id)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$pet) {
+                return response()->json([
+                    'errors' => "You are unauthorized to place an emergency shelter request for this pet."
+                ], 403);
+            }
+
+            $existingRequest = EmergencyShelter::where('user_id', $userId)
+                ->where('request_date', $requestDate)
+                ->first();
+
+            if ($existingRequest) {
+                return response()->json([
+                    'errors' => "You have already submitted an emergency shelter request on this date."
+                ], 409);
+            }
+            $emergencyShelter = EmergencyShelter::create([
+                'user_id' => $userId,
+                'pet_id' => $request->pet_id,
+                'request_date' => $request->request_date,
+            ]);
 
 
+            $emergencyShelter->load('pet', 'user');
 
-            $emergencyShelter = EmergencyShelter::create($validatedData);
-
-            $emergencyShelter->load(['user', 'pet']);
-
-            DB::commit();
-
-            return response()->json([
-                "success" => "Emergency pet shelter request created successfully."],
-                 201);
+            return response()->json(
+                [
+                    "success" => "Emergency pet shelter request created successfully."
+                ],
+                201
+            );
 
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Error storing emergency shelter request: ' . $e->getMessage());
             return response()->json(["errors" => "Failed to create emergency shelter request."], 500);
         }
     }
+
 
     /**
      * Display a list of all emergency pet shelter requests for the authenticated user.
@@ -120,8 +141,19 @@ class EmergencyShelterController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $shelterRequests = EmergencyShelter::where('user_id', Auth::id())
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['error' => 'You must be logged in to view your requests.'], 401);
+            }
+
+            $shelterRequests = EmergencyShelter::with(['pet'])
+                ->where('user_id', $user->id)
                 ->get();
+
+            if ($shelterRequests->isEmpty()) {
+                return response()->json([], 200);
+            }
 
             return response()->json($shelterRequests, 200);
 
@@ -135,7 +167,7 @@ class EmergencyShelterController extends Controller
      * Display the specified emergency pet shelter request.
      *
      * @OA\Get(
-     * path="/api/shelters/{shelterId}",
+     * path="/api/shelterspet/{shelterId}",
      * operationId="showShelterRequest",
      * tags={"Emergency Shelters"},
      * summary="Get a specific emergency pet shelter request",
@@ -176,27 +208,34 @@ class EmergencyShelterController extends Controller
     public function show(string $shelterId): JsonResponse
     {
         try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['error' => 'You must be logged in to view this request.'], 401);
+            }
+
             $shelterRequest = EmergencyShelter::with([
                 'user' => function ($query) {
                     $query->select('id', 'username', 'email');
                 },
                 'pet'
-            ])->find($shelterId);
+            ])
+                ->where('id', $shelterId)
+                ->where('user_id', $user->id)
+                ->first();
 
             if (!$shelterRequest) {
-                return response()->json(['error' => 'Emergency shelter request not found or unauthorized.'], 404);
+                return response()->json(['error' => 'You are not authorized to view this shelter request.'], 404);
             }
 
             return response()->json($shelterRequest, 200);
 
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Emergency shelter request not found or unauthorized.'], 404);
         } catch (\Exception $e) {
-            Log::error('Error fetching emergency shelter request: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not fetch emergency shelter request.'], 500);
+            return response()->json([
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
-
     /**
      * Remove the specified emergency pet shelter request.
      *
@@ -240,26 +279,27 @@ class EmergencyShelterController extends Controller
      */
     public function destroy(string $shelterId): JsonResponse
     {
-        DB::beginTransaction();
 
         try {
-            $shelterRequest = EmergencyShelter::where('shelter_id', $shelterId)
+            $shelterRequest = EmergencyShelter::where('id', $shelterId)
                 ->where('user_id', Auth::id())
-                ->firstOrFail();
+                ->first();
+
+
+            if (!$shelterRequest) {
+                return response()->json(['error' => 'You are unauthorized to delete this request.'], 403);
+            }
+
 
             $shelterRequest->delete();
 
-            DB::commit();
 
             return response()->json(null, 204);
 
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Emergency shelter request not found or unauthorized.'], 404);
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error deleting emergency shelter request: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not delete emergency shelter request.'], 500);
+            return response()->json([
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 }
