@@ -2,16 +2,17 @@
 
 namespace App\Http\Requests\Order;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
+use Illuminate\Validation\Rule;
 
-class OrderUpdateRequest extends FormRequest
+class OrderUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,20 @@ class OrderUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'order_status' => ['sometimes', 'string', Rule::in(['delivered', 'canceled'])],
+            'subscribe_type' => [
+                'sometimes',
+                'string',
+                Rule::in(['none', 'weekly', 'monthly']),
+            ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'order_status.in' => 'Invalid order status.',
+            'subscribe_type.in' => 'Invalid subscribe type.',
         ];
     }
 }

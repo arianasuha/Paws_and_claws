@@ -65,6 +65,26 @@ use OpenApi\Annotations as OA;
  * description="API Endpoints for reporting and managing lost pets"
  * )
  *
+ * @OA\Tag(
+ * name="Emergency Shelters",
+ * description="API Endpoints for managing emergency pet shelter requests"
+ * )
+ *
+ * @OA\Tag(
+ * name="Cart",
+ * description="API Endpoints for managing the shopping cart"
+ * )
+ *
+ * @OA\Tag(
+ * name="PetProducts",
+ * description="API Endpoints for managing pet products"
+ * )
+ *
+ * @OA\Tag(
+ * name="Categories",
+ * description="API Endpoints for managing product categories"
+ * )
+ *
  * @OA\Schema(
  * schema="ErrorResponse",
  * title="Error Response",
@@ -708,8 +728,53 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="total", type="integer"),
  * )
  * )
+ *
+ * @OA\Schema(
+ * schema="CartItem",
+ * title="CartItem",
+ * description="Cart item model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Cart item ID"),
+ * @OA\Property(property="cart_id", type="integer", format="int64", description="ID of the associated cart"),
+ * @OA\Property(property="product_id", type="integer", format="int64", description="ID of the product in the cart"),
+ * @OA\Property(property="quantity", type="integer", description="Quantity of the product"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * @OA\Property(property="product", ref="#/components/schemas/PetProduct", description="Associated product information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="CartItemStoreRequest",
+ * title="CartItemStoreRequest",
+ * description="Request payload to add a product to the cart",
+ * required={"product_id"},
+ * @OA\Property(property="product_id", type="integer", description="ID of the pet product"),
+ * @OA\Property(property="quantity", type="integer", nullable=true, description="Quantity to add (defaults to 1)")
+ * )
+ *
+ * @OA\Schema(
+ * schema="CartItemUpdateRequest",
+ * title="CartItemUpdateRequest",
+ * description="Request payload to update a product in the cart",
+ * required={"quantity"},
+ * @OA\Property(property="quantity", type="integer", description="New quantity for the cart item")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProduct",
+ * title="PetProduct",
+ * description="Pet Product model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Product ID"),
+ * @OA\Property(property="category_id", type="integer", format="int64", description="ID of the product's category"),
+ * @OA\Property(property="name", type="string", description="Name of the product"),
+ * @OA\Property(property="description", type="string", description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
+ * @OA\Property(property="stock", type="integer", description="Available stock of the product"),
+ * @OA\Property(property="image_url", type="string", nullable=true, description="URL of the product image"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp")
+ * )
+ *
  */
-
 class Annotations
 {
     // This class is just a container for the annotations. No actual code needed here.
