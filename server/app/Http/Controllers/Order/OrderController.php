@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Shop\RegisterOrderRequest;
-use App\Http\Requests\Shop\UpdateOrderRequest;
+use App\Http\Requests\Order\OrderRegisterRequest;
+use App\Http\Requests\Order\OrderUpdateRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Prescription;
@@ -250,7 +250,7 @@ class OrderController extends Controller
      * )
      * )
      */
-    public function create(RegisterOrderRequest $request): JsonResponse
+    public function create(OrderRegisterRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
@@ -396,7 +396,7 @@ class OrderController extends Controller
      * )
      * )
      */
-    public function update(UpdateOrderRequest $request, string $order)
+    public function update(OrderUpdateRequest $request, string $order)
     {
         $validated = $request->validated();
         try {
