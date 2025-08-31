@@ -9,6 +9,7 @@ use App\Models\PetProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PetProductController extends Controller
 {
@@ -82,12 +83,15 @@ class PetProductController extends Controller
 
             return response()->json($petProducts, 200);
         } catch (\Exception $e) {
+            // Log the full exception for detailed error tracking
+            Log::error('Error retrieving pet products: ' . $e->getMessage());
+
+            // Return the specific error message to the user for immediate debugging
             return response()->json([
-                'errors' => 'Failed to retrieve pet products.'
+                'errors' => 'Failed to retrieve pet products: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
      * @OA\Post(
      * path="/api/pet-products",
@@ -144,8 +148,12 @@ class PetProductController extends Controller
                 "success" => "Pet Product created successfully.",
             ], 201);
         } catch (\Exception $e) {
+            // Log the full exception for detailed error tracking
+            Log::error('Error creating pet product: ' . $e->getMessage());
+
+            // Return the specific error message to the user for immediate debugging
             return response()->json([
-                'errors' => 'Failed to create pet product.'
+                'errors' => 'Failed to create pet product: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -202,7 +210,7 @@ class PetProductController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      * path="/api/pet-products/{petProductid}",
      * operationId="updatePetProduct",
      * tags={"PetProducts"},

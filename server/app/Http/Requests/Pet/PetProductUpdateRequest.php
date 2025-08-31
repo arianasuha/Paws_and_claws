@@ -24,10 +24,10 @@ class PetProductUpdateRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('pet_products')->ignore($this->pet_product)],
-            'description' => 'nullable|string',
+            'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'image_url' => 'nullable|image|max:2048',
+            'image_url' => 'sometimes|image|max:2048',
         ];
     }
 
@@ -38,6 +38,7 @@ class PetProductUpdateRequest extends FormRequest
     {
         return [
             'name.unique' => 'A product with this name already exists.',
+            'category_id.exists' => 'The selected category does not exist.',
         ];
     }
 
