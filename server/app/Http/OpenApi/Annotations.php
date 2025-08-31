@@ -729,51 +729,78 @@ use OpenApi\Annotations as OA;
  * )
  * )
  *
- * @OA\Schema(
- * schema="CartItem",
- * title="CartItem",
- * description="Cart item model",
- * @OA\Property(property="id", type="integer", format="int64", description="Cart item ID"),
- * @OA\Property(property="cart_id", type="integer", format="int64", description="ID of the associated cart"),
- * @OA\Property(property="product_id", type="integer", format="int64", description="ID of the product in the cart"),
- * @OA\Property(property="quantity", type="integer", description="Quantity of the product"),
- * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
- * @OA\Property(property="product", ref="#/components/schemas/PetProduct", description="Associated product information")
- * )
- *
- * @OA\Schema(
- * schema="CartItemStoreRequest",
- * title="CartItemStoreRequest",
- * description="Request payload to add a product to the cart",
- * required={"product_id"},
- * @OA\Property(property="product_id", type="integer", description="ID of the pet product"),
- * @OA\Property(property="quantity", type="integer", nullable=true, description="Quantity to add (defaults to 1)")
- * )
- *
- * @OA\Schema(
- * schema="CartItemUpdateRequest",
- * title="CartItemUpdateRequest",
- * description="Request payload to update a product in the cart",
- * required={"quantity"},
- * @OA\Property(property="quantity", type="integer", description="New quantity for the cart item")
+ * @OA\Tag(
+ * name="PetProducts",
+ * description="API Endpoints for managing pet products"
  * )
  *
  * @OA\Schema(
  * schema="PetProduct",
  * title="PetProduct",
  * description="Pet Product model",
- * @OA\Property(property="id", type="integer", format="int64", description="Product ID"),
- * @OA\Property(property="category_id", type="integer", format="int64", description="ID of the product's category"),
- * @OA\Property(property="name", type="string", description="Name of the product"),
- * @OA\Property(property="description", type="string", description="Description of the product"),
+ * @OA\Property(property="id", type="integer", format="int64", description="Pet Product ID"),
+ * @OA\Property(property="name", type="string", description="Name of the pet product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
  * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
- * @OA\Property(property="stock", type="integer", description="Available stock of the product"),
- * @OA\Property(property="image_url", type="string", nullable=true, description="URL of the product image"),
+ * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", nullable=true, description="URL to the product image"),
+ * @OA\Property(property="category_id", type="integer", format="int64", description="ID of the product's category"),
  * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp")
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * @OA\Property(property="category", ref="#/components/schemas/Category", description="Associated category information")
  * )
  *
+ * @OA\Schema(
+ * schema="PetProductPaginatedResponse",
+ * title="PetProductPaginatedResponse",
+ * description="Paginated list of pet products",
+ * @OA\Property(property="current_page", type="integer"),
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/PetProduct")),
+ * @OA\Property(property="first_page_url", type="string"),
+ * @OA\Property(property="from", type="integer"),
+ * @OA\Property(property="last_page", type="integer"),
+ * @OA\Property(property="last_page_url", type="string"),
+ * @OA\Property(
+ * property="links",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="url", type="string", nullable=true),
+ * @OA\Property(property="label", type="string"),
+ * @OA\Property(property="active", type="boolean")
+ * )
+ * ),
+ * @OA\Property(property="next_page_url", type="string", nullable=true),
+ * @OA\Property(property="path", type="string"),
+ * @OA\Property(property="per_page", type="integer"),
+ * @OA\Property(property="prev_page_url", type="string", nullable=true),
+ * @OA\Property(property="to", type="integer"),
+ * @OA\Property(property="total", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProductRegisterRequest",
+ * title="PetProductRegisterRequest",
+ * description="Pet product registration payload",
+ * required={"name", "price", "quantity", "category_id"},
+ * @OA\Property(property="name", type="string", description="Name of the product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
+ * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
+ * @OA\Property(property="category_id", type="integer", description="ID of the product's category")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProductUpdateRequest",
+ * title="PetProductUpdateRequest",
+ * description="Pet product update payload",
+ * @OA\Property(property="name", type="string", nullable=true, description="Name of the product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", nullable=true, description="Price of the product"),
+ * @OA\Property(property="quantity", type="integer", nullable=true, description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
+ * @OA\Property(property="category_id", type="integer", nullable=true, description="ID of the product's category")
+ * )
  */
 class Annotations
 {
