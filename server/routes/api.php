@@ -15,6 +15,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceProviderController;
 use App\Http\Controllers\Pet\EmergencyShelterController;
+use App\Http\Controllers\Order\CartItemController;
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('api.login');
@@ -203,4 +204,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/shelters/{shelterId}', [EmergencyShelterController::class, 'destroy'])
         ->name('api.deleteServiceProvider');
+
+    Route::get('/cart-items/{user_id}', [CartItemController::class, 'show'])
+        ->name('api.getCartItems');
+
+    Route::put('/cart-items/{cart_id}', [CartItemController::class, 'update'])
+        ->name('api.updateCart');
+
+    Route::delete('/cart-items/{cart_id}', [CartItemController::class, 'destroy'])
+        ->name('api.deleteFromCart');
 });

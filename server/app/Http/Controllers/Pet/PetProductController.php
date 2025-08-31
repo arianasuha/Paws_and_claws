@@ -47,7 +47,33 @@ class PetProductController extends Controller
         }
     }
 
-
+    /**
+     * @OA\Get(
+     * path="/api/pet-products",
+     * operationId="getPetProductsList",
+     * tags={"PetProducts"},
+     * summary="Get list of all pet products",
+     * description="Returns a paginated list of all pet products, with an option to specify the number of items per page.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="per_page",
+     * in="query",
+     * description="Number of items per page",
+     * required=false,
+     * @OA\Schema(type="integer", default=10)
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/PetProductPaginatedResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Server error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -62,7 +88,44 @@ class PetProductController extends Controller
         }
     }
 
-
+    /**
+     * @OA\Post(
+     * path="/api/pet-products",
+     * operationId="createPetProduct",
+     * tags={"PetProducts"},
+     * summary="Create a new pet product (Admin only)",
+     * description="Creates a new pet product. Requires admin authentication.",
+     * security={{"sanctum":{}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Pet product data",
+     * @OA\MediaType(
+     * mediaType="multipart/form-data",
+     * @OA\Schema(ref="#/components/schemas/PetProductRegisterRequest")
+     * )
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Pet product created successfully",
+     * @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden - User is not an admin",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Server error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     */
     public function createProduct(PetProductRegisterRequest $request): JsonResponse
     {
         try {
@@ -87,6 +150,38 @@ class PetProductController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/pet-products/{petProductid}",
+     * operationId="getPetProductById",
+     * tags={"PetProducts"},
+     * summary="Get a single pet product",
+     * description="Returns a single pet product by its ID.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="petProductid",
+     * in="path",
+     * required=true,
+     * description="ID of the pet product",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Successful operation",
+     * @OA\JsonContent(ref="#/components/schemas/PetProduct")
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Pet product not found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Server error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     */
 
     public function show(string $petProductid): JsonResponse
     {
@@ -106,7 +201,59 @@ class PetProductController extends Controller
         }
     }
 
-
+    /**
+     * @OA\Post(
+     * path="/api/pet-products/{petProductid}",
+     * operationId="updatePetProduct",
+     * tags={"PetProducts"},
+     * summary="Update a pet product (Admin only)",
+     * description="Updates an existing pet product by its ID. Requires admin authentication. Using POST with _method spoofing for file uploads.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="petProductid",
+     * in="path",
+     * required=true,
+     * description="ID of the pet product to update",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Pet product data to update",
+     * @OA\MediaType(
+     * mediaType="multipart/form-data",
+     * @OA\Schema(ref="#/components/schemas/PetProductUpdateRequest")
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Pet product updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="success", type="string", example="Pet product updated successfully."),
+     * @OA\Property(property="pet_product", ref="#/components/schemas/PetProduct")
+     * )
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden - User is not an admin",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Pet product not found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Server error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     */
     public function update(PetProductUpdateRequest $request, string $petProductid): JsonResponse
     {
         try {
@@ -139,6 +286,42 @@ class PetProductController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     * path="/api/pet-products/{petProductid}",
+     * operationId="deletePetProduct",
+     * tags={"PetProducts"},
+     * summary="Delete a pet product (Admin only)",
+     * description="Deletes a pet product by its ID. Requires admin authentication.",
+     * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="petProductid",
+     * in="path",
+     * required=true,
+     * description="ID of the pet product to delete",
+     * @OA\Schema(type="integer")
+     * ),
+     * @OA\Response(
+     * response=204,
+     * description="Pet product deleted successfully"
+     * ),
+     * @OA\Response(
+     * response=403,
+     * description="Forbidden - User is not an admin",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=404,
+     * description="Pet product not found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Server error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     * )
+     * )
+     */
 
     public function destroy(string $petProductid): JsonResponse
     {

@@ -21,6 +21,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Notification;
 use App\Models\CartItems;
 use App\Models\EmergencyShelter;
+use App\Models\Payment;
+use App\Models\Category;
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,6 +37,7 @@ class DatabaseSeeder extends Seeder
         ServiceProvider::factory()->count(10)->create();
         MedicalLog::factory()->count(10)->create();
         PetProduct::factory()->count(10)->create();
+        Category::factory()->count(10)->create();
 
         // 2. Seed tables that depend on the first group.
         Pet::factory()->count(10)->create();
@@ -55,5 +58,6 @@ class DatabaseSeeder extends Seeder
         PetMedical::factory()->count(10)->create();
         PetMarket::factory()->count(10)->create();
         OrderItem::factory()->count(10)->create();
+        Payment::factory()->count(10)->create();
     }
 }

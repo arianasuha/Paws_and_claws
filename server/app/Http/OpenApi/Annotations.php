@@ -65,6 +65,26 @@ use OpenApi\Annotations as OA;
  * description="API Endpoints for reporting and managing lost pets"
  * )
  *
+ * @OA\Tag(
+ * name="Emergency Shelters",
+ * description="API Endpoints for managing emergency pet shelter requests"
+ * )
+ *
+ * @OA\Tag(
+ * name="Cart",
+ * description="API Endpoints for managing the shopping cart"
+ * )
+ *
+ * @OA\Tag(
+ * name="PetProducts",
+ * description="API Endpoints for managing pet products"
+ * )
+ *
+ * @OA\Tag(
+ * name="Categories",
+ * description="API Endpoints for managing product categories"
+ * )
+ *
  * @OA\Schema(
  * schema="ErrorResponse",
  * title="Error Response",
@@ -708,8 +728,80 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="total", type="integer"),
  * )
  * )
+ *
+ * @OA\Tag(
+ * name="PetProducts",
+ * description="API Endpoints for managing pet products"
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProduct",
+ * title="PetProduct",
+ * description="Pet Product model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Pet Product ID"),
+ * @OA\Property(property="name", type="string", description="Name of the pet product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
+ * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", nullable=true, description="URL to the product image"),
+ * @OA\Property(property="category_id", type="integer", format="int64", description="ID of the product's category"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp"),
+ * @OA\Property(property="category", ref="#/components/schemas/Category", description="Associated category information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProductPaginatedResponse",
+ * title="PetProductPaginatedResponse",
+ * description="Paginated list of pet products",
+ * @OA\Property(property="current_page", type="integer"),
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/PetProduct")),
+ * @OA\Property(property="first_page_url", type="string"),
+ * @OA\Property(property="from", type="integer"),
+ * @OA\Property(property="last_page", type="integer"),
+ * @OA\Property(property="last_page_url", type="string"),
+ * @OA\Property(
+ * property="links",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="url", type="string", nullable=true),
+ * @OA\Property(property="label", type="string"),
+ * @OA\Property(property="active", type="boolean")
+ * )
+ * ),
+ * @OA\Property(property="next_page_url", type="string", nullable=true),
+ * @OA\Property(property="path", type="string"),
+ * @OA\Property(property="per_page", type="integer"),
+ * @OA\Property(property="prev_page_url", type="string", nullable=true),
+ * @OA\Property(property="to", type="integer"),
+ * @OA\Property(property="total", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProductRegisterRequest",
+ * title="PetProductRegisterRequest",
+ * description="Pet product registration payload",
+ * required={"name", "price", "quantity", "category_id"},
+ * @OA\Property(property="name", type="string", description="Name of the product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
+ * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
+ * @OA\Property(property="category_id", type="integer", description="ID of the product's category")
+ * )
+ *
+ * @OA\Schema(
+ * schema="PetProductUpdateRequest",
+ * title="PetProductUpdateRequest",
+ * description="Pet product update payload",
+ * @OA\Property(property="name", type="string", nullable=true, description="Name of the product"),
+ * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
+ * @OA\Property(property="price", type="number", format="float", nullable=true, description="Price of the product"),
+ * @OA\Property(property="quantity", type="integer", nullable=true, description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
+ * @OA\Property(property="category_id", type="integer", nullable=true, description="ID of the product's category")
+ * )
  */
-
 class Annotations
 {
     // This class is just a container for the annotations. No actual code needed here.

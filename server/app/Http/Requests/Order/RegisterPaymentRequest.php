@@ -5,7 +5,7 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Rule;
 
-class OrderUpdateRequest extends BaseRequest
+class RegisterPaymentRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,20 +23,15 @@ class OrderUpdateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'order_status' => ['sometimes', 'string', Rule::in(['delivered', 'canceled'])],
-            'subscribe_type' => [
-                'sometimes',
-                'string',
-                Rule::in(['none', 'weekly', 'monthly']),
-            ],
+            'order_id' => ['required', 'exists:orders,id'],
+            'payment_type' => ['required', 'string', Rule::in(['cash', 'card'])],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'order_status.in' => 'Invalid order status.',
-            'subscribe_type.in' => 'Invalid subscribe type.',
+            'payment_type.in' => 'Payment type must be either "cash" or "card".',
         ];
     }
 }
