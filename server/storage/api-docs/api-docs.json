@@ -2230,6 +2230,334 @@
                 ]
             }
         },
+        "/api/pet-products": {
+            "get": {
+                "tags": [
+                    "PetProducts"
+                ],
+                "summary": "Get list of all pet products",
+                "description": "Returns a paginated list of all pet products, with an option to specify the number of items per page.",
+                "operationId": "getPetProductsList",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetProductPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "PetProducts"
+                ],
+                "summary": "Create a new pet product (Admin only)",
+                "description": "Creates a new pet product. Requires admin authentication.",
+                "operationId": "createPetProduct",
+                "requestBody": {
+                    "description": "Pet product data",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetProductRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pet product created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User is not an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pet-products/{petProductid}": {
+            "get": {
+                "tags": [
+                    "PetProducts"
+                ],
+                "summary": "Get a single pet product",
+                "description": "Returns a single pet product by its ID.",
+                "operationId": "getPetProductById",
+                "parameters": [
+                    {
+                        "name": "petProductid",
+                        "in": "path",
+                        "description": "ID of the pet product",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetProduct"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "PetProducts"
+                ],
+                "summary": "Delete a pet product (Admin only)",
+                "description": "Deletes a pet product by its ID. Requires admin authentication.",
+                "operationId": "deletePetProduct",
+                "parameters": [
+                    {
+                        "name": "petProductid",
+                        "in": "path",
+                        "description": "ID of the pet product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Pet product deleted successfully"
+                    },
+                    "403": {
+                        "description": "Forbidden - User is not an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "PetProducts"
+                ],
+                "summary": "Update a pet product (Admin only)",
+                "description": "Updates an existing pet product by its ID. Requires admin authentication. Using POST with _method spoofing for file uploads.",
+                "operationId": "updatePetProduct",
+                "parameters": [
+                    {
+                        "name": "petProductid",
+                        "in": "path",
+                        "description": "ID of the pet product to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pet product data to update",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PetProductUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pet product updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "Pet product updated successfully."
+                                        },
+                                        "pet_product": {
+                                            "$ref": "#/components/schemas/PetProduct"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User is not an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/reports/lost-pets": {
             "get": {
                 "tags": [
@@ -5153,6 +5481,205 @@
                     }
                 },
                 "type": "object"
+            },
+            "PetProduct": {
+                "title": "PetProduct",
+                "description": "Pet Product model",
+                "properties": {
+                    "id": {
+                        "description": "Pet Product ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the pet product",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the product",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "description": "Price of the product",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "stock": {
+                        "description": "Available quantity in stock",
+                        "type": "integer"
+                    },
+                    "image_url": {
+                        "description": "URL to the product image",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "category_id": {
+                        "description": "ID of the product's category",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/Category"
+                    }
+                },
+                "type": "object"
+            },
+            "PetProductPaginatedResponse": {
+                "title": "PetProductPaginatedResponse",
+                "description": "Paginated list of pet products",
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PetProduct"
+                        }
+                    },
+                    "first_page_url": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "next_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "PetProductRegisterRequest": {
+                "title": "PetProductRegisterRequest",
+                "description": "Pet product registration payload",
+                "required": [
+                    "name",
+                    "price",
+                    "category_id",
+                    "image_url",
+                    "stock"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the product",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the product",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "description": "Price of the product",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "stock": {
+                        "description": "Available quantity in stock",
+                        "type": "integer"
+                    },
+                    "image_url": {
+                        "description": "Product image file",
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "category_id": {
+                        "description": "ID of the product's category",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "PetProductUpdateRequest": {
+                "title": "PetProductUpdateRequest",
+                "description": "Pet product update payload",
+                "properties": {
+                    "name": {
+                        "description": "Name of the product",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the product",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "description": "Price of the product",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "stock": {
+                        "description": "Available quantity in stock",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "description": "Product image file",
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "category_id": {
+                        "description": "ID of the product's category",
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -5200,12 +5727,16 @@
             "description": "API Endpoints for managing emergency pet shelter requests"
         },
         {
-            "name": "Authentication",
-            "description": "Authentication"
+            "name": "PetProducts",
+            "description": "API Endpoints for managing pet products"
         },
         {
             "name": "Categories",
-            "description": "Categories"
+            "description": "API Endpoints for managing product categories"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
         },
         {
             "name": "Medical Logs",

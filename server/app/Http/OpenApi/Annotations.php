@@ -742,7 +742,7 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="name", type="string", description="Name of the pet product"),
  * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
  * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
- * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="stock", type="integer", description="Available quantity in stock"),
  * @OA\Property(property="image_url", type="string", nullable=true, description="URL to the product image"),
  * @OA\Property(property="category_id", type="integer", format="int64", description="ID of the product's category"),
  * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
@@ -781,12 +781,12 @@ use OpenApi\Annotations as OA;
  * schema="PetProductRegisterRequest",
  * title="PetProductRegisterRequest",
  * description="Pet product registration payload",
- * required={"name", "price", "quantity", "category_id"},
+ * required={"name", "price", "category_id", "image_url","stock"},
  * @OA\Property(property="name", type="string", description="Name of the product"),
  * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
  * @OA\Property(property="price", type="number", format="float", description="Price of the product"),
- * @OA\Property(property="quantity", type="integer", description="Available quantity in stock"),
- * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
+ * @OA\Property(property="stock", type="integer", description="Available quantity in stock"),
+ * @OA\Property(property="image_url", type="string", format="binary", description="Product image file"),
  * @OA\Property(property="category_id", type="integer", description="ID of the product's category")
  * )
  *
@@ -797,7 +797,7 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="name", type="string", nullable=true, description="Name of the product"),
  * @OA\Property(property="description", type="string", nullable=true, description="Description of the product"),
  * @OA\Property(property="price", type="number", format="float", nullable=true, description="Price of the product"),
- * @OA\Property(property="quantity", type="integer", nullable=true, description="Available quantity in stock"),
+ * @OA\Property(property="stock", type="integer", nullable=true, description="Available quantity in stock"),
  * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
  * @OA\Property(property="category_id", type="integer", nullable=true, description="ID of the product's category")
  * )

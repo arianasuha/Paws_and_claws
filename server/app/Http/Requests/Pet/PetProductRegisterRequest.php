@@ -26,7 +26,8 @@ class PetProductRegisterRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image_url' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id' => 'required|integer|exists:categories,id',
         ];
     }
 
@@ -39,6 +40,8 @@ class PetProductRegisterRequest extends FormRequest
             'name.unique' => 'A product with this name already exists.',
             'price.required' => 'The product price is required.',
             'stock.required' => 'The product stock quantity is required.',
+            'category_id.required' => 'The category ID is required.',
+            'category_id.exists' => 'The selected category does not exist.',
         ];
     }
 

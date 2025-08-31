@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Requests\EmergencyShelter\EmergencyShelterUpdateRequest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\UserController;
@@ -79,16 +78,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pet-products', [PetProductController::class, 'index'])
         ->name('api.getPetProducts');
 
-    Route::get('/pet-products/{petProduct}', [PetProductController::class, 'show'])
+    Route::get('/pet-products/{petProductid}', [PetProductController::class, 'show'])
         ->name('api.getPetProduct');
 
     Route::post('/pet-products', [PetProductController::class, 'createProduct'])
         ->name('api.createPetProduct');
 
-    Route::patch('/pet-products/{petProduct}', [PetProductController::class, 'update'])
+    Route::patch('/pet-products/{petProductid}', [PetProductController::class, 'update'])
         ->name('api.updatePetProduct');
 
-    Route::delete('/pet-products/{petProduct}', [PetProductController::class, 'destroy'])
+    Route::delete('/pet-products/{petProductid}', [PetProductController::class, 'destroy'])
         ->name('api.deletePetProduct');
 
     Route::get('/pet-markets', [PetMarketController::class, 'index'])
@@ -205,12 +204,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/shelters/{shelterId}', [EmergencyShelterController::class, 'destroy'])
         ->name('api.deleteServiceProvider');
 
-    Route::get('/cart-items/{user_id}', [CartItemController::class, 'show'])
-        ->name('api.getCartItems');
+    // Route::get('/cart-items/{user_id}', [CartItemController::class, 'show'])
+    //     ->name('api.getCartItems');
 
-    Route::put('/cart-items/{cart_id}', [CartItemController::class, 'update'])
-        ->name('api.updateCart');
+    // Route::put('/cart-items/{cart_id}', [CartItemController::class, 'update'])
+    //     ->name('api.updateCart');
 
-    Route::delete('/cart-items/{cart_id}', [CartItemController::class, 'destroy'])
-        ->name('api.deleteFromCart');
+    // Route::delete('/cart-items/{cart_id}', [CartItemController::class, 'destroy'])
+    //     ->name('api.deleteFromCart');
 });

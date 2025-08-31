@@ -1,21 +1,21 @@
-<?php
 
-namespace App\Http\Controllers\Order;
 
-use App\Http\Controllers\Controller;
-use App\Models\Cart;
-use App\Models\CartItems;
-use App\Http\Requests\Order\UpdateCartItemRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use App\OpenApi\Annotations as OA;
+// namespace App\Http\Controllers\Order;
 
-class CartItemController extends Controller
-{
-    public function __construct() {
-        $this->middleware('auth:sanctum');
-    }
+// use App\Http\Controllers\Controller;
+// use App\Models\Cart;
+// use App\Models\CartItems;
+// use App\Http\Requests\Order\UpdateCartItemRequest;
+// use Illuminate\Support\Facades\Auth;
+// use Illuminate\Http\JsonResponse;
+// use Illuminate\Support\Facades\Log;
+// use App\OpenApi\Annotations as OA;
+
+// class CartItemController extends Controller
+// {
+//     public function __construct() {
+//         $this->middleware('auth:sanctum');
+//     }
 
     /**
      * @OA\Get(
@@ -59,35 +59,35 @@ class CartItemController extends Controller
      * )
      * )
      */
-    public function show(string $user_id): JsonResponse
-    {
-        if ($user_id != Auth::id()) {
-            return response()->json([
-                'error' => 'You are not authorized to access this cart.',
-            ], 403);
-        }
+    // public function show(string $user_id): JsonResponse
+    // {
+    //     if ($user_id != Auth::id()) {
+    //         return response()->json([
+    //             'error' => 'You are not authorized to access this cart.',
+    //         ], 403);
+    //     }
 
-        try {
-            $cart = Cart::where('user_id', $user_id)->first();
+    //     try {
+    //         $cart = Cart::where('user_id', $user_id)->first();
 
-            if (!$cart) {
-                return response()->json([
-                    'error' => 'Cart not found.',
-                ], 404);
-            }
+    //         if (!$cart) {
+    //             return response()->json([
+    //                 'error' => 'Cart not found.',
+    //             ], 404);
+    //         }
 
-            $cartItems = CartItems::with(['medicine' => function ($query) {
-                $query->select('id', 'name');
-            }])->where('cart_id', $cart->id)->get();
+    //         $cartItems = CartItems::with(['medicine' => function ($query) {
+    //             $query->select('id', 'name');
+    //         }])->where('cart_id', $cart->id)->get();
 
-            return response()->json($cartItems, 200);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json($cartItems, 200);
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json([
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
     /**
      * @OA\Put(
@@ -137,50 +137,50 @@ class CartItemController extends Controller
      * )
      * )
      */
-    public function update(UpdateCartItemRequest $request, string $cart_id): JsonResponse
-    {
-        $validated = $request->validated();
-        $cartId = (int) $cart_id;
+    // public function update(UpdateCartItemRequest $request, string $cart_id): JsonResponse
+    // {
+    //     $validated = $request->validated();
+    //     $cartId = (int) $cart_id;
 
-        $cart = Cart::find($cartId);
+    //     $cart = Cart::find($cartId);
 
-        if (!$cart) {
-            return response()->json([
-                'error' => 'Cart not found.',
-            ], 404);
-        }
+    //     if (!$cart) {
+    //         return response()->json([
+    //             'error' => 'Cart not found.',
+    //         ], 404);
+    //     }
 
-        if ($cart->user_id !== Auth::id()) {
-            return response()->json([
-                'error' => 'You are not authorized to update this cart.',
-            ], 403);
-        }
+    //     if ($cart->user_id !== Auth::id()) {
+    //         return response()->json([
+    //             'error' => 'You are not authorized to update this cart.',
+    //         ], 403);
+    //     }
 
-        try {
-            CartItems::where('cart_id', $cartId)->delete();
+    //     try {
+    //         CartItems::where('cart_id', $cartId)->delete();
 
-            $newCartItems = [];
-            foreach ($validated['items'] as $item) {
-                $newCartItems[] = [
-                    'cart_id' => $cart->id,
-                    'medicine_id' => $item['medicine_id'],
-                    'quantity' => $item['quantity'],
-                ];
-            }
+    //         $newCartItems = [];
+    //         foreach ($validated['items'] as $item) {
+    //             $newCartItems[] = [
+    //                 'cart_id' => $cart->id,
+    //                 'medicine_id' => $item['medicine_id'],
+    //                 'quantity' => $item['quantity'],
+    //             ];
+    //         }
 
-            CartItems::insert($newCartItems);
+    //         CartItems::insert($newCartItems);
 
-            return response()->json([
-                'success' => 'Cart updated successfully.',
-            ], 200);
+    //         return response()->json([
+    //             'success' => 'Cart updated successfully.',
+    //         ], 200);
 
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json([
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
     /**
      * @OA\Delete(
@@ -226,28 +226,28 @@ class CartItemController extends Controller
      * )
      * )
      */
-    public function destroy(string $cart_id): JsonResponse
-    {
-        $cartId = (int) $cart_id;
+    // public function destroy(string $cart_id): JsonResponse
+    // {
+    //     $cartId = (int) $cart_id;
 
-        $cart = Cart::find($cartId);
+    //     $cart = Cart::find($cartId);
 
-        if (!$cart || $cart->user_id !== Auth::id()) {
-            return response()->json([
-                'error' => 'You are not authorized to delete this cart.',
-            ], 403);
-        }
+    //     if (!$cart || $cart->user_id !== Auth::id()) {
+    //         return response()->json([
+    //             'error' => 'You are not authorized to delete this cart.',
+    //         ], 403);
+    //     }
 
-        try {
-            CartItems::where('cart_id', $cartId)->delete();
+    //     try {
+    //         CartItems::where('cart_id', $cartId)->delete();
 
-            return response()->json(null, 204);
+    //         return response()->json(null, 204);
 
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json([
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }
