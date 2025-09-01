@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Pet;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 
-class PetProductUpdateRequest extends FormRequest
+class PetProductUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +23,12 @@ class PetProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'string', 'max:255', Rule::unique('pet_products')->ignore($this->pet_product)],
+            'name' => ['sometimes', 'string', 'max:255', Rule::unique('pet_products')->ignore($this->route('petProductid'))],
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
             'image_url' => 'sometimes|image|max:2048',
+            'category_id' => 'sometimes|exists:categories,id',
         ];
     }
 

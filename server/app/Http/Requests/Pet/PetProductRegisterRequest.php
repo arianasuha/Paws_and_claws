@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Pet;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class PetProductRegisterRequest extends FormRequest
+class PetProductRegisterRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

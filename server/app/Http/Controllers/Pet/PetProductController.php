@@ -19,17 +19,19 @@ class PetProductController extends Controller
     }
 
 
-    private function imageHandler(Request $request, array &$validated, ?PetProduct $petProduct = null): void
+    private function imageHandler(Request $request, array &$validated, ?PetProduct $petproduct = null): void
     {
         if ($request->hasFile('image_url')) {
-            if ($petProduct && $petProduct->image_url) {
-                $this->deleteOldImage($petProduct->image_url);
+            if ($petproduct && $petproduct->image_url) {
+                $this->deleteOldImage($petproduct->image_url);
             }
-            $path = $request->file('image_url')->store('product_images', 'public');
+            $path = $request->file('image_url')->store('profile_images', 'public');
             $validated['image_url'] = Storage::url($path);
         } else if (array_key_exists('image_url', $validated) && is_null($validated['image_url'])) {
-            if ($petProduct && $petProduct->image_url) {
-                $this->deleteOldImage($petProduct->image_url);
+            // If remove Image button is pressed we will send image_url null
+            // otherwise the key won't be sent
+            if ($petproduct && $petproduct->image_url) {
+                $this->deleteOldImage($petproduct->image_url);
             }
             $validated['image_url'] = null;
         } else {
