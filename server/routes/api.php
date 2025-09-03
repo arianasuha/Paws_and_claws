@@ -15,15 +15,14 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceProviderController;
 use App\Http\Controllers\Pet\EmergencyShelterController;
 use App\Http\Controllers\Order\CartItemController;
+use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\Order\PaymentController;
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('api.login');
 
 Route::post('/users', [UserController::class, 'createUser'])
     ->name('api.createUser');
-
-Route::post('/admin/users', [UserController::class, 'createAdminUser'])
-    ->name('api.createAdminUser');
 
 Route::post('/vets', [VetController::class, 'createVet'])
     ->name('api.createVet');
@@ -96,7 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pet-markets', [PetMarketController::class, 'create'])
         ->name('api.createPetMarket');
 
-    Route::get('/pet-markets/{petMarket}', [PetMarketController::class, 'show'])
+    Route::get('/pet-markets/{pet_id}', [PetMarketController::class, 'show'])
         ->name('api.getPetMarket');
 
     Route::patch('/pet-markets/{petMarket}', [PetMarketController::class, 'update'])
@@ -174,9 +173,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'create'])
         ->name('api.createCategory');
 
-    Route::patch('/categories/{id}', [CategoryController::class, 'update'])
-        ->name('api.updateCategory');
-
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])
         ->name('api.deleteCategory');
 
@@ -204,12 +200,40 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/shelters/{shelterId}', [EmergencyShelterController::class, 'destroy'])
         ->name('api.deleteServiceProvider');
 
-    // Route::get('/cart-items/{user_id}', [CartItemController::class, 'show'])
-    //     ->name('api.getCartItems');
+    Route::get('/cart-items/{user_id}', [CartItemController::class, 'show'])
+        ->name('api.getCartItems');
 
-    // Route::put('/cart-items/{cart_id}', [CartItemController::class, 'update'])
-    //     ->name('api.updateCart');
+    Route::put('/cart-items/{cart_id}', [CartItemController::class, 'update'])
+        ->name('api.updateCart');
 
-    // Route::delete('/cart-items/{cart_id}', [CartItemController::class, 'destroy'])
-    //     ->name('api.deleteFromCart');
+    Route::delete('/cart-items/{cart_id}', [CartItemController::class, 'destroy'])
+        ->name('api.deleteFromCart');
+
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('api.getOrders');
+
+    Route::get('/orders/{order}', [OrderController::class, 'show'])
+        ->name('api.getOrder');
+
+    Route::post('/orders', [OrderController::class, 'create'])
+        ->name('api.createOrder');
+
+    Route::patch('/orders/{order}', [OrderController::class, 'update'])
+        ->name('api.updateOrder');
+
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])
+        ->name('api.deleteOrder');
+
+    Route::get('/payments', [PaymentController::class, 'index'])
+        ->name('api.getPayments');
+
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])
+        ->name('api.getPayment');
+
+    Route::post('/payments', [PaymentController::class, 'create'])
+        ->name('api.createPayment');
+
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])
+        ->name('api.deletePayment');
+
 });

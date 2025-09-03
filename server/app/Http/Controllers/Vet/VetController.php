@@ -12,6 +12,8 @@ use App\Http\Requests\Vet\VetUpdateRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VetController extends Controller
 {
@@ -25,9 +27,23 @@ class VetController extends Controller
      * path="/api/vets",
      * operationId="indexVets",
      * tags={"Vets"},
-     * summary="Get a list of all vet profiles",
-     * description="Returns a paginated list of vet profiles. Requires authentication and administrative privileges.",
+     * summary="Get a list of all vet profiles with search",
+     * description="Returns a paginated list of vet profiles. Can be filtered by a case-insensitive partial match on first name, last name, email, and username. Requires authentication and administrative privileges.",
      * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="search",
+     * in="query",
+     * description="Case-insensitive search query for first_name, last_name, email, and username.",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -38,11 +54,28 @@ class VetController extends Controller
      * @OA\Response(response=500, description="Internal Server Error")
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $vets = Vet::with('user')->paginate(10);
+            $query = Vet::with('user');
+
+            if ($request->has('search')) {
+                $searchTerm = strtolower($request->input('search'));
+                
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->orWhereHas('user', function ($uq) use ($searchTerm) {
+                        $uq->where(DB::raw('lower(first_name)'), 'like', "%{$searchTerm}%")
+                        ->orWhere(DB::raw('lower(last_name)'), 'like', "%{$searchTerm}%")
+                        ->orWhere(DB::raw('lower(email)'), 'like', "%{$searchTerm}%")
+                        ->orWhere(DB::raw('lower(username)'), 'like', "%{$searchTerm}%");
+                    });
+                });
+            }
+
+            $vets = $query->paginate(10);
+            
             return response()->json($vets, 200);
+
         } catch (AuthorizationException $e) {
             return response()->json(["errors" => "You are not authorized to view vet listings."], 403);
         } catch (\Exception $e) {

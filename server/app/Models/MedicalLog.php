@@ -43,5 +43,4 @@ class MedicalLog extends Model
             'pet_id'
         );
     }
-
 }

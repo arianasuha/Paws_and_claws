@@ -1,4 +1,4 @@
-
+<?php
 
 namespace App\Http\Controllers\Order;
 
@@ -17,7 +17,7 @@ class PaymentController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-
+    
     /**
      * @OA\Get(
      * path="/api/payments",
@@ -26,13 +26,6 @@ class PaymentController extends Controller
      * summary="Get a list of payments, optionally filtered by order",
      * description="Retrieves a paginated list of all payments. SuperAdmins can see all payments, while other users can only see their own. An optional order_id query parameter can be used to filter payments.",
      * security={{"sanctum": {}}},
-     * @OA\Parameter(
-     * name="page",
-     * in="query",
-     * description="Page number for pagination",
-     * required=false,
-     * @OA\Schema(type="integer", default=1)
-     * ),
      * @OA\Parameter(
      * name="order_id",
      * in="query",
@@ -62,7 +55,7 @@ class PaymentController extends Controller
         try {
             $query = Payment::query();
 
-            if (!Auth::user()->isSuperAdmin()) {
+            if (!Auth::user()->isAdmin()) {
                 $query->where('user_id', Auth::user()->id);
             }
 
@@ -129,7 +122,7 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-            if ($payment->user_id !== Auth::user()->id && !Auth::user()->isSuperAdmin()) {
+            if ($payment->user_id !== Auth::user()->id && !Auth::user()->isAdmin()) {
                 return response()->json([
                     "errors" => "You are not authorized to view this payment."
                 ], 403);
@@ -201,12 +194,20 @@ class PaymentController extends Controller
 
             $validated['user_id'] = Auth::user()->id;
             $validated['payment_date'] = now();
-            Payment::create($validated);
+            $payment = Payment::create($validated);
+            
+            $order->update(['payment_status' => 'paid']);
 
             Notification::create([
-                "user_id" => $order->user_id,
-                "subject" => "Payment successful.",
-                "message" => "Your payment for order #{$order->id} has been successful."
+                'user_id' => $order->user_id,
+                'subject' => 'Order ' . $order->id,
+                'message' => 'Payment confirmed',
+            ]);
+
+            Notification::create([
+                'user_id' => $order->user_id,
+                'subject' => 'Payment ' . $payment->id,
+                'message' => "Payment Successfull"
             ]);
 
             return response()->json([
@@ -267,17 +268,11 @@ class PaymentController extends Controller
                 ], 404);
             }
 
-            if (!Auth::user()->isSuperAdmin()) {
+            if (!Auth::user()->isAdmin()) {
                 return response()->json([
                     "errors" => "You are not authorized to delete this payment."
                 ], 403);
             }
-
-            Notification::create([
-                "user_id" => $payment->user_id,
-                "subject" => "Payment deleted.",
-                "message" => "Your payment for order #{$payment->order_id} has been deleted."
-            ]);
 
             $payment->delete();
 

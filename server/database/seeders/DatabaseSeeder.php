@@ -19,7 +19,7 @@ use App\Models\PetMedical;
 use App\Models\MedicalLog;
 use Illuminate\Database\Seeder;
 use App\Models\Notification;
-use App\Models\CartItems;
+use App\Models\CartItem;
 use App\Models\EmergencyShelter;
 use App\Models\Payment;
 use App\Models\Category;
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
         // 3. Seed tables that depend on the previous two groups.
         EmergencyShelter::factory()->count(10)->create();
         Appointment::factory()->count(10)->create();
-        CartItems::factory()->count(10)->create();
+        CartItem::factory()->count(10)->create();
 
         // \Log::info('Created 10 appointments');
 

@@ -4,38 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Cart extends Model
 {
     use HasFactory;
-    public const UPDATED_AT = null;
+
     public const CREATED_AT = null;
+    public const UPDATED_AT = null;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'cart_id',
-        'user_id',
+        'user_id'
     ];
 
-    /**
-     * Get the user that owns the cart.
-     */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the product that is in the cart.
-     */
-    public function cartitems()
+    public function cartItems()
     {
-        return $this->hasMany(CartItems::class);
+        return $this->hasMany(CartItem::class);
     }
 }

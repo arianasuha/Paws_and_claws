@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Medical;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class MedicalLogUpdateRequest extends FormRequest
+class MedicalLogUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,14 +23,13 @@ class MedicalLogUpdateRequest extends FormRequest
     public function rules(): array
     {
        return [
-            'pet_id' => 'required|integer|exists:pets,id',
-            'visit_date' => 'required|date',
-            'visit_reason' => 'nullable|string|max:255',
-            'diagnosis' => 'required|string|max:255',
-            'notes' => 'nullable|string',
-            'vet_name' => 'nullable|string|max:255',
-            'clinic_name' => 'nullable|string|max:255',
-            'prescribed_medication' => 'nullable|string|max:255',
+            'visit_date' => 'sometimes|date',
+            'visit_reason' => 'sometimes|string|max:255',
+            'diagnosis' => 'sometimes|string|max:255',
+            'notes' => 'sometimes|string',
+            'vet_name' => 'sometimes|string|max:255',
+            'clinic_name' => 'sometimes|string|max:255',
+            'prescribed_medication' => 'sometimes|string|max:255',
             'attachment_url' => 'sometimes|string|max:2048',
         ];
     }

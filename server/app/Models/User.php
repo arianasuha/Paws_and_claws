@@ -13,6 +13,7 @@ use Spatie\Sluggable\SlugOptions;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Vet;
+use App\Models\ServiceProvider;
 use App\Models\EmergencyShelter;
 
 class User extends Authenticatable
@@ -112,6 +113,21 @@ class User extends Authenticatable
         return SlugOptions::create()
             ->generateSlugsFrom('email')
             ->saveSlugsTo('slug');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
+    public function isVet(): bool
+    {
+        return $this->is_vet;
+    }
+
+    public function isServiceProvider(): bool
+    {
+        return $this->serviceProvider()->exists();
     }
 
     public function vet(): HasOne

@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServiceProviderController extends Controller
 {
@@ -25,9 +27,23 @@ class ServiceProviderController extends Controller
      * path="/api/service-providers",
      * operationId="getServiceProvidersList",
      * tags={"Service Providers"},
-     * summary="Get a list of all service providers",
-     * description="Returns a list of all registered service providers, including their user information.",
+     * summary="Get a list of all service providers with search functionality",
+     * description="Returns a list of all registered service providers, filtered by a case-insensitive partial match on their user's first name, last name, email, and username.",
      * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="search",
+     * in="query",
+     * description="Case-insensitive search query for user's first name, last name, email, and username.",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -42,10 +58,24 @@ class ServiceProviderController extends Controller
      * )
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $serviceProviders = ServiceProvider::with('user')->get();
+            $query = ServiceProvider::with('user');
+
+            if ($request->has('search')) {
+                $searchTerm = strtolower($request->input('search'));
+
+                $query->whereHas('user', function ($q) use ($searchTerm) {
+                    $q->where(DB::raw('lower(first_name)'), 'like', "%{$searchTerm}%")
+                    ->orWhere(DB::raw('lower(last_name)'), 'like', "%{$searchTerm}%")
+                    ->orWhere(DB::raw('lower(email)'), 'like', "%{$searchTerm}%")
+                    ->orWhere(DB::raw('lower(username)'), 'like', "%{$searchTerm}%");
+                });
+            }
+
+            $serviceProviders = $query->paginate(10);
+
             return response()->json($serviceProviders, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -53,7 +83,6 @@ class ServiceProviderController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * @OA\Post(
@@ -225,7 +254,7 @@ class ServiceProviderController extends Controller
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::id() !== $foundUser->id) {
+            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
                 return response()->json([
                     "errors" => "You are not authorized to update this Service Provider profile."
                 ], 403);

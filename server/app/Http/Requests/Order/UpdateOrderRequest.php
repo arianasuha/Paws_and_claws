@@ -1,11 +1,11 @@
-
+<?php
 
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Rule;
 
-class OrderUpdateRequest extends BaseRequest
+class UpdateOrderRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,7 @@ class OrderUpdateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'order_status' => ['sometimes', 'string', Rule::in(['delivered', 'canceled'])],
-            'subscribe_type' => [
-                'sometimes',
-                'string',
-                Rule::in(['none', 'weekly', 'monthly']),
-            ],
+            'order_status' => ['required', 'string', Rule::in(['preparing', 'ready', 'picked', 'delivered', 'cancelled'])],
         ];
     }
 
@@ -36,7 +31,6 @@ class OrderUpdateRequest extends BaseRequest
     {
         return [
             'order_status.in' => 'Invalid order status.',
-            'subscribe_type.in' => 'Invalid subscribe type.',
         ];
     }
 }

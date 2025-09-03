@@ -8,7 +8,7 @@ use App\Models\EmergencyShelter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 use App\Models\Pet;
 
 
@@ -89,8 +89,13 @@ class EmergencyShelterController extends Controller
                 'request_date' => $request->request_date,
             ]);
 
-
             $emergencyShelter->load('pet', 'user');
+
+            Notification::create([
+                'user_id' => Auth::user()->id,
+                'subject' => "Emergency Request",
+                'message' => "Your request has been placed successfully",
+            ]);
 
             return response()->json(
                 [
@@ -116,6 +121,12 @@ class EmergencyShelterController extends Controller
      * summary="Get all emergency pet shelter requests for the authenticated user",
      * description="Retrieves a list of all emergency shelter requests submitted by the currently authenticated user.",
      * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="page",
+     * description="Page number for pagination (if enabled)",
+     * in="query",
+     * @OA\Schema(type="integer")
+     * ),
      * @OA\Response(
      * response=200,
      * description="A list of emergency shelter requests.",
@@ -141,25 +152,30 @@ class EmergencyShelterController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $user = Auth::user();
-
-            if (!$user) {
-                return response()->json(['error' => 'You must be logged in to view your requests.'], 401);
+            if (!Auth::user()->is_admin) {
+                return response()->json([
+                    "errors" => "You are not authorized to view all the requests"
+                ], 403);
             }
 
-            $shelterRequests = EmergencyShelter::with(['pet'])
-                ->where('user_id', $user->id)
-                ->get();
-
-            if ($shelterRequests->isEmpty()) {
-                return response()->json([], 200);
-            }
+            $shelterRequests = EmergencyShelter::query()
+                ->with([
+                    'pet' => function ($query) {
+                        $query->select('id', 'name', 'user_id');
+                    },
+                    'user' => function ($query) {
+                        $query->select('id', 'username');
+                    }
+                ])
+                // Order the results by the 'request_date' in descending order
+                ->orderByDesc('request_date')
+                ->paginate();
 
             return response()->json($shelterRequests, 200);
 
         } catch (\Exception $e) {
             Log::error('Error fetching emergency shelter requests: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not fetch emergency shelter requests.'], 500);
+            return response()->json(['errors' => 'Could not fetch emergency shelter requests.'], 500);
         }
     }
 
@@ -211,7 +227,7 @@ class EmergencyShelterController extends Controller
             $user = Auth::user();
 
             if (!$user) {
-                return response()->json(['error' => 'You must be logged in to view this request.'], 401);
+                return response()->json(['errors' => 'You must be logged in to view this request.'], 401);
             }
 
             $shelterRequest = EmergencyShelter::with([
@@ -225,7 +241,7 @@ class EmergencyShelterController extends Controller
                 ->first();
 
             if (!$shelterRequest) {
-                return response()->json(['error' => 'You are not authorized to view this shelter request.'], 404);
+                return response()->json(['errors' => 'You are not authorized to view this shelter request.'], 404);
             }
 
             return response()->json($shelterRequest, 200);
@@ -287,7 +303,7 @@ class EmergencyShelterController extends Controller
 
 
             if (!$shelterRequest) {
-                return response()->json(['error' => 'You are unauthorized to delete this request.'], 403);
+                return response()->json(['errors' => 'You are unauthorized to delete this request.'], 403);
             }
 
 

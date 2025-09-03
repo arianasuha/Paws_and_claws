@@ -24,6 +24,13 @@ class UserController extends Controller
      * summary="Get all users (Admin only)",
      * description="Returns a paginated list of all users. Requires admin privileges.",
      * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -187,51 +194,6 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Post(
-     * path="/api/admin/users",
-     * operationId="createAdminUser",
-     * tags={"Users"},
-     * summary="Register a new admin user",
-     * description="Creates a new admin user account. Requires a specific auth mechanism not detailed here.",
-     * @OA\RequestBody(
-     * required=true,
-     * description="Admin user registration payload",
-     * @OA\JsonContent(ref="#/components/schemas/RegisterUserRequest")
-     * ),
-     * @OA\Response(
-     * response=201,
-     * description="Admin user created successfully"
-     * ),
-     * @OA\Response(
-     * response=422,
-     * description="Validation error"
-     * ),
-     * @OA\Response(
-     * response=403,
-     * description="Forbidden"
-     * )
-     * )
-     */
-    public function createAdminUser(RegisterUserRequest $request): JsonResponse
-    {
-        $validated = $request->validated();
-        $validated['is_admin'] = true;
-
-        try {
-            $user = User::create($validated);
-            Cart::create(['user_id' => $user->id]);
-
-            return response()->json([
-                "success" => "User created successfully.",
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                "errors" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * @OA\Patch(
      * path="/api/users/{user}",
      * operationId="updateUser",
@@ -320,8 +282,7 @@ class UserController extends Controller
             $foundUser->update($validated);
 
             return response()->json([
-                "success" => "User updated successfully.",
-                'user' => $foundUser->fresh(),
+                "success" => "User updated successfully."
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -384,7 +345,7 @@ class UserController extends Controller
                 return response()->json(['error' => 'User not found'], 404);
             }
 
-            if (Auth::id() !== $foundUser->id) {
+            if (Auth::id() !== $foundUser->id && !Auth::user()->is_admin) {
                 return response()->json([
                     'errors' => 'You are not authorized to delete this user.'
                 ], 403);

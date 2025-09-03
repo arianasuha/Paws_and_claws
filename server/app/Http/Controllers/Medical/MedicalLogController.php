@@ -67,27 +67,31 @@ class MedicalLogController extends Controller
     public function index(Request $request, $petId)
     {
         try {
-            $pet = Pet::where('id', $petId)->where('user_id', Auth::id())->first();
+            $pet = Pet::where('id', $petId)->first();
 
             if (!$pet) {
-                return response()->json(['error' => 'Pet not found.'], 404);
+                return response()->json(['errors' => 'Pet not found.'], 404);
+            }
+
+            if (Auth::user()->id !== $pet->user_id) {
+                return response()->json(['errors' => 'You are unauthorized to see this information.'], 403);
             }
 
             $query = $pet->medicalLogs();
 
             if ($request->has('diagnosis')) {
-                $query->where('diagnosis', 'like', '%' . $request->diagnosis . '%');
+                $query->where('diagnosis', 'ilike', '%' . $request->diagnosis . '%');
             }
 
-            $medicalLogs = $query->orderBy('visit_date', 'desc')->get();
+            $medicalLogs = $query->orderBy('visit_date', 'desc')->paginate(10);
 
             return response()->json(['medical_logs' => $medicalLogs]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['error' => 'You are unauthorized to see this information.'], 404);
+            return response()->json(['errors' => 'You are unauthorized to see this information.'], 404);
         } catch (\Exception $e) {
             Log::error('Error fetching medical logs: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not fetch medical logs.'], 500);
+            return response()->json(['errors' => 'Could not fetch medical logs.'], 500);
         }
     }
 
@@ -132,7 +136,7 @@ class MedicalLogController extends Controller
 
             if (!$pet) {
                 DB::rollBack();
-                return response()->json(['error' => 'Pet not found or unauthorized.'], 404);
+                return response()->json(['errors' => 'Pet not found or unauthorized.'], 404);
             }
 
             $validatedData = $request->validated();
@@ -146,17 +150,16 @@ class MedicalLogController extends Controller
             DB::commit();
 
             return response()->json([
-                "message" => "Medical log created successfully.",
-                "medical_log" => $medicalLog,
+                "success" => "Medical log created successfully."
             ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Pet not found or unauthorized.'], 404);
+            return response()->json(['errors' => 'Pet not found or unauthorized.'], 404);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error storing medical log: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not store medical log.'], 500);
+            return response()->json(['errors' => 'Could not store medical log.'], 500);
         }
     }
     /**
@@ -192,22 +195,24 @@ class MedicalLogController extends Controller
             $medicalLog = MedicalLog::find($medicalLogId);
 
             if (!$medicalLog) {
-                return response()->json(['error' => 'Medical log not found.'], 404);
+                return response()->json(['errors' => 'Medical log not found.'], 404);
             }
 
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'You are unauthorized to view this medical log.'], 403);
+                return response()->json(['errors' => 'You are unauthorized to view this medical log.'], 403);
             }
 
-            $medicalLog->load('pets');
+            $medicalLog->load(['pets' => function ($query) {
+                $query->select('pets.id', 'pets.name');
+            }]);
 
             return response()->json($medicalLog, 200);
 
         } catch (\Exception $e) {
             Log::error('Error fetching medical log: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not fetch medical log.'], 500);
+            return response()->json(['errors' => 'Could not fetch medical log.'], 500);
         }
     }
 
@@ -251,13 +256,13 @@ class MedicalLogController extends Controller
             $medicalLog = MedicalLog::find($medicalLogId);
 
             if (!$medicalLog) {
-                return response()->json(['error' => 'Medical log not found.'], 404);
+                return response()->json(['errors' => 'Medical log not found.'], 404);
             }
 
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'You are unauthorized to update this medical log.'], 403);
+                return response()->json(['errors' => 'You are unauthorized to update this medical log.'], 403);
             }
 
             // Update the medical log with the new data
@@ -310,7 +315,7 @@ class MedicalLogController extends Controller
             $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
 
             if (!$isAuthorized) {
-                return response()->json(['error' => 'You are unauthorized to delete this medical log.'], 403);
+                return response()->json(['errors' => 'You are unauthorized to delete this medical log.'], 403);
             }
 
             $medicalLog->pets()->detach(Auth::id());
@@ -323,7 +328,7 @@ class MedicalLogController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error deleting medical log: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not delete medical log.'], 500);
+            return response()->json(['errors' => 'Could not delete medical log.'], 500);
         }
     }
 }

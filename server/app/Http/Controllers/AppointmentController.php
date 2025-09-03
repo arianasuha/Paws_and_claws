@@ -9,6 +9,7 @@ use App\Http\Requests\AppointmentUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\Pet;
 
 class AppointmentController extends Controller
 {
@@ -21,6 +22,13 @@ class AppointmentController extends Controller
      * summary="Get a list of appointments for the authenticated user",
      * description="Returns a list of appointments. Vets and service providers can see all appointments they are associated with, while regular users can only see their own.",
      * security={{"sanctum":{}}},
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -42,13 +50,15 @@ class AppointmentController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'vet' || $user->role === 'service_provider') {
-            $appointments = Appointment::where('provider_id', $user->id)->get();
+        if ($user->isAdmin()) {
+            $appointments = Appointment::orderByDesc('app_date')->orderByDesc('app_time')->paginate(10);
+        } elseif ($user->isVet() || $user->isServiceProvider()) {
+            $appointments = Appointment::where('provider_id', $user->id)->orderByDesc('app_date')->orderByDesc('app_time')->paginate(10);
         } else {
-            $appointments = Appointment::where('user_id', $user->id)->get();
+            $appointments = Appointment::where('user_id', $user->id)->orderByDesc('app_date')->orderByDesc('app_time')->paginate(10);
         }
 
-        return response()->json(['appointments' => $appointments]);
+        return response()->json($appointments, 200);
     }
 
 
@@ -89,15 +99,16 @@ class AppointmentController extends Controller
 
         $validated = $request->validated();
 
-        $appointment = Appointment::create([
-            'user_id' => $user->id,
-            'pet_id' => $validated['pet_id'],
-            'provider_id' => $validated['provider_id'],
-            'app_date' => $validated['app_date'],
-            'app_time' => $validated['app_time'],
-            'visit_reason' => $validated['visit_reason'],
-            'status' => 'pending',
-        ]);
+        $pet = Pet::find($validated['pet_id']);
+
+        if ($pet->user_id !== $user->id) {
+            return response()->json([
+                'errors' => 'You are not authorized to create an appointment for this pet.'
+            ], 403);
+        }
+
+        $validated['user_id'] = $user->id;
+        $appointment = Appointment::create($validated);
 
         $provider = User::find($validated['provider_id']);
 
@@ -115,7 +126,9 @@ class AppointmentController extends Controller
         ]);
 
 
-        return response()->json(['message' => 'Appointment created successfully.', 'appointment' => $appointment], 201);
+        return response()->json([
+            'success' => 'Appointment created successfully.'
+        ], 201);
     }
 
 
@@ -151,13 +164,33 @@ class AppointmentController extends Controller
      * )
      * )
      */
-    public function show(Appointment $appointment)
+    public function show(string $appointment)
     {
 
         $user = Auth::user();
 
+        $appointment = Appointment::where('id', $appointment)
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'first_name', 'last_name');
+                },
+                'provider' => function ($query) {
+                    $query->select('id', 'first_name', 'last_name');
+                },
+                'pet' => function ($query) {
+                    $query->select('id', 'name');
+                },
+            ])
+            ->first();
+
+        if (!$appointment) {
+            return response()->json(['errors' => 'Appointment not found.'], 404);
+        }
+
         if ($appointment->user_id !== $user->id && $appointment->provider_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized to view this appointment.'], 403);
+            return response()->json([
+                'errors' => 'Unauthorized to view this appointment.'
+            ], 403);
         }
 
         return response()->json(['appointment' => $appointment]);
@@ -206,21 +239,39 @@ class AppointmentController extends Controller
      * )
      * )
      */
-    public function update(AppointmentUpdateRequest $request, Appointment $appointment)
+    public function update(AppointmentUpdateRequest $request, string $appointment)
     {
         $user = Auth::user();
-        if ($appointment->provider_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized to update this appointment.'], 403);
+
+        $validated = $request->validated();
+        $appointment = Appointment::where('id', $appointment)->first();
+
+        if (!$appointment) {
+            return response()->json([
+                'errors' => 'Appointment not found.'
+            ], 404);
         }
 
-        $appointment->update($request->validated());
+        if (
+            ($appointment->user_id === $user->id && $validated['status'] !== 'canceled') ||
+            ($appointment->provider_id === $user->id && $validated['status'] === 'canceled')
+        ) {
+            return response()->json([
+                'errors' => 'You cannot update this status'
+            ], 403);
+        }
+
+        $appointment->update($validated);
+
         Notification::create([
             'user_id' => $appointment->user_id,
             'subject' => 'Appointment Updated',
             'message' => 'Your appointment has been updated.',
         ]);
 
-        return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment]);
+        return response()->json([
+            'success' => 'Appointment updated successfully.', 
+        ]);
     }
 
     /**
@@ -255,11 +306,20 @@ class AppointmentController extends Controller
      * )
      * )
      */
-    public function destroy(Appointment $appointment)
+    public function destroy(string $appointment)
     {
-        $user = Auth::user();
-        if ($appointment->user_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized to delete this appointment.'], 403);
+        $appointment = Appointment::where('id', $appointment)->first();
+
+        if (!$appointment) {
+            return response()->json([
+                'errors' => 'Appointment not found.'
+            ], 404);
+        }
+
+        if (!Auth::user()->is_admin) {
+            return response()->json([
+                'errors' => 'Unauthorized to delete this appointment.'
+            ], 403);
         }
 
         $appointment->delete();

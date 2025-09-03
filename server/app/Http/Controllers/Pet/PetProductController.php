@@ -25,7 +25,7 @@ class PetProductController extends Controller
             if ($petproduct && $petproduct->image_url) {
                 $this->deleteOldImage($petproduct->image_url);
             }
-            $path = $request->file('image_url')->store('profile_images', 'public');
+            $path = $request->file('image_url')->store('pet_product_images', 'public');
             $validated['image_url'] = Storage::url($path);
         } else if (array_key_exists('image_url', $validated) && is_null($validated['image_url'])) {
             // If remove Image button is pressed we will send image_url null
@@ -59,11 +59,11 @@ class PetProductController extends Controller
      * description="Returns a paginated list of all pet products, with an option to specify the number of items per page.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
-     * name="per_page",
+     * name="page",
      * in="query",
-     * description="Number of items per page",
+     * description="Page number for pagination",
      * required=false,
-     * @OA\Schema(type="integer", default=10)
+     * @OA\Schema(type="integer", default=1)
      * ),
      * @OA\Response(
      * response=200,
@@ -80,8 +80,7 @@ class PetProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $perPage = $request->input('per_page', 10);
-            $petProducts = PetProduct::with('category')->paginate($perPage);
+            $petProducts = PetProduct::with('category')->paginate(10);
 
             return response()->json($petProducts, 200);
         } catch (\Exception $e) {
@@ -212,12 +211,12 @@ class PetProductController extends Controller
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      * path="/api/pet-products/{petProductid}",
      * operationId="updatePetProduct",
      * tags={"PetProducts"},
-     * summary="Update a pet product (Admin only)",
-     * description="Updates an existing pet product by its ID. Requires admin authentication. Using POST with _method spoofing for file uploads.",
+     * summary="Update a pet product (Admin only) using _method spoofing",
+     * description="Updates an existing pet product by its ID. Requires admin authentication. Supports both file uploads (multipart/form-data) and standard JSON updates.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
      * name="petProductid",
@@ -230,9 +229,36 @@ class PetProductController extends Controller
      * required=true,
      * description="Pet product data to update",
      * @OA\MediaType(
-     * mediaType="multipart/form-data",
-     * @OA\Schema(ref="#/components/schemas/PetProductUpdateRequest")
+     * mediaType="application/json",
+     * @OA\Schema(
+     * @OA\Property(
+     * property="_method",
+     * type="string",
+     * example="PATCH",
+     * description="Method spoofing for PATCH request"
+     * ),
+     * @OA\Property(property="name", type="string", example="New Product Name"),
+     * @OA\Property(property="price", type="number", format="float", example="15.99"),
+     * @OA\Property(property="description", type="string", example="Updated description for the product."),
+     * @OA\Property(property="stock", type="integer", example="50")
      * )
+     * ),
+     * @OA\MediaType(
+     * mediaType="multipart/form-data",
+     * @OA\Schema(
+     * @OA\Property(
+     * property="_method",
+     * type="string",
+     * example="PATCH",
+     * description="Method spoofing for PATCH request"
+     * ),
+     * @OA\Property(property="name", type="string", example="New Product Name"),
+     * @OA\Property(property="price", type="number", format="float", example="15.99"),
+     * @OA\Property(property="description", type="string", example="Updated description for the product."),
+     * @OA\Property(property="stock", type="integer", example="50"),
+     * @OA\Property(property="image_url", type="string", format="binary", description="New image file for the product")
+     * )
+     * ),
      * ),
      * @OA\Response(
      * response=200,
@@ -287,7 +313,6 @@ class PetProductController extends Controller
 
             return response()->json([
                 'success' => 'Pet product updated successfully.',
-                'pet_product' => $petProduct->fresh(),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests\Pet;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
+use App\Http\Requests\BaseRequest;
 
-class PetMarketUpdateRequest extends FormRequest
+class PetMarketUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,15 +34,5 @@ class PetMarketUpdateRequest extends FormRequest
         return [
             'type.in' => 'The selected market type is invalid. It must be either "sale" or "adoption".',
         ];
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ], 422));
     }
 }
