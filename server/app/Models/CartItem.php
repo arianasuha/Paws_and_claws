@@ -3,19 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItem extends Model
+class CartItem extends Model
 {
     use HasFactory;
 
     public const CREATED_AT = null;
     public const UPDATED_AT = null;
-
+    
     protected $fillable = [
-        'order_id',
-        'product_id',
+        'cart_id',
+        'food_id',
         'quantity',
     ];
 
@@ -23,13 +22,13 @@ class OrderItem extends Model
         'quantity' => 'integer',
     ];
 
-    public function order()
+    public function cart()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Cart::class);
     }
 
-    public function product(): BelongsTo
+     public function product()
     {
-        return $this->belongsTo(PetProduct::class);
+        return $this->belongsTo(PetProduct::class, 'product_id');
     }
 }

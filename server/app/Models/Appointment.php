@@ -43,6 +43,11 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function provider()
+    {
+        return $this->belongsTo(User::class, 'provider_id');
+    }
+
     public function medicalLog()
     {
         return $this->hasOne(MedicalLog::class, 'app_id');

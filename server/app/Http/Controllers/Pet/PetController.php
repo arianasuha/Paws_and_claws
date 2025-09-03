@@ -19,7 +19,7 @@ class PetController extends Controller
             if ($pet && $pet->image_url) {
                 $this->deleteOldImage($pet->image_url);
             }
-            $path = $request->file('image_url')->store('profile_images', 'public');
+            $path = $request->file('image_url')->store('pet_images', 'public');
             $validated['image_url'] = Storage::url($path);
         } else if (array_key_exists('image_url', $validated) && is_null($validated['image_url'])) {
             // If remove Image button is pressed we will send image_url null
@@ -49,15 +49,34 @@ class PetController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
      * @OA\Get(
      * path="/api/pets",
      * operationId="indexPets",
      * tags={"Pets"},
-     * summary="Get a list of all pets",
-     * description="Returns a paginated list of all pets. Requires authentication.",
+     * summary="Get a list of all pets with filtering",
+     * description="Returns a paginated list of all pets, filtered by search query (name, species, breed) and gender. Requires authentication.",
      * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
+     * @OA\Parameter(
+     * name="search",
+     * in="query",
+     * description="Search query for partial matching on name, species, and breed",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="gender",
+     * in="query",
+     * description="Filter by gender",
+     * required=false,
+     * @OA\Schema(type="string", enum={"male", "female"})
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -73,10 +92,26 @@ class PetController extends Controller
      * )
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $pets = Pet::paginate(10);
+            $query = Pet::query();
+
+            if ($request->has('search')) {
+                $searchTerm = '%' . $request->input('search') . '%';
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('name', 'ilike', $searchTerm)
+                        ->orWhere('species', 'ilike', $searchTerm)
+                        ->orWhere('breed', 'ilike', $searchTerm);
+                });
+            }
+
+            if ($request->has('gender')) {
+                $query->where('gender', $request->input('gender'));
+            }
+
+            $pets = $query->paginate(10);
+
             return response()->json($pets, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -136,21 +171,16 @@ class PetController extends Controller
         $validatedData = $request->validated();
         $validatedData['user_id'] = Auth::id(); // Ensure user_id is set to authenticated user
 
-        if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('pet_images', 'public');
-            $validatedData['image_url'] = Storage::url($imagePath);
-        } else {
-            $validatedData['image_url'] = null;
-        }
+        $this->imageHandler($request, $validatedData);
 
-        $pet = Pet::create($validatedData);
+        Pet::create($validatedData);
 
         return response()->json([
-                "success" => "Pet created successfully.",
-            ], 201);
+            "success" => "Pet created successfully.",
+        ], 201);
     }
 
-   /**
+    /**
      * Display the specified resource.
      *
      * @OA\Get(
@@ -204,14 +234,12 @@ class PetController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @OA\Patch(
+     * @OA\Post(
      * path="/api/pets/{pet}",
      * operationId="updatePet",
      * tags={"Pets"},
-     * summary="Update a pet by ID",
-     * description="Updates an authenticated user's pet. Requires the user to be the owner of the pet.",
+     * summary="Update a pet by ID with method spoofing",
+     * description="Updates an authenticated user's pet. Requires the user to be the owner of the pet. Uses POST with _method spoofing for file uploads.",
      * security={{"sanctum": {}}},
      * @OA\Parameter(
      * name="pet",
@@ -223,8 +251,32 @@ class PetController extends Controller
      * @OA\RequestBody(
      * required=true,
      * @OA\MediaType(
+     * mediaType="application/json",
+     * @OA\Schema(
+     * @OA\Property(
+     * property="_method",
+     * type="string",
+     * example="PATCH",
+     * description="Method spoofing for PATCH request"
+     * ),
+     * @OA\Property(property="name", type="string", nullable=true),
+     * @OA\Property(property="gender", type="string", enum={"male", "female"}, nullable=true),
+     * @OA\Property(property="species", type="string", nullable=true),
+     * @OA\Property(property="breed", type="string", nullable=true),
+     * @OA\Property(property="dob", type="string", format="date", nullable=true),
+     * @OA\Property(property="height", type="number", format="float", nullable=true),
+     * @OA\Property(property="weight", type="number", format="float", nullable=true)
+     * )
+     * ),
+     * @OA\MediaType(
      * mediaType="multipart/form-data",
      * @OA\Schema(
+     * @OA\Property(
+     * property="_method",
+     * type="string",
+     * example="PATCH",
+     * description="Method spoofing for PATCH request"
+     * ),
      * @OA\Property(property="name", type="string", nullable=true),
      * @OA\Property(property="gender", type="string", enum={"male", "female"}, nullable=true),
      * @OA\Property(property="species", type="string", nullable=true),
@@ -232,7 +284,7 @@ class PetController extends Controller
      * @OA\Property(property="dob", type="string", format="date", nullable=true),
      * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Pet's profile image file"),
      * @OA\Property(property="height", type="number", format="float", nullable=true),
-     * @OA\Property(property="weight", type="number", format="float", nullable=true),
+     * @OA\Property(property="weight", type="number", format="float", nullable=true)
      * )
      * )
      * ),

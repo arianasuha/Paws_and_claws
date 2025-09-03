@@ -1,4 +1,4 @@
-
+<?php
 
 namespace App\Http\Requests\Order;
 
@@ -23,11 +23,11 @@ class UpdateCartItemRequest extends BaseRequest
     {
         return [
             'items' => ['required', 'array'],
-            'items.*.medicine_id' => ['required', 'exists:medicines,id'],
+            'items.*.product_id' => ['required', 'exists:pet_products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ];
     }
-
+    
     /**
      * Get the error messages for the defined validation rules.
      */
@@ -36,11 +36,12 @@ class UpdateCartItemRequest extends BaseRequest
         return [
             'items.required' => 'The items list is required.',
             'items.array' => 'The items must be an array.',
-            'items.*.medicine_id.required' => 'Each cart item must have a medicine ID.',
-            'items.*.medicine_id.exists' => 'One or more medicine IDs do not exist.',
+            'items.*.product_id.required' => 'Each cart item must have a product ID.',
+            'items.*.product_id.exists' => 'One or more food IDs do not exist.',
             'items.*.quantity.required' => 'Each cart item must have a quantity.',
             'items.*.quantity.integer' => 'The quantity must be an integer.',
             'items.*.quantity.min' => 'The quantity must be at least 1.',
         ];
     }
 }
+

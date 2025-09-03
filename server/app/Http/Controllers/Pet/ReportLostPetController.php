@@ -9,6 +9,7 @@ use App\Http\Requests\Pet\ReportLostPetUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class ReportLostPetController extends Controller
 {
@@ -18,9 +19,37 @@ class ReportLostPetController extends Controller
      * path="/api/reports/lost-pets",
      * operationId="getLostPetReports",
      * tags={"Lost Pets"},
-     * summary="Get a list of all lost pet reports",
-     * description="Returns a list of all lost pet reports, including associated user and pet details.",
+     * summary="Get a list of all lost pet reports with filtering and sorting",
+     * description="Returns a list of all lost pet reports, with options to filter by status and location, and sort by date. Includes associated user and pet details.",
      * security={{"sanctum": {}}},
+     * @OA\Parameter(
+     * name="page",
+     * in="query",
+     * description="Page number for pagination",
+     * required=false,
+     * @OA\Schema(type="integer", default=1)
+     * ),
+     * @OA\Parameter(
+     * name="status",
+     * in="query",
+     * description="Filter reports by status (e.g., 'missing' or 'found')",
+     * required=false,
+     * @OA\Schema(type="string", enum={"missing", "found"})
+     * ),
+     * @OA\Parameter(
+     * name="location",
+     * in="query",
+     * description="Filter reports by a partial, case-insensitive match on location",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="sort_date",
+     * in="query",
+     * description="Sort reports by date_lost in ascending ('asc') or descending ('desc') order. Defaults to 'desc'.",
+     * required=false,
+     * @OA\Schema(type="string", enum={"asc", "desc"})
+     * ),
      * @OA\Response(
      * response=200,
      * description="Successful operation",
@@ -36,14 +65,27 @@ class ReportLostPetController extends Controller
      * )
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $reports = ReportLostPet::with([
             'user' => function ($query) {
                 $query->select('id', 'username', 'email');
             },
             'pet'
-        ])->get();
+        ])
+        ->when($request->has('status'), function ($query) use ($request) {
+            $query->where('status', $request->status);
+        })
+        ->when($request->has('location'), function ($query) use ($request) {
+            $query->where('location', 'ilike', '%' . $request->location . '%');
+        })
+        ->when($request->has('sort_date'), function ($query) use ($request) {
+            $sortDirection = $request->sort_date === 'asc' ? 'asc' : 'desc';
+            $query->orderBy('date_lost', $sortDirection);
+        }, function ($query) {
+            $query->orderBy('date_lost', 'desc');
+        })
+        ->paginate(10);
 
         return response()->json($reports);
     }
@@ -79,23 +121,15 @@ class ReportLostPetController extends Controller
     public function store(ReportLostPetRegisterRequest $request): JsonResponse
     {
         $userId = $request->user()->id;
+        $validated = $request->validated();
+        $validated['user_id'] = $userId;
 
-        // Access non-nested fields directly
-        $report = ReportLostPet::create([
-            'user_id' => $userId,
-            'location' => $request->location,
-            'date_lost' => $request->date_lost,
-            'pet_id' => $request->pet_id,
-            'status' => $request->status ?? 'missing',
-        ]);
-
-        $report->load(['user', 'pet']);
+        ReportLostPet::create($validated);
 
         return response()->json([
             "success" => "Lost Pet Report created successfully.",
         ], 201);
     }
-
 
 
     /**
@@ -141,17 +175,15 @@ class ReportLostPetController extends Controller
             ])->find($id);
 
             if (!$reportLostPet) {
-                return response()->json(['error' => 'Lost Report not found.'], 404);
+                return response()->json(['errors' => 'Lost Report not found.'], 404);
             }
 
             return response()->json($reportLostPet, 200);
         } catch (\Exception $e) {
             Log::error('Error fetching lost pet report: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to retrieve lost pet report.'], 500);
+            return response()->json(['errors' => 'Failed to retrieve lost pet report.'], 500);
         }
     }
-
-
 
     /**
      * @OA\Patch(
@@ -203,11 +235,11 @@ class ReportLostPetController extends Controller
         $reportLostPet = ReportLostPet::find($id);
 
         if (!$reportLostPet) {
-            return response()->json(['error' => 'Lost Pet Report not found.'], 404);
+            return response()->json(['errors' => 'Lost Pet Report not found.'], 404);
         }
 
         if ($request->user()->id !== $reportLostPet->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['errors' => 'Unauthorized to update this report'], 403);
         }
 
         $reportLostPet->update($request->validated());
@@ -219,7 +251,9 @@ class ReportLostPetController extends Controller
             'pet'
         ]);
 
-        return response()->json($reportLostPet);
+        return response()->json([
+            'success' => 'Lost Pet Report updated successfully.',
+        ], 200);
     }
 
     /**
@@ -269,7 +303,6 @@ class ReportLostPetController extends Controller
         if (Auth::id() !== $reportLostPet->user_id) {
                 return response()->json(['error' => 'Unauthorized. You can only delete your own your reports.'], 403);
             }
-
 
         $reportLostPet->delete();
 

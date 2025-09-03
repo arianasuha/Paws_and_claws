@@ -72,7 +72,17 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Tag(
  * name="Cart",
- * description="API Endpoints for managing the shopping cart"
+ * description="API Endpoints for Cart Management"
+ * )
+ *
+ * @OA\Tag(
+ * name="Orders",
+ * description="API Endpoints for Orders Management"
+ * )
+ * 
+ * @OA\Tag(
+ * name="Payments",
+ * description="API Endpoints for Payment Management"
  * )
  *
  * @OA\Tag(
@@ -363,31 +373,37 @@ use OpenApi\Annotations as OA;
  * @OA\Schema(
  * schema="PetMarketRegisterRequest",
  * title="PetMarketRegisterRequest",
- * description="Pet market registration payload",
- * required={"pet", "market"},
+ * description="Pet market registration payload for an existing pet",
+ * required={"pet_id", "date", "type", "status"},
  * @OA\Property(
- * property="pet",
- * type="object",
- * description="Pet details for the listing",
- * required={"name", "species", "gender", "dob"},
- * @OA\Property(property="name", type="string", description="Name of the pet"),
- * @OA\Property(property="species", type="string", description="Species of the pet"),
- * @OA\Property(property="breed", type="string", nullable=true, description="Breed of the pet"),
- * @OA\Property(property="dob", type="string", format="date", description="Date of birth of the pet"),
- * @OA\Property(property="gender", type="string", description="Gender of the pet"),
- * @OA\Property(property="weight", type="integer", nullable=true, description="Weight of the pet"),
- * @OA\Property(property="height", type="integer", nullable=true, description="Height of the pet"),
- * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Image file of the pet")
+ * property="pet_id",
+ * type="integer",
+ * description="ID of the pet for this listing"
  * ),
  * @OA\Property(
- * property="market",
- * type="object",
- * description="Pet market listing details",
- * required={"date", "type", "status"},
- * @OA\Property(property="date", type="string", format="date", description="Date of the listing"),
- * @OA\Property(property="type", type="string", enum={"sale", "adoption"}, description="Type of listing"),
- * @OA\Property(property="description", type="string", nullable=true, description="Description of the listing"),
- * @OA\Property(property="fee", type="number", format="float", nullable=true, description="Fee associated with the listing")
+ * property="date",
+ * type="string",
+ * format="date",
+ * description="Date of the listing"
+ * ),
+ * @OA\Property(
+ * property="type",
+ * type="string",
+ * enum={"sale", "adoption"},
+ * description="Type of listing"
+ * ),
+ * @OA\Property(
+ * property="description",
+ * type="string",
+ * nullable=true,
+ * description="Description of the listing"
+ * ),
+ * @OA\Property(
+ * property="fee",
+ * type="number",
+ * format="float",
+ * nullable=true,
+ * description="Fee associated with the listing"
  * )
  * )
  *
@@ -660,7 +676,6 @@ use OpenApi\Annotations as OA;
  * schema="MedicalLogUpdateRequest",
  * title="MedicalLogUpdateRequest",
  * description="Medical log update request payload",
- * @OA\Property(property="pet_id", type="integer", format="int64", nullable=true, description="ID of the pet the log is for"),
  * @OA\Property(property="visit_date", type="string", format="date", nullable=true, description="Date of the medical visit"),
  * @OA\Property(property="diagnosis", type="string", nullable=true, description="Diagnosis from the vet"),
  * @OA\Property(property="notes", type="string", nullable=true, description="Additional notes for the log"),
@@ -801,6 +816,228 @@ use OpenApi\Annotations as OA;
  * @OA\Property(property="image_url", type="string", format="binary", nullable=true, description="Product image file"),
  * @OA\Property(property="category_id", type="integer", nullable=true, description="ID of the product's category")
  * )
+ * 
+ * @OA\Schema(
+ * schema="CartItem",
+ * title="CartItem",
+ * description="Cart item model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Cart item ID"),
+ * @OA\Property(property="cart_id", type="integer", format="int64", description="ID of the associated cart"),
+ * @OA\Property(property="product_id", type="integer", format="int64", description="ID of the associated product item"),
+ * @OA\Property(property="quantity", type="integer", description="Quantity of the product item"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Timestamp of creation"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Timestamp of last update"),
+ * example={
+ * "id": 1,
+ * "cart_id": 1,
+ * "product_id": 101,
+ * "quantity": 2,
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z"
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="CartItemList",
+ * title="CartItemList",
+ * description="List of cart items",
+ * @OA\Property(
+ * property="cartItems",
+ * type="array",
+ * @OA\Items(ref="#/components/schemas/CartItem")
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="UpdateCartItemRequest",
+ * title="UpdateCartItemRequest",
+ * description="Request body for updating cart items",
+ * required={"cart_id", "items"},
+ * @OA\Property(
+ * property="items",
+ * type="array",
+ * @OA\Items(
+ * @OA\Property(property="product_id", type="integer", description="ID of the product item"),
+ * @OA\Property(property="quantity", type="integer", description="Quantity of the product item")
+ * ),
+ * description="List of new cart items"
+ * ),
+ * example={
+ * "items": {
+ * {"product_id": 1, "quantity": 2},
+ * {"product_id": 2, "quantity": 1}
+ * }
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="Order",
+ * title="Order",
+ * description="Order model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Order ID"),
+ * @OA\Property(property="user_id", type="integer", format="int64", description="ID of the user who placed the order"),
+ * @OA\Property(property="order_date", type="string", format="date-time", description="Date and time of the order"),
+ * @OA\Property(property="total_amount", type="number", format="float", description="Total amount of the order"),
+ * @OA\Property(
+ * property="order_status",
+ * type="string",
+ * enum={"pending", "preparing", "ready", "picked", "delivered", "cancelled"},
+ * default="pending",
+ * description="Current status of the order"
+ * ),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Timestamp of order creation"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Timestamp of last update"),
+ * example={
+ * "id": 1,
+ * "user_id": 10,
+ * "order_date": "2023-01-01T12:00:00.000000Z",
+ * "total_amount": 25.75,
+ * "order_status": "pending",
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z"
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="OrderItem",
+ * title="OrderItem",
+ * description="Order item model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Order item ID"),
+ * @OA\Property(property="order_id", type="integer", format="int64", description="ID of the associated order"),
+ * @OA\Property(property="product_id", type="integer", format="int64", description="ID of the associated product item"),
+ * @OA\Property(property="quantity", type="integer", description="Quantity of the product item"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Timestamp of creation"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Timestamp of last update"),
+ * example={
+ * "id": 1,
+ * "order_id": 1,
+ * "product_id": 101,
+ * "quantity": 2,
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z"
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="OrderWithItems",
+ * title="OrderWithItems",
+ * description="Order model with associated order items",
+ * allOf={
+ * @OA\Schema(ref="#/components/schemas/Order"),
+ * @OA\Schema(
+ * @OA\Property(
+ * property="order_items",
+ * type="array",
+ * @OA\Items(ref="#/components/schemas/OrderItem")
+ * )
+ * )
+ * },
+ * example={
+ * "id": 1,
+ * "user_id": 10,
+ * "order_date": "2023-01-01T12:00:00.000000Z",
+ * "total_amount": 25.75,
+ * "order_status": "pending",
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z",
+ * "order_items": {
+ * {
+ * "id": 1,
+ * "order_id": 1,
+ * "product_id": 101,
+ * "quantity": 2,
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z"
+ * }
+ * }
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="NewOrder",
+ * title="NewOrder",
+ * description="New order model",
+ * @OA\Property(property="id", type="integer", format="int64", description="New order ID"),
+ * @OA\Property(property="order_id", type="integer", format="int64", description="ID of the associated order"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Timestamp of creation"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Timestamp of last update"),
+ * @OA\Property(
+ * property="order",
+ * ref="#/components/schemas/Order"
+ * ),
+ * example={
+ * "id": 1,
+ * "order_id": 1,
+ * "created_at": "2023-01-01T12:00:00.000000Z",
+ * "updated_at": "2023-01-01T12:00:00.000000Z",
+ * "order": {
+ * "id": 1,
+ * "user_id": 10,
+ * "order_date": "2023-01-01T12:00:00.000000Z",
+ * "total_amount": 25.75,
+ * "order_status": "pending"
+ * }
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="OrderPagination",
+ * title="Order Pagination",
+ * description="Paginated list of orders",
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Order")),
+ * @OA\Property(property="links", type="object", description="Pagination links"),
+ * @OA\Property(property="meta", type="object", description="Pagination meta information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="NewOrderPagination",
+ * title="New Order Pagination",
+ * description="Paginated list of new orders",
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/NewOrder")),
+ * @OA\Property(property="links", type="object", description="Pagination links"),
+ * @OA\Property(property="meta", type="object", description="Pagination meta information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="Payment",
+ * title="Payment",
+ * description="Payment model",
+ * @OA\Property(property="id", type="integer", format="int64", description="Payment ID"),
+ * @OA\Property(property="user_id", type="integer", format="int64", description="ID of the user who made the payment"),
+ * @OA\Property(property="order_id", type="integer", format="int64", description="ID of the associated order"),
+ * @OA\Property(property="payment_type", type="string", enum={"cash", "card"}, description="Type of payment"),
+ * @OA\Property(property="payment_date", type="string", format="date-time", description="Date and time of the payment"),
+ * example={
+ * "id": 1,
+ * "user_id": 1,
+ * "order_id": 10,
+ * "payment_type": "cash",
+ * "payment_date": "2023-01-01T13:00:00.000000Z"
+ * }
+ * )
+ *
+ * @OA\Schema(
+ * schema="PaymentPagination",
+ * title="Payment Pagination",
+ * description="Paginated list of payments",
+ * @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Payment")),
+ * @OA\Property(property="links", type="object", description="Pagination links"),
+ * @OA\Property(property="meta", type="object", description="Pagination meta information")
+ * )
+ *
+ * @OA\Schema(
+ * schema="RegisterPaymentRequest",
+ * title="RegisterPaymentRequest",
+ * description="Request body for creating a new payment",
+ * required={"order_id", "payment_type"},
+ * @OA\Property(property="order_id", type="integer", description="ID of the order to be paid"),
+ * @OA\Property(property="payment_type", type="string", enum={"cash", "card"}, description="Type of payment"),
+ * example={
+ * "order_id": 1,
+ * "payment_type": "cash"
+ * }
+ * )
+ * 
  */
 class Annotations
 {

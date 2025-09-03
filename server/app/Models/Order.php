@@ -4,32 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
     use HasFactory;
-    public const UPDATED_AT = null;
+
     public const CREATED_AT = null;
+    public const UPDATED_AT = null;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'user_id',
         'order_date',
         'total_amount',
-        'payment_status',
         'order_status',
+        'payment_status',
     ];
 
-    /**
-     * Get the user that owns the checkout.
-     */
-    public function user(): BelongsTo
+    protected $casts = [
+        'order_date' => 'date',
+    ];
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

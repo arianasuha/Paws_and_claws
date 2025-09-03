@@ -2,22 +2,22 @@
 
 namespace Database\Factories;
 
-use App\Models\CartItems;
+use App\Models\CartItem;
 use App\Models\Cart;
 use App\Models\PetProduct;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CartItems>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CartItem>
  */
-class CartItemsFactory extends Factory
+class CartItemFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = CartItems::class;
+    protected $model = CartItem::class;
 
     /**
      * Define the model's default state.
