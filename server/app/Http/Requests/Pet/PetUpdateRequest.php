@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Pet;
 
 use App\Http\Requests\BaseRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 
 class PetUpdateRequest extends BaseRequest
 {
@@ -25,12 +23,12 @@ class PetUpdateRequest extends BaseRequest
             'name' => 'sometimes|string|max:255',
             'gender' => 'sometimes|in:male,female',
             'species' => 'sometimes|string|max:255',
-            'breed' => 'nullable|string|max:255',
+            'breed' => 'sometimes|string|max:255',
             'dob' => 'sometimes|date',
-            'image_url' => 'nullable|image|max:2048',
+            'image_url' => 'sometimes|image|max:2048',
             'user_id' => 'prohibited',
-            'height' => 'nullable|numeric|min:0',
-            'weight' => 'nullable|numeric|min:0',
+            'height' => 'sometimes|numeric|min:0',
+            'weight' => 'sometimes|numeric|min:0',
         ];
     }
 
@@ -42,15 +40,5 @@ class PetUpdateRequest extends BaseRequest
         return [
             'user_id.prohibited' => 'You cannot modify the owner of a pet.',
         ];
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ], 422));
     }
 }

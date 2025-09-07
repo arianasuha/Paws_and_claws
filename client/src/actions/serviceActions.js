@@ -6,7 +6,7 @@ import {
   updateServiceProvider,
   deleteServiceProvider
 } from "@/libs/api";
-import { logoutAction } from "./authActions";
+import { deleteSessionCookie } from "@/libs/cookie";
 
 export const actionError = async (response) => {
   if (typeof response.error === "object") {
@@ -204,7 +204,8 @@ export const deleteServiceProviderAction = async (id) => {
       return { error: response.error };
     }
 
-    await logoutAction()
+    await deleteSessionCookie();
+    
     return { success: response.success };
   } catch (error) {
     console.error(error);

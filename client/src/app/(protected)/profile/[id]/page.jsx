@@ -47,11 +47,11 @@ export default async function DynamicProfilePage({ params }) {
   return (
     <div className={styles["profile-page"]}>
       <div className={styles["profile-container"]}>
-        {userRole === "user" && <CustomerProfileForm userId={profileId} />}
+        {(userRole === "user" || userRole === "admin") && <CustomerProfileForm userId={profileId} />}
         {userRole === "vet" && <VetProfileForm userId={profileId} />}
         {userRole === "provider" && <ServiceProfileForm userId={profileId} />}
 
-        {!["user", "vet", "provider"].includes(userRole) && (
+        {!["user", "vet", "provider", "admin"].includes(userRole) && (
           <div className={styles["error-message"]}>
             Unknown user role. Cannot display profile.
           </div>

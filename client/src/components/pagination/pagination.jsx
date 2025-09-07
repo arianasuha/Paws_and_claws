@@ -1,60 +1,84 @@
 "use client"
 
-import styles from "./pagination.module.css"
+import styles from "./Pagination.module.css"
 
-export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  const handlePageClick = (page) => {
-    if (page !== currentPage && page >= 1 && page <= totalPages) {
-      onPageChange(page)
-    }
-  }
-
-  const renderPageNumbers = () => {
+export default function Pagination({ currentPage, totalPages, onPageChange, itemsPerPage = 10, totalItems = 0 }) {
+  const getPageNumbers = () => {
     const pages = []
     const maxVisiblePages = 5
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
-    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
 
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1)
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageClick(i)}
-          className={`${styles["page-btn"]} ${i === currentPage ? styles["active"] : ""}`}
-        >
-          {i}
-        </button>,
-      )
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i)
+        }
+        pages.push("...")
+        pages.push(totalPages)
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1)
+        pages.push("...")
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i)
+        }
+      } else {
+        pages.push(1)
+        pages.push("...")
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i)
+        }
+        pages.push("...")
+        pages.push(totalPages)
+      }
     }
 
     return pages
   }
 
+  const startItem = (currentPage - 1) * itemsPerPage + 1
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+
   if (totalPages <= 1) return null
 
   return (
-    <div className={styles["pagination-container"]}>
-      <button
-        onClick={() => handlePageClick(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`${styles["nav-btn"]} ${currentPage === 1 ? styles["disabled"] : ""}`}
-      >
-        Previous
-      </button>
+    <div className={styles.paginationContainer}>
+   
 
-      {renderPageNumbers()}
+      <div className={styles.paginationControls}>
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={styles.paginationButton}
+        >
+          Previous
+        </button>
 
-      <button
-        onClick={() => handlePageClick(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={`${styles["nav-btn"]} ${currentPage === totalPages ? styles["disabled"] : ""}`}
-      >
-        Next
-      </button>
+        <div className={styles.pageNumbers}>
+          {getPageNumbers().map((page, index) => (
+            <button
+              key={index}
+              onClick={() => typeof page === "number" && onPageChange(page)}
+              disabled={page === "..." || page === currentPage}
+              className={`${styles.pageButton} ${
+                page === currentPage ? styles.activePage : ""
+              } ${page === "..." ? styles.ellipsis : ""}`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={styles.paginationButton}
+        >
+          Next
+        </button>
+      </div>
     </div>
   )
 }

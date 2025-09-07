@@ -24,12 +24,12 @@ class MedicalLogUpdateRequest extends BaseRequest
     {
        return [
             'visit_date' => 'sometimes|date',
-            'visit_reason' => 'sometimes|string|max:255',
+            'reason_for_visit' => 'sometimes|string|max:255',
             'diagnosis' => 'sometimes|string|max:255',
             'notes' => 'sometimes|string',
             'vet_name' => 'sometimes|string|max:255',
             'clinic_name' => 'sometimes|string|max:255',
-            'prescribed_medication' => 'sometimes|string|max:255',
+            'treatment_prescribed' => 'sometimes|string|max:255',
             'attachment_url' => 'sometimes|string|max:2048',
         ];
     }

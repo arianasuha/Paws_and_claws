@@ -187,7 +187,7 @@ class AppointmentController extends Controller
             return response()->json(['errors' => 'Appointment not found.'], 404);
         }
 
-        if ($appointment->user_id !== $user->id && $appointment->provider_id !== $user->id) {
+        if ($appointment->user_id !== $user->id && $appointment->provider_id !== $user->id && !$user->is_admin) {
             return response()->json([
                 'errors' => 'Unauthorized to view this appointment.'
             ], 403);

@@ -297,13 +297,15 @@ class EmergencyShelterController extends Controller
     {
 
         try {
-            $shelterRequest = EmergencyShelter::where('id', $shelterId)
-                ->where('user_id', Auth::id())
-                ->first();
+            $shelterRequest = EmergencyShelter::where('id', $shelterId)->first();
 
 
             if (!$shelterRequest) {
-                return response()->json(['errors' => 'You are unauthorized to delete this request.'], 403);
+                return response()->json(['errors' => 'Emergency Shelter Request not found.'], 404);
+            }
+
+            if (!Auth::user()->is_admin) {
+                return response()->json(['errors' => 'You are not authorized to delete this shelter request.'], 403);
             }
 
 

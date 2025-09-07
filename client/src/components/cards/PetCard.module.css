@@ -1,0 +1,88 @@
+.petCard {
+background-color: #ffffff;
+border: 1px solid #e2e8f0;
+height: 550px;
+border-radius: 0.75rem;
+overflow: hidden;
+cursor: pointer;
+transition: all 0.2s ease;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+padding-bottom: 1.5rem;
+}
+
+.petCard:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+border-color: #667eea;
+}
+
+.petImage {
+width: 100%;
+height: 300px;
+object-fit: cover;
+display: block;
+transition: transform 0.2s ease;
+}
+
+.petCard:hover .petImage {
+transform: scale(1.05);
+}
+
+.petName {
+font-size: 1.5rem;
+font-weight: 700;
+color: #2d3748;
+margin: 1.5rem 0 0.5rem 0;
+text-align: center;
+}
+
+.petDetails {
+display: flex;
+flex-direction: column;
+padding: 0 1.5rem;
+gap: 0.5rem;
+}
+
+.petDetail {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0.5rem 0;
+border-bottom: 1px solid #e2e8f0;
+}
+
+.petDetail:last-child {
+border-bottom: none;
+}
+
+.petDetailLabel {
+font-weight: 600;
+color: #718096;
+font-size: 0.875rem;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 300px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .petCard {
+  padding-bottom: 1rem;
+  }
+
+  .petName {
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  }
+
+  .petDetails {
+  padding: 0 1rem;
+  }
+}

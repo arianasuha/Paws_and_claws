@@ -55,8 +55,8 @@ class PetProductController extends Controller
      * path="/api/pet-products",
      * operationId="getPetProductsList",
      * tags={"PetProducts"},
-     * summary="Get list of all pet products",
-     * description="Returns a paginated list of all pet products, with an option to specify the number of items per page.",
+     * summary="Get list of all pet products with search, filter, and sort options",
+     * description="Returns a paginated list of all pet products. Supports searching by name and description, filtering by category, and sorting by price.",
      * security={{"sanctum":{}}},
      * @OA\Parameter(
      * name="page",
@@ -64,6 +64,27 @@ class PetProductController extends Controller
      * description="Page number for pagination",
      * required=false,
      * @OA\Schema(type="integer", default=1)
+     * ),
+     * @OA\Parameter(
+     * name="search",
+     * in="query",
+     * description="Search products by name or description (case-insensitive)",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="category",
+     * in="query",
+     * description="Filter products by exact category name",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     * name="sort_by_price",
+     * in="query",
+     * description="Sort products by price. Use 'asc' or 'desc'.",
+     * required=false,
+     * @OA\Schema(type="string", enum={"asc", "desc"})
      * ),
      * @OA\Response(
      * response=200,
@@ -80,19 +101,39 @@ class PetProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $petProducts = PetProduct::with('category')->paginate(10);
+            $query = PetProduct::with('category');
+
+            if ($request->has('search')) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'ilike', '%' . $search . '%')
+                        ->orWhere('description', 'ilike', '%' . $search . '%');
+                });
+            }
+
+            if ($request->has('category')) {
+                $categoryName = $request->input('category');
+                $query->whereHas('category', function ($q) use ($categoryName) {
+                    $q->where('name', $categoryName);
+                });
+            }
+
+            if ($request->has('sort_by_price')) {
+                $sortDirection = $request->input('sort_by_price', 'asc');
+                $query->orderBy('price', $sortDirection);
+            }
+
+            $petProducts = $query->paginate(10)->appends($request->except('page'));
 
             return response()->json($petProducts, 200);
         } catch (\Exception $e) {
-            // Log the full exception for detailed error tracking
             Log::error('Error retrieving pet products: ' . $e->getMessage());
-
-            // Return the specific error message to the user for immediate debugging
             return response()->json([
-                'errors' => 'Failed to retrieve pet products: ' . $e->getMessage()
+                'errors' => 'Failed to retrieve pet products. Please try again later.'
             ], 500);
         }
     }
+
     /**
      * @OA\Post(
      * path="/api/pet-products",

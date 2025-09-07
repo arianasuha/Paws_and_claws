@@ -1,0 +1,87 @@
+/* Creating payment card styles with purple-amber theme */
+.mainCard {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-top: 4px solid;
+  border-image: linear-gradient(135deg, #10b981 0%, #059669 100%) 1;
+}
+
+.mainCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.paymentId {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.value {
+  color: #374151;
+  font-weight: 500;
+}
+
+.paymentType {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Payment Type Colors */
+.card {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.cash {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.paypal {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.crypto {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+@media (max-width: 480px) {
+  .detail {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+}

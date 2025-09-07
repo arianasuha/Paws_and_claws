@@ -40,7 +40,7 @@ export const actionError = async (response) => {
     }
 
     if (response.error.image_url) {
-      errorMessages["image_url"] = response.error.image_url;
+      errorMessages["image"] = response.error.image_url;
     }
 
     // Combine messages into a single string with \n between each
@@ -51,9 +51,9 @@ export const actionError = async (response) => {
   return { error: { error: response.error } };
 };
 
-export const getPetsAction = async () => {
+export const getPetsAction = async (queryParams = {}) => {
   try {
-    const response = await getPets();
+    const response = await getPets(queryParams);
 
     if (response.error) {
       return { error: response.error };
@@ -90,28 +90,8 @@ export const getPetAction = async (id) => {
 };
 
 export const createPetAction = async (formData) => {
-  const name = formData.get("name");
-  const species = formData.get("species");
-  const breed = formData.get("breed");
-  const dob = formData.get("dob");
-  const gender = formData.get("gender");
-  const weight = formData.get("weight");
-  const height = formData.get("height");
-  const image_url = formData.get("image_url");
-
-  const data = {
-    name,
-    ...(species && { species }),
-    ...(breed && { breed }),
-    ...(dob && { dob }),
-    ...(gender && { gender }),
-    ...(weight && { weight }),
-    ...(height && { height }),
-    ...(image_url && { image_url }),
-  };
-
   try {
-    const response = await createPet(data);
+    const response = await createPet(formData);
 
     if (response.error) {
       return actionError(response);
@@ -125,28 +105,33 @@ export const createPetAction = async (formData) => {
 };
 
 export const updatePetAction = async (id, formData) => {
-  const name = formData.get("name");
-  const species = formData.get("species");
-  const breed = formData.get("breed");
-  const dob = formData.get("dob");
-  const gender = formData.get("gender");
-  const weight = formData.get("weight");
-  const height = formData.get("height");
-  const image_url = formData.get("image_url");
-
-  const data = {
-    name,
-    ...(species && { species }),
-    ...(breed && { breed }),
-    ...(dob && { dob }),
-    ...(gender && { gender }),
-    ...(weight && { weight }),
-    ...(height && { height }),
-    ...(image_url && { image_url }),
-  };
-
   try {
-    const response = await updatePet(id, data);
+    let data, response;
+    let image_url = formData.get("image_url")
+    
+    if (image_url.size > 0) {
+      response = await updatePet(id, formData, true);
+    } else {
+      const name = formData.get("name");
+      const species = formData.get("species");
+      const breed = formData.get("breed");
+      const dob = formData.get("dob");
+      const gender = formData.get("gender");
+      const weight = formData.get("weight");
+      const height = formData.get("height");
+
+      data = {
+        ...(name && { name }),
+        ...(species && { species }),
+        ...(breed && { breed }),
+        ...(dob && { dob }),
+        ...(gender && { gender }),
+        ...(weight && { weight }),
+        ...(height && { height }),
+      };
+
+      response = await updatePet(id, data);
+    }
 
     if (response.error) {
       return actionError(response);
@@ -167,7 +152,6 @@ export const deletePetAction = async (id) => {
       return { error: response.error };
     }
     
-    await logoutAction()
     return { success: response.success };
   } catch (error) {
     console.error(error);

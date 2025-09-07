@@ -24,7 +24,7 @@ class ReportLostPetUpdateRequest extends BaseRequest
         return [
             'location' => ['sometimes', 'string', 'max:255'],
             'date_lost' => ['sometimes', 'date'],
-            'status' => ['sometimes', 'string', 'in:found'],
+            'status' => ['sometimes', 'string', 'in:missing,found'],
         ];
     }
 }

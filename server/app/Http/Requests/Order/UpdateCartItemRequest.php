@@ -37,7 +37,7 @@ class UpdateCartItemRequest extends BaseRequest
             'items.required' => 'The items list is required.',
             'items.array' => 'The items must be an array.',
             'items.*.product_id.required' => 'Each cart item must have a product ID.',
-            'items.*.product_id.exists' => 'One or more food IDs do not exist.',
+            'items.*.product_id.exists' => 'One or more product IDs do not exist.',
             'items.*.quantity.required' => 'Each cart item must have a quantity.',
             'items.*.quantity.integer' => 'The quantity must be an integer.',
             'items.*.quantity.min' => 'The quantity must be at least 1.',
