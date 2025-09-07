@@ -21,12 +21,12 @@ class MedicalLogRegisterRequest extends BaseRequest
         return [
             'pet_id' => 'required|integer|exists:pets,id',
             'visit_date' => 'required|date',
-            'visit_reason' => 'nullable|string|max:255',
+            'reason_for_visit' => 'nullable|string|max:255',
             'diagnosis' => 'required|string|max:255',
             'notes' => 'nullable|string',
             'vet_name' => 'nullable|string|max:255',
             'clinic_name' => 'nullable|string|max:255',
-            'prescribed_medication' => 'nullable|string|max:255',
+            'treatment_prescribed' => 'nullable|string|max:255',
             'attachment_url' => 'nullable|url|max:2048',
         ];
     }

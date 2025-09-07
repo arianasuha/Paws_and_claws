@@ -22,7 +22,8 @@ class PetMarketUpdateRequest extends BaseRequest
         return [
             'type' => 'sometimes|string|in:sale,adoption',
             'description' => 'sometimes|string|nullable',
-            'fee' => 'sometimes|numeric|min:0',
+            'status' => 'sometimes|string|in:adopted,sold',
+            'fee' => 'sometimes|numeric|nullable',
         ];
     }
 

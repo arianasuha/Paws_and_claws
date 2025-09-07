@@ -95,6 +95,7 @@ export class ApiClient {
     }
 
     try {
+      console.log("Fetching:", url, options);
       const response = await fetch(url, options);
       return await this.handleErrors(response);
     } catch (error) {

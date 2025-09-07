@@ -1,0 +1,102 @@
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.appointmentInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statusPending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.statusAccepted {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.statusCanceled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.statusDefault {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.dateTime {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.date,
+.time {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.petInfo,
+.reason {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.reason {
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .appointmentInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .dateTime {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

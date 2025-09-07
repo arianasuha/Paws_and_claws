@@ -1,0 +1,158 @@
+/* Creating order card styles with purple-amber theme */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-top: 4px solid;
+  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.orderId {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.value {
+  color: #374151;
+  font-weight: 500;
+}
+
+.statusRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #f3f4f6;
+}
+
+.statusItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status,
+.paymentStatus {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Order Status Colors */
+.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.preparing {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.ready {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.delivered {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.cancelled {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Payment Status Colors */
+.paid {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.paymentPending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.failed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.payment {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment:hover {
+  transform: scale(1.05);
+}
+
+.default {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .statusRow {
+    gap: 0.75rem;
+  }
+}

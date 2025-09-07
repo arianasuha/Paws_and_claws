@@ -124,6 +124,14 @@ class ReportLostPetController extends Controller
         $validated = $request->validated();
         $validated['user_id'] = $userId;
 
+        $lostPet = ReportLostPet::where('pet_id', $validated['pet_id'])->first();
+
+        if ($lostPet) {
+            return response()->json([
+                "errors" => "Pet already has a lost pet report.",
+            ], 403);
+        }
+
         ReportLostPet::create($validated);
 
         return response()->json([
@@ -244,13 +252,6 @@ class ReportLostPetController extends Controller
 
         $reportLostPet->update($request->validated());
 
-        $reportLostPet->load([
-            'user' => function ($query) {
-                $query->select('id', 'username', 'email');
-            },
-            'pet'
-        ]);
-
         return response()->json([
             'success' => 'Lost Pet Report updated successfully.',
         ], 200);
@@ -297,11 +298,11 @@ class ReportLostPetController extends Controller
         $reportLostPet = ReportLostPet::find($id);
 
         if (!$reportLostPet) {
-            return response()->json(['error' => 'Lost Pet Report not found.'], 404);
+            return response()->json(['errors' => 'Lost Pet Report not found.'], 404);
         }
 
         if (Auth::id() !== $reportLostPet->user_id) {
-                return response()->json(['error' => 'Unauthorized. You can only delete your own your reports.'], 403);
+                return response()->json(['errors' => 'Unauthorized. You can only delete your own your reports.'], 403);
             }
 
         $reportLostPet->delete();

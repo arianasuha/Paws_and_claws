@@ -10,7 +10,6 @@ use App\Models\Pet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class PetMarketController extends Controller
@@ -193,6 +192,20 @@ class PetMarketController extends Controller
 
             $pet = Pet::find($validated['pet_id']);
 
+            if (!$pet) {
+                return response()->json([
+                    'errors' => 'Pet not found.'
+                ], 404);
+            }
+
+            $petMarket = PetMarket::where('pet_id', $validated['pet_id'])->first();
+
+            if ($petMarket) {
+                return response()->json([
+                    'errors' => 'A market listing already exists for this pet.'
+                ], 403);
+            }
+
             if ($pet->user_id !== Auth::user()->id) {
                 return response()->json([
                     'errors' => 'You are not authorized to create a market listing for this pet.'
@@ -201,10 +214,10 @@ class PetMarketController extends Controller
 
             if (isset($validated['type']) && isset($validated['status'])) {
                 if ($validated['type'] === 'adoption' && !in_array($validated['status'], ['available', 'adopted'])) {
-                    return response()->json(['error' => 'Invalid status for adoption. Status must be available, adopted.'], 422);
+                    return response()->json(['errors' => 'Invalid status for adoption. Status must be available, adopted.'], 422);
                 }
                 if ($validated['type'] === 'sale' && !in_array($validated['status'], ['available', 'sold'])) {
-                    return response()->json(['error' => 'Invalid status for sale. Status must be available, sold.'], 422);
+                    return response()->json(['errors' => 'Invalid status for sale. Status must be available, sold.'], 422);
                 }
             }
 
@@ -261,7 +274,12 @@ class PetMarketController extends Controller
     public function show(string $pet_id)
     {
         try {
-            $petMarket = PetMarket::where('pet_id', $pet_id)->first();
+            $petMarket = PetMarket::with([
+                'pet',
+                'user' => function ($query) {
+                    $query->select('id', 'username', 'email');
+                }
+            ])->where('pet_id', $pet_id)->first();
 
             if (!$petMarket) {
                 return response()->json(['errors' => 'Pet market listing not found.'], 404);
@@ -327,10 +345,10 @@ class PetMarketController extends Controller
             $petMarket = PetMarket::find($id);
 
             if (!$petMarket) {
-                return response()->json(['error' => 'Pet market listing not found.'], 404);
+                return response()->json(['errors' => 'Pet market listing not found.'], 404);
             }
-            if ($petMarket->user_id !== Auth::id()) {
-                return response()->json(['error' => 'Unauthorized to update this listing.'], 403);
+            if ($petMarket->user_id !== Auth::id() && !Auth::user()->is_admin) {
+                return response()->json(['errors' => 'Unauthorized to update this listing.'], 403);
             }
 
             $validatedData = $request->validated();
@@ -342,7 +360,7 @@ class PetMarketController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error updating pet market listing: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not update pet market listing.'], 500);
+            return response()->json(['errors' => 'Could not update pet market listing.'], 500);
         }
     }
 
@@ -388,11 +406,11 @@ class PetMarketController extends Controller
             $petMarket = PetMarket::find($id);
 
             if (!$petMarket) {
-                return response()->json(['error' => 'Pet market listing not found.'], 404);
+                return response()->json(['errors' => 'Pet market listing not found.'], 404);
             }
 
             if ($petMarket->user_id !== Auth::id() && !Auth::user()->is_admin) {
-                return response()->json(['error' => 'Unauthorized to delete this listing.'], 403);
+                return response()->json(['errors' => 'Unauthorized to delete this listing.'], 403);
             }
 
             $petMarket->delete();
@@ -400,7 +418,7 @@ class PetMarketController extends Controller
             return response()->json(null, 204);
         } catch (\Exception $e) {
             Log::error('Error deleting pet market listing: ' . $e->getMessage());
-            return response()->json(['error' => 'Could not delete pet market listing.'], 500);
+            return response()->json(['errors' => 'Could not delete pet market listing.'], 500);
         }
     }
 }

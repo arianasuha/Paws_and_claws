@@ -71,6 +71,13 @@ class PetController extends Controller
      * @OA\Schema(type="string")
      * ),
      * @OA\Parameter(
+     * name="my_pets",
+     * in="query",
+     * description="Search query for owned pets",
+     * required=false,
+     * @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
      * name="gender",
      * in="query",
      * description="Filter by gender",
@@ -96,6 +103,10 @@ class PetController extends Controller
     {
         try {
             $query = Pet::query();
+
+            if ($request->has('my_pets')) {
+                $query->where('user_id', Auth::user()->id);
+            }
 
             if ($request->has('search')) {
                 $searchTerm = '%' . $request->input('search') . '%';
@@ -234,7 +245,7 @@ class PetController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      * path="/api/pets/{pet}",
      * operationId="updatePet",
      * tags={"Pets"},
@@ -322,15 +333,15 @@ class PetController extends Controller
     {
         try {
             $foundPet = Pet::find($pet);
-
+            
             if (!$foundPet) {
-                return response()->json(['error' => 'Pet not found'], 404);
+                return response()->json(['errors' => 'Pet not found'], 404);
             }
 
             if (Auth::id() !== $foundPet->user_id) {
-                return response()->json(['error' => 'Unauthorized. You can only update your own pets.'], 403);
+                return response()->json(['errors' => 'Unauthorized. You can only update your own pets.'], 403);
             }
-
+            
             $validated = $request->validated();
 
             $this->imageHandler($request, $validated, $foundPet);
@@ -338,7 +349,6 @@ class PetController extends Controller
 
             return response()->json([
                 'success' => 'Pet information updated successfully.',
-                'pet' => $foundPet->fresh(),
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -392,11 +402,11 @@ class PetController extends Controller
             $foundPet = Pet::find($pet);
 
             if (!$foundPet) {
-                return response()->json(['error' => 'Pet not found'], 404);
+                return response()->json(['errors' => 'Pet not found'], 404);
             }
 
             if (Auth::id() !== $foundPet->user_id) {
-                return response()->json(['error' => 'Unauthorized. You can only update your own pets.'], 403);
+                return response()->json(['errors' => 'Unauthorized. You can only update your own pets.'], 403);
             }
 
             if ($foundPet->image_url) {

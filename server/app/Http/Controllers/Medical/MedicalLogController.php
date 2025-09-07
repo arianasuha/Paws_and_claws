@@ -73,10 +73,6 @@ class MedicalLogController extends Controller
                 return response()->json(['errors' => 'Pet not found.'], 404);
             }
 
-            if (Auth::user()->id !== $pet->user_id) {
-                return response()->json(['errors' => 'You are unauthorized to see this information.'], 403);
-            }
-
             $query = $pet->medicalLogs();
 
             if ($request->has('diagnosis')) {
@@ -196,12 +192,6 @@ class MedicalLogController extends Controller
 
             if (!$medicalLog) {
                 return response()->json(['errors' => 'Medical log not found.'], 404);
-            }
-
-            $isAuthorized = $medicalLog->pets()->where('user_id', Auth::id())->exists();
-
-            if (!$isAuthorized) {
-                return response()->json(['errors' => 'You are unauthorized to view this medical log.'], 403);
             }
 
             $medicalLog->load(['pets' => function ($query) {

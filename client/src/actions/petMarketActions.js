@@ -6,73 +6,42 @@ import {
   updatePetMarket,
   deletePetMarket,
 } from "@/libs/api";
-import { logoutAction } from "./authActions";
-
-// needs work
-export const petActionError = async (response, errorMessages = {}) => {
-  if (typeof response.pet === "object") {
-    if (response.pet.name) {
-      errorMessages["name"] = response.pet.name;
-    }
-
-    if (response.pet.species) {
-      errorMessages["species"] = response.pet.species;
-    }
-
-    if (response.pet.breed) {
-      errorMessages["breed"] = response.pet.breed;
-    }
-
-    if (response.pet.dob) {
-      errorMessages["dob"] = response.pet.dob;
-    }
-
-    if (response.pet.height) {
-      errorMessages["height"] = response.pet.height;
-    }
-
-    if (response.pet.weight) {
-      errorMessages["weight"] = response.pet.weight;
-    }
-
-    if (response.pet.image_url) {
-      errorMessages["image_url"] = response.pet.image_url;
-    }
-
-    return errorMessages
-  }
-};
-
-export const marketActionError = async (response, errorMessages = {}) => {
-  if (typeof response.market === "object") {
-    if (response.market.type) {
-      errorMessages["type"] = response.market.type;
-    }
-
-    if (response.market.description) {
-      errorMessages["description"] = response.market.description;
-    }
-
-    if (response.market.fee) {
-      errorMessages["fee"] = response.market.fee;
-    }
-
-    return errorMessages
-  }
-};
 
 export const actionError = async (response) => {
   if (typeof response.error === "object") {
     const errorMessages = {};
 
-    errorMessages = await petActionError(response, errorMessages);
-    errorMessages = await marketActionError(response, errorMessages);
+    if (response.error.pet_id) {
+      errorMessages["pet"] = response.error.pet_id;
+    }
 
+    if (response.error.type) {
+      errorMessages["type"] = response.error.type;
+    }
+
+    if (response.error.description) {
+      errorMessages["description"] = response.error.description;
+    }
+
+    if (response.error.date) {
+      errorMessages["date"] = response.error.date;
+    }
+
+    if (response.error.status) {
+      errorMessages["status"] = response.error.status;
+    }
+
+    if (response.error.fee) {
+      errorMessages["fee"] = response.error.fee;
+    }
+
+    // Combine messages into a single string with \n between each
     return { error: errorMessages };
   }
 
+  // If it's not an object, return the error as is (string or other type)
   return { error: { error: response.error } };
-}
+};
 
 export const getPetMarketsAction = async (queryParams = {}) => {
   try {
@@ -113,35 +82,18 @@ export const getPetMarketAction = async (id) => {
 };
 
 export const createPetMarketAction = async (formData) => {
-  const name = formData["name"];
-  const species = formData["species"];
-  const breed = formData["breed"];
-  const dob = formData["dob"];
-  const gender = formData["gender"];
-  const weight = formData["weight"];
-  const height = formData["height"];
-  const image_url = formData["image_url"];
-
+  const pet_id = formData["pet"];
   const type = formData["type"];
   const description = formData["description"];
   const fee = formData["fee"];
+  const date = formData["date"];
 
   const data = {
-    pet: {
-      name,
-      ...(species && { species }),
-      ...(breed && { breed }),
-      ...(dob && { dob }),
-      ...(gender && { gender }),
-      ...(weight && { weight }),
-      ...(height && { height }),
-      ...(image_url && { image_url }),
-    },
-    market: {
-      type,
-      description,
-      fee
-    }
+    pet_id,
+    type,
+    description,
+    fee,
+    date,
   };
 
   try {
@@ -159,14 +111,16 @@ export const createPetMarketAction = async (formData) => {
 };
 
 export const updatePetMarketAction = async (id, formData) => {
-  const type = formData["type"];
-  const description = formData["description"];
-  const fee = formData["fee"];
+  const type = formData.get("type");
+  const description = formData.get("description");
+  const fee = formData.get("fee");
+  const status = formData.get("status");
 
   const data = {
     ...(type && { type }),
     ...(description && { description }),
     ...(fee && { fee }),
+    ...(status && { status }),
   };
 
   try {
@@ -191,7 +145,6 @@ export const deletePetMarketAction = async (id) => {
       return { error: response.error };
     }
     
-    await logoutAction()
     return { success: response.success };
   } catch (error) {
     console.error(error);

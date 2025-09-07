@@ -1,34 +1,3 @@
-/* Create Pet Button Styles */
-.create-pet-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); /* Greenish gradient */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-  text-decoration: none;
-  margin-top: 20px;
-}
-
-.create-pet-btn:hover {
-  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
-}
-
-.create-pet-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-}
 /* Signup Button Styles - Adapted from Login Button */
 .signup-btn {
   width: 100%;
@@ -119,78 +88,6 @@
 .delete-btn:active {
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
-}
-
-/* Delete Pet Button Styles - Adapted from Delete Button */
-.delete-pet-btn {
-  width: 100%;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); /* Red gradient */
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 16px;
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
-}
-.delete-pet-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-.delete-pet-btn:hover::before {
-  left: 100%;
-}
-.delete-pet-btn:hover {
-  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(229, 62, 62, 0.6);
-}
-.delete-pet-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
-}
-/* Detail Button Styles */
-.detail-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); /* Blue gradient */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
-  text-decoration: none;
-}
-
-.detail-btn:hover {
-  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(66, 153, 225, 0.6);
-}
-
-.detail-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 10px rgba(66, 153, 225, 0.4);
 }
 /* Login Button Styles */
 .login-btn {
@@ -309,7 +206,6 @@
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
-/* Profile Button Styles - Adapted from Option Button */
 .profile-btn {
   display: inline-flex;
   align-items: center;
@@ -339,7 +235,6 @@
   transform: translateY(0);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-/* Show Pets Button Styles */
 .show-pets-btn {
   width: 100%;
   padding: 16px 24px;
@@ -380,7 +275,6 @@
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
 }
-/* Update Button Styles - Adapted from Login Button */
 .update-btn {
   width: 100%;
   padding: 16px 24px;
@@ -430,57 +324,7 @@
 .update-btn:disabled::before {
   display: none;
 }
-/* Update Pet Button Styles - Adapted from Update Button */
-.update-pet-btn {
-  width: 100%;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); /* Greenish gradient */
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 16px;
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-}
-.update-pet-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-.update-pet-btn:hover::before {
-  left: 100%;
-}
-.update-pet-btn:hover {
-  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
-}
-.update-pet-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-}
-.update-pet-btn:disabled {
-  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-.update-pet-btn:disabled::before {
-  display: none;
-}
-/* Vet Signup Button Styles - Adapted from Login Button */
+
 .vet-signup-btn {
   width: 100%;
   padding: 16px 24px;
@@ -531,26 +375,28 @@
   display: none;
 }
 
-/* Delete Listing Button Styles */
-.delete-listing-btn {
-  width: 100%;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); /* Red gradient */
-  color: white;
+.homePageButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 250px;
+  padding: 18px 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: whitesmoke;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 16px;
-  position: relative;
-  overflow: hidden;
+  text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+  position: relative;
+  overflow: hidden;
 }
-.delete-listing-btn::before {
+
+.homePageButton:before {
   content: "";
   position: absolute;
   top: 0;
@@ -560,31 +406,29 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
-.delete-listing-btn:hover::before {
+
+.homePageButton:hover::before {
   left: 100%;
 }
-.delete-listing-btn:hover {
-  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+
+.homePageButton:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(229, 62, 62, 0.6);
-}
-.delete-listing-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-/* Update Listing Button Styles */
-.update-listing-btn {
-  width: 100%;
+/* Create Pet Button Styles */
+.CreatedPetButtonPrimary { 
+  width: 200px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); /* Green gradient */
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   color: white;
   border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, .2, 1);
   margin-top: 16px;
   position: relative;
   overflow: hidden;
@@ -592,7 +436,8 @@
   letter-spacing: 0.5px;
   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
 }
-.update-listing-btn::before {
+
+.CreatedPetButtonPrimary::before {
   content: "";
   position: absolute;
   top: 0;
@@ -602,39 +447,101 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
-.update-listing-btn:hover::before {
+
+.CreatedPetButtonPrimary:hover::before {
   left: 100%;
 }
-.update-listing-btn:hover {
+
+.CreatedPetButtonPrimary:hover {
   background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
 }
-.update-listing-btn:active {
+
+.CreatedPetButtonPrimary:active {
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
 }
 
-/* Update Pet Market Button Styles */
-.update-pet-market-btn {
-  width: 100%;
+.UpdatePetButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.UpdatePetSecondary {
+  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.UpdatePetSecondary:hover {
+  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.UpdatePetSecondary:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.DeletePetDestructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);   
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4);
+}
+
+.DeletePetDestructive:hover {
+  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(229, 62, 62, 0.6);
+}
+
+.DeletePetDestructive:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4);
+}
+
+.CPMarketButton { 
+  width: 250px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); /* Blue gradient */
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   color: white;
   border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, .2, 1);
   margin-top: 16px;
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
 }
-.update-pet-market-btn::before {
+
+.CPMarketButton::before {
   content: "";
   position: absolute;
   top: 0;
@@ -644,15 +551,774 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
-.update-pet-market-btn:hover::before {
+
+.CPMarketButton:hover::before {
   left: 100%;
 }
-.update-pet-market-btn:hover {
-  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+
+.CPMarketButton:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.6);
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
 }
-.update-pet-market-btn:active {
+
+.CPMarketButton:active {
   transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+.UPMarketButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.UPMarketButtonSecondary {
+  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.UPMarketButtonSecondary:hover {
+  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.UPMarketButtonSecondary:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.DPMarketButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);   
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4);
+}
+
+.DPMarketButton:hover {
+  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(229, 62, 62, 0.6);
+}
+
+.DPMarketButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4);
+}
+
+.CPMSbutton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.CPMSbutton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.CPMSbutton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-1px);
+}
+
+.CPMSbutton:disabled,
+
+
+.CPPButton { 
+  width: 250px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, .2, 1);
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+.CPPButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.CPPButton:hover::before {
+  left: 100%;
+}
+
+.CPPButton:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
+}
+
+.CPPButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+@media (max-width: 768px) {
+  .CPPButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.ATCButton {
+  background: #4a5568;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: whitesmoke;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ATCButton:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.ATCButton:hover::before {
+  left: 100%;
+}
+
+.ATCButton:hover {
+  opacity: 0.9;
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.ATCdisabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ATCadded {
+  background-color: #28a745;
+}
+
+.ATCloading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ATCloading::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.ATCsuccess {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Creating cancel button styles with purple-amber theme */
+.CancelOrdercancelButton {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.CancelOrdercancelButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+}
+
+.CancelOrdercancelButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Creating cancel order button styles with purple-amber theme */
+.CancelOrderbutton {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.CancelOrderbutton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+}
+
+.CancelOrderconfirmDialog {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 2px solid #fecaca;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.CancelOrderconfirmText {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.CancelOrderconfirmButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.CancelOrderkeepButton {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.CancelOrderkeepButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+}
+
+@media (max-width: 480px) {
+  .CancelOrderconfirmButtons {
+    flex-direction: column;
+  }
+}
+
+/* Creating checkout button styles with purple-amber theme */
+.CheckoutButton {
+  background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.CheckoutButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 48, 221, 0.3);
+}
+
+.CheckoutButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+.AdminDashboardButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.AdminDashboardButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.AdminDashboardButton:hover::before {
+  left: 100%;
+}
+
+.AdminDashboardButton:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.AdminDashboardButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.AdminDashboardButton:disabled {
+  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.AdminDashboardButton:disabled::before {
+  display: none;
+}
+
+.DeleteNotificationdeleteButton {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.DeleteNotificationdeleteButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.DeleteNotificationmodalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.DeleteNotificationmodal {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.DeleteNotificationmodalHeader {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  padding: 20px 24px;
+}
+
+.DeleteNotificationmodalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.DeleteNotificationmodalContent {
+  padding: 24px;
+}
+
+.DeleteNotificationconfirmMessage {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.DeleteNotificationerror {
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.DeleteNotificationsuccess {
+  background-color: #c6f6d5;
+  color: #22543d;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.DeleteNotificationmodalActions {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 24px 24px;
+}
+
+.DeleteNotificationcancelButton {
+  flex: 1;
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.DeleteNotificationcancelButton:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.DeleteNotificationconfirmButton {
+  flex: 1;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.DeleteNotificationconfirmButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.DeleteNotificationconfirmButton:disabled,
+.DeleteNotificationcancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .DeleteNotificationmodalActions {
+    flex-direction: column;
+  }
+
+  .DeleteNotificationmodal {
+    margin: 20px;
+  }
+}
+
+.removeButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.removeButton:hover:not(:disabled) {
+  background-color: #c82333;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.removeButton:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.removeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.removeButton.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.createCategoryButton {
+  background-color: #32208e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.createCategoryButton:hover:not(:disabled) {
+  background-color:  #764ba2;
+  transform: translateY(-1px);
+}
+
+.createCategoryButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.createCategoryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+/* Focus styles for accessibility */
+.createCategoryButton:focus {
+  outline: 2px solid #4629a5;
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .createCategoryButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+.deleteEmergencyButton {
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.deleteEmergencyButton:hover {
+  background: #dc3545;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.deleteEmergencyButton:active {
+  transform: translateY(0);
+}
+
+.DAbutton {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160px;
+}
+
+.DAbutton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.DAbutton:active {
+  transform: translateY(0);
+}
+
+.UAbutton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160px;
+}
+
+.UAbutton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.UAbutton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.UAbutton:active {
+  transform: translateY(0);
+}
+
+.BNbutton {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+  position: relative;
+}
+
+.BNbutton:hover:not(.disabled):not(.pending) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.BNbutton:active:not(.disabled):not(.pending) {
+  transform: translateY(0);
+}
+
+.BNdisabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.BNpending {
+  background-color: #6b7280;
+  cursor: wait;
+}
+
+.BNpending::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .BNbutton {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+  }
 }

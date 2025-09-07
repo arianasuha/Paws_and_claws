@@ -42,6 +42,10 @@ class PetProductRegisterRequest extends BaseRequest
             'stock.required' => 'The product stock quantity is required.',
             'category_id.required' => 'The category ID is required.',
             'category_id.exists' => 'The selected category does not exist.',
+            'image_url.required' => 'The product image is required.',
+            'image_url.image' => 'The product image must be an image.',
+            'image_url.mimes' => 'The product image must be a JPEG, PNG, JPG, or GIF image.',
+            'image_url.max' => 'The product image size must not exceed 2MB.',
         ];
     }
 

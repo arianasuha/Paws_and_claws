@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Pet;
 
 use App\Http\Requests\BaseRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 
 class PetRegisterRequest extends BaseRequest
 {
@@ -25,7 +23,7 @@ class PetRegisterRequest extends BaseRequest
             'name' => 'required|string|max:255',
             'gender' => 'required|in:male,female',
             'species' => 'required|string|max:255',
-            'breed' => 'nullable|string|max:255',
+            'breed' => 'required|string|max:255',
             'dob' => 'required|date',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'user_id' => 'prohibited', // Prevent user_id from being sent
@@ -42,15 +40,5 @@ class PetRegisterRequest extends BaseRequest
         return [
             'user_id.prohibited' => 'You can only register pets for yourself.',
         ];
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ], 422));
     }
 }
