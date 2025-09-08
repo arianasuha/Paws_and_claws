@@ -7,7 +7,7 @@ export default function VetCard({ vet }) {
   const router = useRouter()
 
   const handleCardClick = () => {
-    router.push(`/appointment/vet-appointment/${vet.id}`)
+    router.push(`/appointment/vet-appointment/${vet.user.id}`)
   }
 
   return (

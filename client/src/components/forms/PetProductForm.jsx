@@ -24,7 +24,7 @@ export default function PetProductForm({ action, onClose, errors, success }) {
       console.error("Error fetching categories:", error)
     }
   }
-  
+
   useEffect(() => {
     fetchCategories()
   }, [])
@@ -122,7 +122,7 @@ export default function PetProductForm({ action, onClose, errors, success }) {
 
      <div className={styles.formGroup}>
         <div className={styles.inputGroup}>
-          <label htmlFor="image" className={styles.label}>Pet Image</label>
+          <label htmlFor="image" className={styles.label}>Product Image</label>
           <input
             type="file"
             id="image"
@@ -136,7 +136,7 @@ export default function PetProductForm({ action, onClose, errors, success }) {
             <label htmlFor="image" className={styles.inputButton}>
               Choose File
             </label>
-            
+
             <span id="fileNameDisplay" className={styles.inputFileName}>{fileName}</span>
           </div>
         </div>
