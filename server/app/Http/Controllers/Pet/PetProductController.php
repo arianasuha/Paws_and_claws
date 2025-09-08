@@ -28,8 +28,6 @@ class PetProductController extends Controller
             $path = $request->file('image_url')->store('pet_product_images', 'public');
             $validated['image_url'] = Storage::url($path);
         } else if (array_key_exists('image_url', $validated) && is_null($validated['image_url'])) {
-            // If remove Image button is pressed we will send image_url null
-            // otherwise the key won't be sent
             if ($petproduct && $petproduct->image_url) {
                 $this->deleteOldImage($petproduct->image_url);
             }
@@ -193,7 +191,7 @@ class PetProductController extends Controller
             // Log the full exception for detailed error tracking
             Log::error('Error creating pet product: ' . $e->getMessage());
 
-            // Return the specific error message to the user for immediate debugging
+
             return response()->json([
                 'errors' => 'Failed to create pet product: ' . $e->getMessage()
             ], 500);

@@ -34,14 +34,14 @@ export default function CreatePetProductModal({ isOpen, onClose, onSuccess }) {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>Add New Pet</h2>
+          <h2 className={styles.modalTitle}>Add New Product</h2>
           <button className={styles.closeButton} onClick={onClose}>
             ×
           </button>
         </div>
 
-        <PetProductForm 
-          onClose={onClose} 
+        <PetProductForm
+          onClose={onClose}
           action={handleSubmit}
           success={success}
           errors={errors}

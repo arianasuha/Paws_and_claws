@@ -461,7 +461,7 @@ export function UpdateMedicalLogButton({ medicalLog, onSuccess}) {
   return (
     <>
       <button onClick={handleOpenModal} className={`${styles.UPMarketButton} ${styles.UPMarketButtonSecondary}`}>
-        Update Market Details
+        Update Medical Log
       </button>
 
       {isModalOpen && <UpdateMedicalLogModal isOpen={isModalOpen} medicalLog={medicalLog} onClose={handleCloseModal} onSuccess={onSuccess}/>}
@@ -483,7 +483,7 @@ export function DeleteMedicalLogButton({ onSuccess, medicalLog }) {
   return (
     <>
       <button onClick={handleOpenModal} className={`${styles.DPMarketButton}`}>
-        Delete Pet From Market
+        Delete Medical Log
       </button>
 
       {isModalOpen && (
