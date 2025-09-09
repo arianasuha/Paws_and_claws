@@ -15,13 +15,13 @@ Walkers, trainers, groomers are service providers. They can create and update th
 Admin can handle emergency pet shelter request placed by other customers, can manage pet product shop and can update product delivery status for any customer depending on the customer's payment status.
 
 ### Appointment System
-- Customers can book appointment to Vets and Service Providers and the Vets and Service Providers can approve appointments.
+Customers can book appointment to Vets and Service Providers and the Vets and Service Providers can approve appointments.
 
 ### Pet Marketplace
-- Customers can buy and sell their pets. Pets information and price will be provided by the customer who wants to sell. The buyer can communicate with the seller through mail address.
+Customers can buy and sell their pets. Pets information and price will be provided by the customer who wants to sell. The buyer can communicate with the seller through mail address.
 
 ### Pet Adoption Portal
-- Customers can put their pets for adoption and can also adopt pets from the portal.
+Customers can put their pets for adoption and can also adopt pets from the portal.
 
 ### Pet Products Shop
 - Products are organised by categories.
