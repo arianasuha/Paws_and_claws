@@ -1,4 +1,4 @@
-# Paws_and_claws- One stop solution for pets
+# Paws and claws- One stop solution for pets
 
 ## Features of this Project:
 
@@ -41,10 +41,10 @@ Customers can put their pets for adoption and can also adopt pets from the porta
 
 ### Notification System (Reminder system)
 - Vets and service providers get notifications when other users book appointments to them.
-- Customers get notifications when they book appointment to the vets and service providers and when the appointments are approved. This work as a reminder to visit the vets and service providers.
+- Customers get notifications when they book appointment to the vets and service providers and when the appointments are approved. This works as a reminder to visit the vets and service providers.
 - Customers get notification when their emergency shelter request is placed successfully.
 - Customers get notifications if they add products to their carts and if their order is confirmed and payment is successful.
-- Notifications remain unread and blue until the users read them. When the user click on any notification it becomes read.
+- Notifications remain unread and blue until the users read them. When the users click on any notification it becomes read.
 - Users can delete the read notifications if they want.
 - Admin gets notified when a user's order and payment is confirmed so that the admin can update delivery status for the user.
 
