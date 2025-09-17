@@ -57,4 +57,4 @@ Customers can put their pets for adoption and can also adopt pets from the porta
 1. Frontend: Nextjs
 2. Backend: Laravel
 3. Database: Postgres
-4. Architecture: MVC
+4. Architecture: MVC (Model-View-Controller)
