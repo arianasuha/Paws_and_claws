@@ -7,12 +7,12 @@ use App\Models\MedicalLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Medical\MedicalLogRegisterRequest;
-use App\Jobs\ScheduleMedicalReminders; // We'll need to create this job
+use App\Jobs\ScheduleMedicalReminders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Pet;
-use App\Models\MedicalReminder; // Assuming you have this model
+use App\Models\MedicalReminder;
 use Illuminate\Support\Facades\Auth;
 use OpenApi\Annotations as OA;
 
