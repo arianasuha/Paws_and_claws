@@ -25,11 +25,12 @@ Customers can put their pets for adoption and can also adopt pets from the porta
 
 ### Pet Products Shop
 - Products are organised by categories.
+- Products are arranged using pagination.
 - Admin can create categories and products.
 - Customers can view products information such as price, description, stock etc.
 - Customers can purchase products from the pet product shop.
 - They can add products to their carts, can delete products from cart and can choose payment options( card or cash ) to pay.
-- Customers can search by filtering products based on price range.
+- Customers can search by filtering products based on price range and category.
 
 ### Report Lost and Found Pets
 - Users can report their lost pet information.
