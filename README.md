@@ -51,7 +51,7 @@ Customers can put their pets for adoption and can also adopt pets from the porta
 - Admin gets notified when a user's order and payment is confirmed so that the admin can update delivery status for the user.
 
 ### Pet disease information
-- Pet medical history such as diagnosis, vet information and disease information can be viewed by the respective owner.
+- Pet medical history such as diagnosis, vet information and disease information can be viewed by the respective pet owner.
 - The owner can add attachment url as well to store pet medical history.
 
 ## Stack
